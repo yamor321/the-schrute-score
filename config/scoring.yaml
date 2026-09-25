@@ -1,0 +1,29 @@
+# Starter scoring configuration for the AI coding model value dashboard.
+# Edit this file to change which vendors are excluded and how the
+# cost-benefit "value" score is weighted. No code changes needed.
+
+# Vendors/creators to exclude entirely from the dashboard.
+# Match is case-insensitive. Example: [deepseek, qwen, google, zhipu]
+excludeVendors: []
+
+# Which benchmark fields (from the Artificial Analysis API) feed the
+# composite "coding score," and how much each one counts.
+# Weights don't need to sum to 1 — for any given model, they are
+# renormalized over whichever of these fields that model actually has
+# a value for (a model missing one benchmark isn't penalized as if it
+# scored zero on it).
+benchmarkWeights:
+  codingIndex: 0.5
+  liveCodeBench: 0.25
+  terminalBench: 0.25
+
+# Which price figure to divide the coding score by to get "value".
+#   blended = (input price + output price) / 2
+#   input   = input price per million tokens only
+#   output  = output price per million tokens only
+priceBasis: blended
+
+# Minimum number of the benchmarkWeights fields above that must be
+# present (non-null) for a model to be ranked at all. Prevents ranking
+# a model off a single thin data point.
+minBenchmarksRequired: 1

@@ -1,0 +1,187 @@
+name: Update data & deploy dashboard
+
+on:
+  schedule:
+    # Twice a day, 12 hours apart. GitHub cron runs in UTC:
+    #   05:00 UTC ≈ 08:00 Israel time in summer (IDT, UTC+3) / 07:00 in winter (IST, UTC+2)
+    #   17:00 UTC ≈ 20:00 Israel time in summer / 19:00 in winter
+    # The Israel-time equivalent shifts by an hour at each DST change. That's
+    # expected — cron has no time zones, and the exact hour doesn't matter here.
+    # (GitHub may also start scheduled runs a few minutes late under load.)
+    - cron: '0 5 * * *'
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    # Re-rank and redeploy right away when the config, scoring code or site
+    # changes. Data commits made by this workflow use GITHUB_TOKEN, which does
+    # not trigger workflows, so this cannot loop.
+    paths:
+      - 'config/**'
+      - 'src/**'
+      - 'site/**'
+      - 'scripts/**'
+      - 'package*.json'
+      - '.github/workflows/update.yml'
+
+# Nothing by default; each job asks only for what it needs.
+permissions: {}
+
+concurrency:
+  group: update-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.update.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck & unit tests
+        run: |
+          npm run typecheck
+          npm test
+
+      - name: Fetch, score, detect new models, write data files
+        id: update
+        # The secret exists only in this step's environment and is never echoed.
+        env:
+          ARTIFICIAL_ANALYSIS_API_KEY: ${{ secrets.ARTIFICIAL_ANALYSIS_API_KEY }}
+        run: npm run update
+
+      - name: Check the API key did not end up in any generated file
+        env:
+          ARTIFICIAL_ANALYSIS_API_KEY: ${{ secrets.ARTIFICIAL_ANALYSIS_API_KEY }}
+        run: |
+          if [ -n "$ARTIFICIAL_ANALYSIS_API_KEY" ] && grep -rqF -- "$ARTIFICIAL_ANALYSIS_API_KEY" data site; then
+            echo "::error::The API key was found in generated files. Aborting before anything is committed or deployed."
+            exit 1
+          fi
+
+      # Hand only this run's new files to the deploy job (not the whole history).
+      - name: Upload new data files
+        if: steps.update.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: data
+          path: ${{ steps.update.outputs.files }}
+          if-no-files-found: error
+          retention-days: 1
+
+  # Runs only when update-data succeeded, so a failed fetch or scoring run can
+  # never overwrite data/latest.json, site/data.json or the live site.
+  deploy-site:
+    needs: update-data
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # commit the data files
+      pages: write      # deploy to GitHub Pages
+      id-token: write   # required by actions/deploy-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Download new data files
+        if: needs.update-data.outputs.changed == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: data
+          path: data
+
+      - name: Copy data/latest.json → site/data.json
+        run: npm run copy-data
+
+      - name: Commit data if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data site/data.json
+          if git diff --cached --quiet; then
+            echo "No meaningful data change — nothing to commit."
+          else
+            git commit -m "data: update $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Keeps one tracking issue (label: pipeline-failure) instead of a new issue
+  # per failed run: opens it on the first failure, comments on repeats, and
+  # comments + closes it once a run succeeds again.
+  report-status:
+    needs: [update-data, deploy-site]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          UPDATE_RESULT: ${{ needs.update-data.result }}
+          DEPLOY_RESULT: ${{ needs.deploy-site.result }}
+        with:
+          script: |
+            const label = 'pipeline-failure';
+            const { UPDATE_RESULT: update, DEPLOY_RESULT: deploy } = process.env;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const failed = update === 'failure' || deploy === 'failure';
+            const succeeded = update === 'success' && deploy === 'success';
+
+            const { data: open } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', labels: label, per_page: 1 });
+            const existing = open[0];
+
+            if (failed) {
+              const stage = update === 'failure' ? 'update-data (fetch / scoring / validation)' : 'deploy-site (commit / Pages deploy)';
+              const body = [
+                `❌ The pipeline failed in **${stage}** at ${new Date().toISOString()}.`,
+                '',
+                `Run log: ${runUrl}`,
+                '',
+                update === 'failure'
+                  ? 'Nothing was committed or deployed — the dashboard keeps showing the last good data.'
+                  : 'The data update itself succeeded; publishing it failed.',
+                '',
+                'Common causes: the `ARTIFICIAL_ANALYSIS_API_KEY` secret is missing or expired (HTTP 401/403), Artificial Analysis is down, the API response changed shape, or `config/scoring.yaml` has a mistake.',
+              ].join('\n');
+              if (existing) {
+                await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body });
+              } else {
+                try {
+                  await github.rest.issues.getLabel({ ...context.repo, name: label });
+                } catch {
+                  await github.rest.issues.createLabel({ ...context.repo, name: label, color: 'b60205', description: 'The scheduled data pipeline is failing' });
+                }
+                await github.rest.issues.create({ ...context.repo, title: 'Data pipeline is failing', labels: [label], body });
+              }
+            } else if (succeeded && existing) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body: `✅ Recovered — run ${runUrl} succeeded. Closing.` });
+              await github.rest.issues.update({ ...context.repo, issue_number: existing.number, state: 'closed', state_reason: 'completed' });
+            }

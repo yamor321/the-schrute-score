@@ -1,0 +1,106 @@
+{
+  "status": 200,
+  "prompt_options": { "parallel_queries": 1, "prompt_length": "medium" },
+  "data": [
+    {
+      "id": "11111111-aaaa-4000-8000-000000000001",
+      "name": "Alpha Coder",
+      "slug": "alpha-coder",
+      "release_date": "2026-05-01",
+      "model_creator": { "id": "c-anthropic", "name": "Anthropic", "slug": "anthropic" },
+      "evaluations": {
+        "artificial_analysis_intelligence_index": 55.2,
+        "artificial_analysis_coding_index": 60,
+        "livecodebench": 0.8,
+        "terminalbench_hard": 0.4,
+        "scicode": 0.45,
+        "gpqa": 0.81
+      },
+      "pricing": { "price_1m_blended_3_to_1": 6, "price_1m_input_tokens": 3, "price_1m_output_tokens": 15 },
+      "median_output_tokens_per_second": 72.4,
+      "median_time_to_first_token_seconds": 1.9,
+      "median_time_to_first_answer_token": 12.3
+    },
+    {
+      "id": "11111111-aaaa-4000-8000-000000000002",
+      "name": "Beta Mini",
+      "slug": "beta-mini",
+      "release_date": "2026-03-15",
+      "model_creator": { "id": "c-openai", "name": "OpenAI", "slug": "openai" },
+      "evaluations": {
+        "artificial_analysis_intelligence_index": 41.0,
+        "artificial_analysis_coding_index": 40,
+        "livecodebench": 0.6,
+        "terminalbench_hard": null,
+        "gpqa": 0.66
+      },
+      "pricing": { "price_1m_blended_3_to_1": 0.75, "price_1m_input_tokens": 0.5, "price_1m_output_tokens": 1.5 },
+      "median_output_tokens_per_second": 150.1
+    },
+    {
+      "id": "11111111-aaaa-4000-8000-000000000003",
+      "name": "Gamma Open",
+      "slug": "gamma-open",
+      "release_date": "2026-06-20",
+      "model_creator": { "id": "c-deepseek", "name": "DeepSeek", "slug": "deepseek" },
+      "evaluations": {
+        "artificial_analysis_coding_index": 50,
+        "livecodebench": 0.7,
+        "terminalbench_hard": 0.3
+      },
+      "pricing": { "price_1m_blended_3_to_1": 0.35, "price_1m_input_tokens": 0.2, "price_1m_output_tokens": 0.8 },
+      "future_field_not_yet_known": { "note": "must survive in raw" }
+    },
+    {
+      "id": "11111111-aaaa-4000-8000-000000000004",
+      "name": "Delta Legacy",
+      "slug": "delta-legacy",
+      "release_date": null,
+      "model_creator": { "id": "c-meta", "name": "Meta", "slug": "meta" },
+      "evaluations": {
+        "artificial_analysis_coding_index": null,
+        "livecodebench": null,
+        "terminalbench_hard": null,
+        "gpqa": 0.5
+      },
+      "pricing": { "price_1m_blended_3_to_1": 0.4, "price_1m_input_tokens": 0.3, "price_1m_output_tokens": 0.7 }
+    },
+    {
+      "id": "11111111-aaaa-4000-8000-000000000005",
+      "name": "Epsilon Unpriced",
+      "slug": "epsilon-unpriced",
+      "release_date": "2026-01-10",
+      "model_creator": { "id": "c-mistral", "name": "Mistral", "slug": "mistral" },
+      "evaluations": {
+        "artificial_analysis_coding_index": 30,
+        "livecodebench": 0.35
+      }
+    },
+    {
+      "id": "11111111-aaaa-4000-8000-000000000006",
+      "name": "Zeta Free",
+      "slug": "zeta-free",
+      "release_date": "2026-02-02",
+      "model_creator": { "id": "c-google", "name": "Google", "slug": "google" },
+      "evaluations": {
+        "artificial_analysis_coding_index": 45,
+        "livecodebench": 0.5,
+        "terminalbench_hard": 0.2
+      },
+      "pricing": { "price_1m_blended_3_to_1": 0, "price_1m_input_tokens": 0, "price_1m_output_tokens": 0 }
+    },
+    {
+      "id": "11111111-aaaa-4000-8000-000000000007",
+      "name": "Eta Half",
+      "slug": "eta-half",
+      "release_date": "2026-04-04",
+      "model_creator": { "id": "c-xai", "name": "xAI", "slug": "xai" },
+      "evaluations": {
+        "artificial_analysis_coding_index": 55,
+        "livecodebench": null,
+        "terminalbench_hard": 0.5
+      },
+      "pricing": { "price_1m_blended_3_to_1": 2.5, "price_1m_input_tokens": 2, "price_1m_output_tokens": null }
+    }
+  ]
+}
