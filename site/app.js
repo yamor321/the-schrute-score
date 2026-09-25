@@ -2,12 +2,13 @@
 // API calls, no keys, no server. Everything below is presentation.
 'use strict';
 
-const BAR_DEFAULT_COUNT = 25;
+const BAR_DEFAULT_COUNT = 40;
+const HIDDEN_KEY = 'schrute.hiddenVendors';
 
 const state = {
   data: null,
-  vendors: [],            // [{ name, count, color }]
-  selected: new Set(),    // vendor names currently shown
+  vendors: [],            // [{ name, count, color }] — vendors with ranked models
+  hidden: new Set(),      // vendor names the visitor unchecked (persisted)
   sort: { key: 'rank', dir: 'asc' },
   search: '',
   barShowAll: false,
@@ -16,6 +17,23 @@ const state = {
 
 const $ = (sel) => document.querySelector(sel);
 
+// ---------- persistence (per-browser convenience only) ----------
+function loadHidden() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(HIDDEN_KEY) ?? '[]');
+    return new Set(Array.isArray(saved) ? saved.filter((v) => typeof v === 'string') : []);
+  } catch {
+    return new Set();
+  }
+}
+function saveHidden() {
+  try {
+    localStorage.setItem(HIDDEN_KEY, JSON.stringify([...state.hidden]));
+  } catch {
+    /* storage unavailable — filter still works for this visit */
+  }
+}
+
 // ---------- formatting ----------
 const fmtScore = (n) => n.toFixed(1);
 const fmtValue = (n) => (n >= 100 ? n.toFixed(0) : n.toFixed(1));
@@ -23,7 +41,7 @@ const fmtValue = (n) => (n >= 100 ? n.toFixed(0) : n.toFixed(1));
 const fmtPrice = (n) => '$' + (n >= 1 ? n.toFixed(2) : String(+n.toFixed(4)));
 const pct = (n) => Math.round(n * 100) + '%';
 const priceBasisLabel = {
-  blended: 'blended (average of input and output price)',
+  blended: 'blended price (the average of the input and output price)',
   input: 'input price',
   output: 'output price',
 };
@@ -64,93 +82,124 @@ function vendorColor(name) {
   const hue = (h * 137.508) % 360;
   return isDark() ? `hsl(${hue.toFixed(0)} 60% 64%)` : `hsl(${hue.toFixed(0)} 58% 44%)`;
 }
+const colorOf = (vendor) => state.vendors.find((v) => v.name === vendor)?.color ?? cssVar('--muted');
 
 // ---------- data helpers ----------
 const benchmarkKeys = () => Object.keys(state.data.config.benchmarkWeights);
 const coverage = (m) => m.benchmarksUsed.length;
-const visibleModels = () => state.data.models.filter((m) => state.selected.has(m.vendor));
+const bestScore = () => state.data.quality?.bestScore ?? Math.max(...state.data.models.map((m) => m.codingScore));
+const relative = (m) => m.codingScore / bestScore();
+const isVisible = (m) => !state.hidden.has(m.vendor);
+const visibleModels = () => state.data.models.filter(isVisible);
 
 function benchmarkLines(m) {
   return benchmarkKeys().map((key) => {
     const b = m.benchmarks[key];
     if (!b || !b.present) return `${b ? b.label : key}: not tested (weight shared by the others)`;
     const raw = b.raw <= 1 && b.normalized !== b.raw ? ` (raw ${b.raw})` : '';
-    return `${b.label}: ${fmtScore(b.normalized)}${raw} × ${pct(b.effectiveWeight)}`;
+    const weight = benchmarkKeys().length > 1 ? ` × ${pct(b.effectiveWeight)}` : '';
+    return `${b.label}: ${fmtScore(b.normalized)}${raw}${weight}`;
   });
 }
 
 // ---------- sections ----------
 function renderHero() {
-  const top = state.data.models[0];
-  $('#hero-name').textContent = top.name;
-  $('#hero-new').hidden = !top.isNew;
-  $('#hero-vendor').textContent = `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}`;
-  $('#hero-value').textContent = fmtValue(top.value);
-  $('#hero-score').textContent = `${fmtScore(top.codingScore)} / 100`;
-  $('#hero-price').textContent = fmtPrice(top.price);
-  $('#hero-coverage').textContent = `${coverage(top)} of ${benchmarkKeys().length}`;
+  const visible = visibleModels();
+  const top = visible[0];
+  $('#hero-body').hidden = !top;
+  $('#hero-empty').hidden = !!top;
+  $('#hero-kicker').textContent = state.hidden.size ? 'Best pick among the vendors you selected' : 'Best pick right now';
+  if (top) {
+    $('#hero-name').textContent = top.name;
+    $('#hero-new').hidden = !top.isNew;
+    $('#hero-vendor').textContent = `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}`;
+    $('#hero-value').textContent = fmtValue(top.value);
+    $('#hero-score').textContent = `${fmtScore(top.codingScore)} / 100`;
+    $('#hero-relative').textContent = pct(relative(top));
+    $('#hero-price').textContent = fmtPrice(top.price);
 
-  const total = benchmarkKeys().length;
-  let note = `${fmtValue(top.value)} coding-score points for every $1 per million tokens.`;
-  if (coverage(top) < total) {
-    note += ` Heads-up: it has results for ${coverage(top)} of the ${total} benchmarks, so its coding score rests on less evidence than models tested on all of them.`;
+    const q = state.data.quality;
+    const leader = q && state.data.models.find((m) => m.name === q.bestModel);
+    let note;
+    if (!leader || leader.id === top.id) {
+      note = 'This is also the highest-scoring model on coding. Nothing close to it is meaningfully cheaper.';
+    } else {
+      const ratio = leader.price / top.price;
+      note =
+        `The top-scoring model, ${leader.name}, scores ${fmtScore(leader.codingScore)} at ${fmtPrice(leader.price)} per 1M tokens. ` +
+        `This one reaches ${pct(relative(top))} of that score` +
+        (ratio >= 1.15 ? ` for ${ratio >= 10 ? Math.round(ratio) : ratio.toFixed(1)}× less money.` : ' at a similar price.');
+    }
+    $('#hero-note').textContent = note;
   }
-  $('#hero-note').textContent = note;
 
-  const fresh = state.data.models.filter((m) => m.isNew);
-  const freshExcluded = state.data.excluded.filter((m) => m.isNew);
+  const fresh = visible.filter((m) => m.isNew);
+  const freshExcluded = state.data.excluded.filter((m) => m.isNew && isVisible(m));
   const callout = $('#new-callout');
-  if (fresh.length || freshExcluded.length) {
+  callout.hidden = !(fresh.length || freshExcluded.length);
+  if (!callout.hidden) {
     callout.replaceChildren(newBadge(), ' ');
-    if (fresh.length) {
-      callout.append(`New since the last update: ${fresh.map((m) => `${m.name} (#${m.rank})`).join(', ')}.`);
-    }
+    if (fresh.length) callout.append(`New since the last update: ${fresh.map((m) => `${m.name} (#${m.rank})`).join(', ')}.`);
     if (freshExcluded.length) {
-      callout.append(` ${freshExcluded.length} other new model${freshExcluded.length === 1 ? ' is' : 's are'} not ranked yet (see "Excluded").`);
+      callout.append(` ${freshExcluded.length} other new model${freshExcluded.length === 1 ? ' is' : 's are'} not ranked (see "Excluded").`);
     }
-    callout.hidden = false;
   }
   $('#hero').hidden = false;
 }
 
 function renderMethod() {
-  const { config } = state.data;
+  const { config, quality } = state.data;
   const sample = state.data.models[0];
   const weights = Object.entries(config.benchmarkWeights);
   const total = weights.reduce((s, [, w]) => s + w, 0);
+  const single = weights.length === 1;
   $('#method-weights').replaceChildren(
-    ...weights.map(([key, w]) => el('li', {}, el('strong', {}, sample.benchmarks[key]?.label ?? key), ` — ${pct(w / total)} of the score`)),
+    ...weights.map(([key, w]) =>
+      el('li', {}, el('strong', {}, sample.benchmarks[key]?.label ?? key), single ? '' : ` — ${pct(w / total)} of the score`),
+    ),
   );
+  $('#method-weights-note').textContent = single
+    ? 'This is Artificial Analysis\'s composite coding index. It combines several independent coding evaluations into one number on a 0–100 scale, and it\'s what current frontier models are measured on. Models without a result on it aren\'t ranked.'
+    : 'Some benchmarks report 0–100 and others 0–1, so everything is converted to 0–100 first. If a model hasn\'t been tested on one of them yet, that isn\'t counted as a zero; the benchmarks it does have share the weight.';
+
+  $('#method-floor').textContent = quality && config.qualityFloor > 0
+    ? `To be ranked at all, a model must reach at least ${pct(config.qualityFloor)} of the best coding score. ` +
+      `Right now the best is ${quality.bestModel} at ${fmtScore(quality.bestScore)}, so the bar is ${fmtScore(quality.minScore)}. ` +
+      'This keeps cheap-but-weak models out: a model that is cheap only because it is much worse never wins. ' +
+      'The bar is relative, so it rises automatically as better models come out.'
+    : 'There is no quality bar in the current configuration. Every model with a price and a score is ranked.';
 
   $('#method-price').textContent =
     `We use the ${priceBasisLabel[config.priceBasis]} in US dollars per million tokens, as listed by Artificial Analysis.` +
-    (config.priceBasis === 'blended'
-      ? ' If only one of the two prices is listed, Artificial Analysis\'s own blended price is used instead.'
-      : '');
+    (config.priceBasis === 'blended' ? ' If only one of the two prices is listed, Artificial Analysis\'s own blended price is used instead.' : '');
 
   const parts = [
-    `A model is not ranked if it has results for fewer than ${config.minBenchmarksRequired} of the benchmarks above,`,
-    'or if it has no price listed (or a price of $0, which usually means the price isn\'t known). A zero price would make the value infinite.',
+    'Models below the quality bar, and models with no price listed (or $0, which usually means the price isn\'t known), aren\'t ranked.',
   ];
-  if (config.excludeVendors.length) {
-    parts.push(`This dashboard also leaves out these vendors by choice: ${config.excludeVendors.join(', ')}.`);
-  }
+  if (config.excludeVendors.length) parts.push(`The site also leaves out these vendors by choice: ${config.excludeVendors.join(', ')}.`);
   parts.push('Every excluded model is listed at the bottom of the page with its reason, so nothing disappears silently.');
   $('#method-exclusions').textContent = parts.join(' ');
   $('#method').hidden = false;
 }
 
 function renderVendorFilters() {
-  const list = $('#vendor-filters');
-  list.replaceChildren(
+  $('#vendor-filters').replaceChildren(
     ...state.vendors.map((v) => {
-      const input = el('input', { type: 'checkbox', checked: state.selected.has(v.name), value: v.name });
+      const input = el('input', { type: 'checkbox', checked: !state.hidden.has(v.name), value: v.name });
       input.addEventListener('change', () => {
-        if (input.checked) state.selected.add(v.name);
-        else state.selected.delete(v.name);
+        if (input.checked) state.hidden.delete(v.name);
+        else state.hidden.add(v.name);
+        saveHidden();
         refresh();
       });
-      return el('label', { class: 'vendor-chip' }, input, el('span', { class: 'swatch', style: `background:${v.color}` }), `${v.name} (${v.count})`);
+      return el(
+        'label',
+        { class: 'vendor-chip', title: `${v.count} ranked model${v.count === 1 ? '' : 's'}` },
+        input,
+        el('span', { class: 'swatch', style: `background:${v.color}` }),
+        el('span', { class: 'vendor-name' }, v.name),
+        el('span', { class: 'vendor-count' }, String(v.count)),
+      );
     }),
   );
 }
@@ -159,7 +208,8 @@ function sortedTableRows() {
   const { key, dir } = state.sort;
   const q = state.search.trim().toLowerCase();
   const rows = visibleModels().filter((m) => !q || m.name.toLowerCase().includes(q) || m.vendor.toLowerCase().includes(q));
-  const get = (m) => (key === 'coverage' ? coverage(m) : key === 'isNew' ? (m.isNew ? 1 : 0) : m[key]);
+  const get = (m) =>
+    key === 'coverage' ? coverage(m) : key === 'relative' ? m.codingScore : key === 'isNew' ? (m.isNew ? 1 : 0) : m[key];
   const mul = dir === 'asc' ? 1 : -1;
   return rows.sort((a, b) => {
     const x = get(a), y = get(b);
@@ -171,7 +221,7 @@ function sortedTableRows() {
 function renderTable() {
   const total = benchmarkKeys().length;
   const rows = sortedTableRows();
-  const colorOf = Object.fromEntries(state.vendors.map((v) => [v.name, v.color]));
+  $('#ranked-table').classList.toggle('single-benchmark', total === 1);
   $('#ranked-table tbody').replaceChildren(
     ...rows.map((m) => {
       const cov = coverage(m);
@@ -180,9 +230,10 @@ function renderTable() {
         {},
         el('td', { class: 'num' }, String(m.rank)),
         el('td', { class: 'name', title: benchmarkLines(m).join('\n') }, m.name),
-        el('td', {}, el('span', { class: 'vendor-cell' }, el('span', { class: 'swatch', style: `background:${colorOf[m.vendor]}` }), m.vendor)),
+        el('td', {}, el('span', { class: 'vendor-cell' }, el('span', { class: 'swatch', style: `background:${colorOf(m.vendor)}` }), m.vendor)),
         el('td', { class: 'num' }, fmtScore(m.codingScore)),
-        el('td', { class: `num${cov < total ? ' coverage-thin' : ''}`, title: benchmarkLines(m).join('\n') }, `${cov}/${total}`),
+        el('td', { class: 'num' }, pct(relative(m))),
+        el('td', { class: `num col-coverage${cov < total ? ' coverage-thin' : ''}`, title: benchmarkLines(m).join('\n') }, `${cov}/${total}`),
         el('td', { class: 'num', title: m.priceNote ?? `${m.priceBasis} price` }, fmtPrice(m.price)),
         el('td', { class: 'num' }, el('strong', {}, fmtValue(m.value))),
         el('td', {}, m.isNew ? newBadge() : ''),
@@ -198,11 +249,18 @@ function renderTable() {
 }
 
 function renderExcluded() {
-  const rows = state.data.excluded;
+  const rows = state.data.excluded.filter(isVisible);
   $('#excluded-count').textContent = rows.length;
   $('#excluded-table tbody').replaceChildren(
     ...rows.map((m) =>
-      el('tr', {}, el('td', {}, m.name, m.isNew ? ' ' : null, m.isNew ? newBadge() : null), el('td', {}, m.vendor), el('td', {}, m.detail)),
+      el(
+        'tr',
+        {},
+        el('td', {}, m.name, m.isNew ? ' ' : null, m.isNew ? newBadge() : null),
+        el('td', {}, m.vendor),
+        el('td', { class: 'num' }, m.codingScore == null ? '—' : fmtScore(m.codingScore)),
+        el('td', {}, m.detail),
+      ),
     ),
   );
 }
@@ -210,7 +268,8 @@ function renderExcluded() {
 function renderCountLine() {
   const shown = visibleModels().length;
   const { counts } = state.data;
-  $('#count-line').textContent = `Showing ${shown} of ${counts.ranked} ranked models · ${counts.excluded} excluded · ${counts.fetched} tracked in total`;
+  const floor = state.data.quality && state.data.config.qualityFloor > 0 ? ` passed the quality bar (≥ ${fmtScore(state.data.quality.minScore)})` : ' ranked';
+  $('#count-line').textContent = `Showing ${shown} of ${counts.ranked} models that${floor} · ${counts.fetched} tracked in total`;
 }
 
 // ---------- charts ----------
@@ -219,45 +278,36 @@ function chartTheme() {
 }
 
 function tooltipLines(m) {
-  return [
+  const lines = [
     `${m.vendor}${m.isNew ? ' · NEW' : ''}`,
     `Value: ${fmtValue(m.value)}  (= ${fmtScore(m.codingScore)} ÷ ${fmtPrice(m.price)})`,
-    `Coding score: ${fmtScore(m.codingScore)}`,
-    ...benchmarkLines(m).map((l) => '  ' + l),
-    `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})` + (m.inputPrice != null && m.outputPrice != null ? ` — in ${fmtPrice(m.inputPrice)}, out ${fmtPrice(m.outputPrice)}` : ''),
+    `Coding score: ${fmtScore(m.codingScore)} (${pct(relative(m))} of the best)`,
   ];
+  if (benchmarkKeys().length > 1) lines.push(...benchmarkLines(m).map((l) => '  ' + l));
+  lines.push(
+    `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})` +
+      (m.inputPrice != null && m.outputPrice != null ? ` — in ${fmtPrice(m.inputPrice)}, out ${fmtPrice(m.outputPrice)}` : ''),
+  );
+  return lines;
 }
 
 function baseTooltip(t) {
-  return {
-    backgroundColor: t.surface,
-    titleColor: t.text,
-    bodyColor: t.text,
-    borderColor: t.grid,
-    borderWidth: 1,
-    padding: 10,
-    boxPadding: 4,
-  };
-}
-
-function buildBarData() {
-  const models = visibleModels();
-  const shown = state.barShowAll ? models : models.slice(0, BAR_DEFAULT_COUNT);
-  const toggle = $('#bar-toggle');
-  toggle.hidden = models.length <= BAR_DEFAULT_COUNT;
-  toggle.textContent = state.barShowAll ? `Show top ${BAR_DEFAULT_COUNT} only` : `Show all ${models.length}`;
-  $('#bar-wrap').style.height = `${Math.max(120, shown.length * 22 + 40)}px`;
-  return shown;
+  return { backgroundColor: t.surface, titleColor: t.text, bodyColor: t.text, borderColor: t.grid, borderWidth: 1, padding: 10, boxPadding: 4 };
 }
 
 function renderBar() {
   const t = chartTheme();
-  const models = buildBarData();
-  const colorOf = Object.fromEntries(state.vendors.map((v) => [v.name, v.color]));
+  const all = visibleModels();
+  const models = state.barShowAll ? all : all.slice(0, BAR_DEFAULT_COUNT);
+  const toggle = $('#bar-toggle');
+  toggle.hidden = all.length <= BAR_DEFAULT_COUNT;
+  toggle.textContent = state.barShowAll ? `Show top ${BAR_DEFAULT_COUNT} only` : `Show all ${all.length}`;
+  $('#bar-wrap').style.height = `${Math.max(120, models.length * 24 + 40)}px`;
+
   const maxLen = window.innerWidth < 600 ? 22 : 42;
   const data = {
     labels: models.map((m) => (m.isNew ? '🆕 ' : '') + (m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name)),
-    datasets: [{ data: models.map((m) => m.value), backgroundColor: models.map((m) => colorOf[m.vendor]), borderRadius: 3, barThickness: 'flex', maxBarThickness: 16 }],
+    datasets: [{ data: models.map((m) => m.value), backgroundColor: models.map((m) => colorOf(m.vendor)), borderRadius: 3, maxBarThickness: 18 }],
   };
   if (state.charts.bar) {
     state.charts.bar.data = data;
@@ -297,16 +347,13 @@ function renderScatter() {
   const t = chartTheme();
   const models = visibleModels();
   const maxValue = Math.max(...state.data.models.map((m) => m.value));
-  const byVendor = new Map();
-  for (const m of models) {
-    if (!byVendor.has(m.vendor)) byVendor.set(m.vendor, []);
-    byVendor.get(m.vendor).push(m);
-  }
   const datasets = state.vendors
-    .filter((v) => byVendor.has(v.name))
+    .filter((v) => !state.hidden.has(v.name))
     .map((v) => ({
       label: v.name,
-      data: byVendor.get(v.name).map((m) => ({ x: m.price, y: m.codingScore, r: 3 + 14 * Math.sqrt(m.value / maxValue), model: m })),
+      data: models
+        .filter((m) => m.vendor === v.name)
+        .map((m) => ({ x: m.price, y: m.codingScore, r: 4 + 14 * Math.sqrt(m.value / maxValue), model: m })),
       backgroundColor: v.color.replace(')', ' / 0.55)'),
       borderColor: v.color,
       borderWidth: 1,
@@ -356,26 +403,30 @@ function destroyCharts() {
 }
 
 // ---------- wiring ----------
+/** Re-renders everything that depends on the vendor filter. */
 function refresh() {
+  renderHero();
   renderCountLine();
   if (typeof Chart !== 'undefined') {
     renderBar();
     renderScatter();
   }
   renderTable();
+  renderExcluded();
 }
 
 function wireControls() {
   for (const btn of document.querySelectorAll('[data-select]')) {
     btn.addEventListener('click', () => {
-      state.selected = btn.dataset.select === 'all' ? new Set(state.vendors.map((v) => v.name)) : new Set();
+      state.hidden = btn.dataset.select === 'all' ? new Set() : new Set(state.vendors.map((v) => v.name));
+      saveHidden();
       renderVendorFilters();
       refresh();
     });
   }
   $('#bar-toggle').addEventListener('click', () => {
     state.barShowAll = !state.barShowAll;
-    renderBar();
+    if (typeof Chart !== 'undefined') renderBar();
   });
   $('#search').addEventListener('input', (e) => {
     state.search = e.target.value;
@@ -394,7 +445,6 @@ function wireControls() {
     renderVendorFilters();
     destroyCharts();
     refresh();
-    renderExcluded();
   });
 }
 
@@ -416,7 +466,7 @@ async function main() {
   state.vendors = [...counts]
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .map(([name, count]) => ({ name, count, color: vendorColor(name) }));
-  state.selected = new Set(state.vendors.map((v) => v.name));
+  state.hidden = loadHidden();
 
   const updated = new Date(state.data.generatedAt);
   const time = $('#updated');
@@ -424,19 +474,18 @@ async function main() {
   time.textContent = `${updated.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} (${relativeTime(updated)})`;
 
   status.hidden = true;
-  renderHero();
-  renderMethod();
-  renderVendorFilters();
-  renderExcluded();
+  $('#filters-card').hidden = false;
   $('#explore').hidden = false;
+  renderVendorFilters();
+  renderMethod();
 
   if (typeof Chart === 'undefined') {
-    for (const id of ['#bar-wrap', '.scatter-wrap']) $(id).replaceChildren(el('p', { class: 'muted' }, 'Charts could not load (Chart.js blocked or offline). The table below has all the data.'));
-    wireControls();
-    refresh();
-    return;
+    for (const id of ['#bar-wrap', '.scatter-wrap']) {
+      $(id).replaceChildren(el('p', { class: 'muted' }, 'Charts could not load (Chart.js blocked or offline). The table below has all the data.'));
+    }
+  } else {
+    Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
   }
-  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
   wireControls();
   refresh();
 }

@@ -34,9 +34,10 @@ describe('computeValueTable', () => {
       expect(row.priceBasis).toBe('blended');
     }
 
+    // Grouped by reason, highest coding score first within a group.
     expect(excluded.map((e) => [e.name, e.reason])).toEqual([
-      ['Epsilon Unpriced', 'missing-price'],
       ['Zeta Free', 'missing-price'],
+      ['Epsilon Unpriced', 'missing-price'],
       ['Delta Legacy', 'insufficient-benchmarks'],
     ]);
   });
@@ -106,6 +107,49 @@ describe('computeValueTable', () => {
     expect(byName(ranked, 'Eta Half')).toBeUndefined();
   });
 
+  describe('quality floor', () => {
+    // Priced, eligible coding scores: Alpha 60, Eta 53.33, Gamma 50, Beta 46.67.
+    it('keeps only models within the floor of the best, then ranks them by value', () => {
+      const { ranked, excluded, quality } = computeValueTable(fixtureModels(), defaultConfig({ qualityFloor: 0.8 }));
+      expect(quality).toEqual({ ratio: 0.8, bestScore: 60, bestModel: 'Alpha Coder', minScore: 48 });
+      // Beta (46.67) is the cheap-but-weaker model that no longer qualifies.
+      expect(ranked.map((r) => [r.rank, r.name])).toEqual([
+        [1, 'Gamma Open'],
+        [2, 'Eta Half'],
+        [3, 'Alpha Coder'],
+      ]);
+      const beta = byName(excluded, 'Beta Mini')!;
+      expect(beta.reason).toBe('below-quality-floor');
+      expect(beta.detail).toBe('Excluded: coding score 46.7 is below the quality floor of 48.0 (80% of the best, 60.0)');
+      expect(excluded[0]!.name).toBe('Beta Mini');
+    });
+
+    it('a high floor leaves only the top model', () => {
+      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ qualityFloor: 0.9 }));
+      expect(ranked.map((r) => r.name)).toEqual(['Alpha Coder']);
+    });
+
+    it('is relative to the best model that has a price (unpriced models cannot raise it)', () => {
+      const models = fixtureModels();
+      models.find((m) => m.name === 'Zeta Free')!.evaluations.artificial_analysis_coding_index = 100;
+      const { quality } = computeValueTable(models, defaultConfig({ qualityFloor: 0.8 }));
+      expect(quality!.bestModel).toBe('Alpha Coder');
+    });
+
+    it('is relative to the best remaining model after vendor exclusion', () => {
+      const { quality, ranked } = computeValueTable(
+        fixtureModels(),
+        defaultConfig({ qualityFloor: 0.9, excludeVendors: ['anthropic'] }),
+      );
+      expect(quality!.bestModel).toBe('Eta Half');
+      expect(ranked.map((r) => r.name)).toEqual(['Gamma Open', 'Eta Half']);
+    });
+
+    it('a floor of 0 ranks everything that has a price', () => {
+      expect(computeValueTable(fixtureModels(), defaultConfig({ qualityFloor: 0 })).ranked).toHaveLength(4);
+    });
+  });
+
   it('notes when the blended price falls back to AA 3:1 blended', () => {
     const eta = byName(computeValueTable(fixtureModels(), defaultConfig()).ranked, 'Eta Half')!;
     expect(eta.priceNote).toMatch(/3:1/);
@@ -114,7 +158,17 @@ describe('computeValueTable', () => {
 
 describe('scoring config', () => {
   it('loads the committed config/scoring.yaml', () => {
-    expect(loadScoringConfig()).toEqual(defaultConfig());
+    expect(loadScoringConfig()).toEqual({
+      excludeVendors: [],
+      benchmarkWeights: { codingIndex: 1 },
+      priceBasis: 'blended',
+      minBenchmarksRequired: 1,
+      qualityFloor: 0.9,
+    });
+  });
+
+  it('defaults qualityFloor to 0 when omitted', () => {
+    expect(parseScoringConfig({ benchmarkWeights: { codingIndex: 1 } }).qualityFloor).toBe(0);
   });
 
   it.each([
@@ -123,6 +177,8 @@ describe('scoring config', () => {
     [{ benchmarkWeights: { codingIndex: 1 }, priceBasis: 'cheapest' }, /priceBasis/],
     [{ benchmarkWeights: { codingIndex: 1 }, minBenchmarksRequired: 2 }, /no model could ever qualify/],
     [{ benchmarkWeights: { codingIndex: 1 }, excludeVendors: 'google' }, /must be a list/],
+    [{ benchmarkWeights: { codingIndex: 1 }, qualityFloor: 90 }, /between 0 and 1/],
+    [{ benchmarkWeights: { codingIndex: 1 }, qualityFloor: -0.1 }, /between 0 and 1/],
   ])('rejects invalid config %j', (input, message) => {
     expect(() => parseScoringConfig(input)).toThrow(message);
   });

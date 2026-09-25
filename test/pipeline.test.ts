@@ -8,12 +8,13 @@ import { computeValueTable } from '../src/scoring.js';
 import { defaultConfig, fixtureBody, fixtureModels } from './helpers.js';
 
 const makeSnapshot = (generatedAt = '2026-09-25T05:00:00.000Z'): Snapshot => {
-  const { ranked, excluded } = computeValueTable(fixtureModels(), defaultConfig());
+  const { ranked, excluded, quality } = computeValueTable(fixtureModels(), defaultConfig());
   return {
     generatedAt,
     source: { name: 'Artificial Analysis', url: 'https://artificialanalysis.ai' },
     config: defaultConfig(),
     counts: { fetched: 7, ranked: ranked.length, excluded: excluded.length },
+    quality,
     models: ranked,
     excluded,
   };

@@ -8,6 +8,8 @@ export interface ScoringConfig {
   benchmarkWeights: Record<string, number>;
   priceBasis: PriceBasis;
   minBenchmarksRequired: number;
+  /** 0–1: a model must reach this fraction of the best model's coding score to be ranked (0 = no floor). */
+  qualityFloor: number;
 }
 
 const PRICE_BASES: readonly PriceBasis[] = ['blended', 'input', 'output'];
@@ -50,7 +52,18 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
     );
   }
 
-  return { excludeVendors: vendors, benchmarkWeights, priceBasis: priceBasis as PriceBasis, minBenchmarksRequired: min };
+  const qualityFloor = c.qualityFloor ?? 0;
+  if (typeof qualityFloor !== 'number' || !Number.isFinite(qualityFloor) || qualityFloor < 0 || qualityFloor > 1) {
+    throw new Error(`qualityFloor must be a number between 0 and 1, e.g. 0.9 for 90% (got ${JSON.stringify(qualityFloor)})`);
+  }
+
+  return {
+    excludeVendors: vendors,
+    benchmarkWeights,
+    priceBasis: priceBasis as PriceBasis,
+    minBenchmarksRequired: min,
+    qualityFloor,
+  };
 }
 
 export function loadScoringConfig(path = 'config/scoring.yaml'): ScoringConfig {

@@ -1,21 +1,31 @@
-# Starter scoring configuration for the AI coding model value dashboard.
-# Edit this file to change which vendors are excluded and how the
-# cost-benefit "value" score is weighted. No code changes needed.
+# Scoring configuration for The Schrute Score.
+# Edit this file to change which vendors are excluded and how models are
+# ranked. No code changes needed — see README "Editing config/scoring.yaml".
 
 # Vendors/creators to exclude entirely from the dashboard.
-# Match is case-insensitive. Example: [deepseek, qwen, google, zhipu]
+# Match is case-insensitive. Example: [deepseek, alibaba, google, zai]
 excludeVendors: []
 
 # Which benchmark fields (from the Artificial Analysis API) feed the
 # composite "coding score," and how much each one counts.
+# Default: the Artificial Analysis Coding Index alone. It is AA's current
+# composite of coding evaluations (it already covers Terminal-Bench and
+# others) and is what the frontier models are measured on. Mixing in
+# LiveCodeBench let old models that only have that one test rank on a
+# different, non-comparable basis.
 # Weights don't need to sum to 1 — for any given model, they are
 # renormalized over whichever of these fields that model actually has
 # a value for (a model missing one benchmark isn't penalized as if it
 # scored zero on it).
 benchmarkWeights:
-  codingIndex: 0.5
-  liveCodeBench: 0.25
-  terminalBench: 0.25
+  codingIndex: 1
+
+# Quality floor: a model must reach at least this fraction of the BEST
+# model's coding score to be ranked at all. Stops cheap-but-weak models
+# from winning just by being cheap. Relative, so it rises as models improve.
+#   0.95 = only the very top tier     0.90 = near the top (default)
+#   0.85 = a bit wider                0    = no floor (pure score-per-dollar)
+qualityFloor: 0.9
 
 # Which price figure to divide the coding score by to get "value".
 #   blended = (input price + output price) / 2

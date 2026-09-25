@@ -1,8 +1,8 @@
 # The Schrute Score
 
-**Which AI coding model gives you the most coding capability per dollar?**
+**The best AI coding model, at the most sensible price.**
 
-This dashboard doesn't rank models only by how well they score on coding benchmarks. It asks whether the model is *worth it*: how much coding capability you get for what you pay. It updates itself twice a day from [Artificial Analysis](https://artificialanalysis.ai) data. Each run finds newly released models, recomputes a transparent **value score**, and publishes a static site to GitHub Pages. It all runs on free infrastructure.
+This dashboard isn't looking for the cheapest model, and it isn't only about the top benchmark score either. Only models close to the top on coding qualify, so no cheap-but-weak picks. Among those, the one that gives the most for the money ranks first. It updates itself twice a day from [Artificial Analysis](https://artificialanalysis.ai) data. Each run finds newly released models, recomputes a transparent **value score**, and publishes a static site to GitHub Pages. It all runs on free infrastructure.
 
 **Live dashboard:** https://yamor321.github.io/the-schrute-score/ *(live after the first successful deploy; see [Setup](#setup-one-time))*
 
@@ -29,8 +29,11 @@ The precise version is the doc comment on `computeValueTable` in [`src/scoring.t
    - `output`: the output price only.
 
    A missing, zero or negative price excludes the model, because you can't divide by it. Artificial Analysis lists many models at $0, which usually means no price is known.
-5. **Value score** = `codingScore ÷ price`. Higher means more coding capability per dollar.
-6. **Sort** by value, highest first (ties go to the higher coding score, then alphabetical order), and number the ranks from 1.
+5. **Quality floor.** Find the best coding score among the remaining (priced) models. Any model below `qualityFloor × best` is excluded. With the default `0.9` and a best score of 81.6, a model needs at least 73.4 to be ranked. This is what keeps cheap-but-weak models out. The floor is relative, so it rises automatically as better models come out.
+6. **Value score** = `codingScore ÷ price`. Every model that got this far is already strong, so this picks the one priced most sensibly. A model at 94% of the best score for 1/13 of the price beats the best model itself.
+7. **Sort** by value, highest first (ties go to the higher coding score, then alphabetical order), and number the ranks from 1.
+
+Steps 2 and 3 describe the general mechanism for blending several benchmarks. With the default config (Coding Index only), a model either has that score or isn't ranked.
 
 Every excluded model still appears on the dashboard, in a separate list with a one-line reason. Every ranked row carries its raw inputs: each benchmark's raw and normalized value, the weight actually applied, which benchmarks were missing, and the price and its basis. Anyone can check the math.
 
@@ -45,12 +48,28 @@ You can change what gets ranked, and how, without touching any code. Edit the fi
 ```yaml
 excludeVendors: []
 benchmarkWeights:
-  codingIndex: 0.5
-  liveCodeBench: 0.25
-  terminalBench: 0.25
+  codingIndex: 1
+qualityFloor: 0.9            # must reach 90% of the best model's coding score
 priceBasis: blended          # blended | input | output
 minBenchmarksRequired: 1
 ```
+
+These are site-wide settings. Visitors can also hide vendors for themselves with the checkboxes at the top of the dashboard. That choice is saved in their own browser and changes nothing for anyone else.
+
+### Set how strict the quality bar is
+
+```yaml
+qualityFloor: 0.95   # only the very top tier
+qualityFloor: 0.9    # near the top (default)
+qualityFloor: 0.85   # a bit wider
+qualityFloor: 0      # no bar: pure coding-score-per-dollar (favors cheap, weak models)
+```
+
+As of September 2026, `0.9` puts Gemini 3.8 Flash (high) first. `0.95` would put Claude Opus 5 (max effort) first.
+
+### Why only the Coding Index by default
+
+The Artificial Analysis Coding Index is their current composite of several coding evaluations, and it's what frontier models are measured on. Mixing in LiveCodeBench let older models that were only ever tested on that one benchmark rank on a different, non-comparable basis. You can still blend benchmarks (see below).
 
 ### Exclude vendors
 
@@ -168,8 +187,9 @@ Still to do by the repo owner:
 ## Known limitations
 
 - **The benchmarks belong to Artificial Analysis.** Which benchmarks exist, how they're run, and how the Coding Index is composed are Artificial Analysis's choices and can change over time. A shift in their methodology shifts these rankings.
-- **"Value" is a simplification, not an objective truth.** It depends entirely on the configured weights and price basis. Dividing by price strongly rewards very cheap models: a small model with a modest score at a few cents per million tokens can outrank a far stronger one. Use the price-vs-score chart to see the trade-off, and the coding score on its own for raw capability.
-- **Uneven evidence.** Many models have results for only some of the configured benchmarks. Renormalization avoids scoring them as zero, but a model scored on one benchmark rests on thinner evidence than one scored on three. The table's "Benchmarks" column (e.g. `1/3`) shows this. Raising `minBenchmarksRequired` trades coverage for rigor.
+- **"Value" is a simplification, not an objective truth.** It depends entirely on the configured weights, quality floor and price basis. Dividing by price rewards cheap models, which is why the quality floor exists. Inside the floor, a model a few points below the best but many times cheaper will win. If you'd pay almost anything for the last few points, raise `qualityFloor`.
+- **The floor is a hard cutoff.** A model at 73.3 is out and one at 73.5 is in, even though the difference is within benchmark noise. The excluded list shows each model's score, so near-misses are visible.
+- **Coverage.** Only models with an Artificial Analysis Coding Index result are ranked by default, which leaves out many older or less-tested models (see "Excluded" on the dashboard). If you blend several benchmarks instead, models with results on only some of them are scored on fewer data points.
 - **Price is per token, not per task.** Models that "think" longer use more tokens for the same job, so their real cost per task is higher than the per-token price suggests. The blended price here is a plain (input + output) / 2, which differs from Artificial Analysis's own 3:1 blend. It falls back to theirs only when one side is missing.
 - **Many models have no usable price.** Artificial Analysis lists some models at $0, usually meaning unknown or not served by a priced provider. These models are excluded, not ranked as infinitely good value.
 - **New-model detection is only as fast as Artificial Analysis**, which aims to add models within about 24 hours of release, plus up to 12 hours until our next scheduled run. The NEW flag lasts one cycle (about 12 hours). A longer window is a possible future extension; see the comment in `src/newModels.ts`.

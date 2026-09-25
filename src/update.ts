@@ -41,6 +41,7 @@ async function main() {
     source: { name: 'Artificial Analysis', url: 'https://artificialanalysis.ai' },
     config: cfg,
     counts: { fetched: models.length, ranked: marked.ranked.length, excluded: marked.excluded.length },
+    quality: table.quality,
     models: marked.ranked,
     excluded: marked.excluded,
   };

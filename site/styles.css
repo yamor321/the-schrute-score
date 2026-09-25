@@ -163,28 +163,40 @@ h1, h2, h3 { line-height: 1.2; margin: 0; }
   font-size: 15px;
 }
 
-/* Filters */
-.filters { border: 0; padding: 0; margin: 20px 0 8px; min-width: 0; }
-.filters legend { font-weight: 600; font-size: 14px; padding: 0; margin-bottom: 8px; }
+/* Vendor filter */
+.filters-card { padding: 20px 24px; }
+.h-small { font-size: 18px !important; }
+.small { font-size: 14px; }
 .link-btn {
   background: none; border: 0; padding: 0; font: inherit; font-weight: 400;
   color: var(--accent); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
 }
-.vendor-list { display: flex; flex-wrap: wrap; gap: 6px; max-height: 168px; overflow-y: auto; padding: 2px; }
+.vendor-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+}
 .vendor-chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 10px 4px 8px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
   user-select: none;
   background: var(--surface);
+  min-width: 0;
 }
-.vendor-chip:has(input:not(:checked)) { opacity: .45; }
-.vendor-chip:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
-.vendor-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.vendor-chip:hover { border-color: var(--muted); }
+.vendor-chip input { margin: 0; width: 16px; height: 16px; accent-color: var(--accent); flex: none; cursor: pointer; }
+.vendor-chip .vendor-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vendor-chip .vendor-count { margin-left: auto; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.vendor-chip:has(input:not(:checked)) { opacity: .5; }
+.vendor-chip:has(input:not(:checked)) .vendor-name { text-decoration: line-through; }
 .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.hero-empty { margin: 8px 0 0; }
+.single-benchmark .col-coverage { display: none; }
 
 /* Charts */
 .chart-title { font-size: 17px; margin: 28px 0 8px; }

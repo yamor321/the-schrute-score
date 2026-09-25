@@ -29,5 +29,5 @@ export function markNewModels(table: ValueTable, previous: Pick<Snapshot, 'model
     const { isNew: _stale, ...rest } = row;
     return (seen.has(row.id) ? rest : { ...rest, isNew: true }) as T;
   };
-  return { ranked: table.ranked.map(flag), excluded: table.excluded.map(flag) };
+  return { ...table, ranked: table.ranked.map(flag), excluded: table.excluded.map(flag) };
 }

@@ -42,7 +42,7 @@ export interface RankedModel {
   isNew?: boolean;
 }
 
-export type ExclusionReason = 'vendor-filter' | 'insufficient-benchmarks' | 'missing-price';
+export type ExclusionReason = 'vendor-filter' | 'insufficient-benchmarks' | 'missing-price' | 'below-quality-floor';
 
 export interface ExcludedModel {
   id: string;
@@ -57,9 +57,21 @@ export interface ExcludedModel {
   isNew?: boolean;
 }
 
+export interface QualityFloor {
+  /** `cfg.qualityFloor`: required fraction of the best coding score. */
+  ratio: number;
+  /** Highest coding score among priced, eligible models. */
+  bestScore: number;
+  bestModel: string;
+  /** ratio × bestScore — the score a model needs to be ranked. */
+  minScore: number;
+}
+
 export interface ValueTable {
   ranked: RankedModel[];
   excluded: ExcludedModel[];
+  /** Null only when no model reached the price step. */
+  quality: QualityFloor | null;
 }
 
 const normalizeVendor = (v: string) => v.trim().toLowerCase();
@@ -113,10 +125,17 @@ export function resolvePrice(model: AaModel, basis: PriceBasis): ResolvedPrice {
  *                3:1 blended price is used instead (and noted on the row).
  *    A missing, zero or negative price excludes the model (cannot divide by it).
  *
- * 5. Value score — value = codingScore / price. Higher is better: more coding
- *    capability per dollar.
+ * 5. Quality floor — find the best codingScore among the models still in
+ *    (priced and eligible). Any model scoring below
+ *    `cfg.qualityFloor × bestScore` is excluded. This keeps cheap-but-weak
+ *    models out: the ranking only compares models that are close to the top
+ *    of the field, then asks which of those is priced most sensibly. The
+ *    floor is relative, so it rises automatically as better models appear.
  *
- * 6. Sort by value descending (ties: higher codingScore, then name) and
+ * 6. Value score — value = codingScore / price. Higher is better: more coding
+ *    capability per dollar, among models that already cleared the floor.
+ *
+ * 7. Sort by value descending (ties: higher codingScore, then name) and
  *    assign rank 1…n.
  *
  * Every excluded model is returned in `excluded` with a reason, so nothing
@@ -188,7 +207,7 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
       continue;
     }
 
-    // 5. Value score
+    // 6. Value score (the quality floor, step 5, needs every candidate first — applied below)
     ranked.push({
       id: m.id,
       name: m.name,
@@ -208,10 +227,46 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
     });
   }
 
-  // 6. Sort and rank
-  ranked.sort((a, b) => b.value - a.value || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
-  const order: Record<ExclusionReason, number> = { 'missing-price': 0, 'insufficient-benchmarks': 1, 'vendor-filter': 2 };
-  excluded.sort((a, b) => order[a.reason] - order[b.reason] || a.name.localeCompare(b.name));
+  // 5. Quality floor
+  let quality: QualityFloor | null = null;
+  let qualified = ranked;
+  if (ranked.length > 0) {
+    const best = ranked.reduce((a, b) => (b.codingScore > a.codingScore ? b : a));
+    quality = {
+      ratio: cfg.qualityFloor,
+      bestScore: best.codingScore,
+      bestModel: best.name,
+      minScore: round(cfg.qualityFloor * best.codingScore),
+    };
+    const minScore = quality.minScore;
+    qualified = ranked.filter((r) => r.codingScore >= minScore);
+    for (const r of ranked) {
+      if (r.codingScore >= minScore) continue;
+      excluded.push({
+        id: r.id,
+        name: r.name,
+        vendor: r.vendor,
+        releaseDate: r.releaseDate,
+        reason: 'below-quality-floor',
+        detail:
+          `Excluded: coding score ${r.codingScore.toFixed(1)} is below the quality floor of ${minScore.toFixed(1)} ` +
+          `(${Math.round(cfg.qualityFloor * 100)}% of the best, ${best.codingScore.toFixed(1)})`,
+        codingScore: r.codingScore,
+      });
+    }
+  }
 
-  return { ranked: ranked.map((r, i) => ({ rank: i + 1, ...r })), excluded };
+  // 7. Sort and rank
+  qualified.sort((a, b) => b.value - a.value || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
+  const order: Record<ExclusionReason, number> = {
+    'below-quality-floor': 0,
+    'missing-price': 1,
+    'insufficient-benchmarks': 2,
+    'vendor-filter': 3,
+  };
+  excluded.sort(
+    (a, b) => order[a.reason] - order[b.reason] || (b.codingScore ?? 0) - (a.codingScore ?? 0) || a.name.localeCompare(b.name),
+  );
+
+  return { ranked: qualified.map((r, i) => ({ rank: i + 1, ...r })), excluded, quality };
 }

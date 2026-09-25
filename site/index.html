@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Schrute Score</title>
-  <meta name="description" content="Which AI coding model gives you the most coding capability per dollar? Updated twice a day from Artificial Analysis data.">
+  <meta name="description" content="The best AI coding models at a sensible price. Only near-top models qualify; among them, the best price wins. Updated twice a day from Artificial Analysis data.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥬</text></svg>">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
@@ -14,25 +14,38 @@
   <header class="masthead">
     <div class="wrap">
       <p class="eyebrow">The Schrute Score</p>
-      <h1>Which AI coding model gives you the most for your money?</h1>
-      <p class="lede">Not the one with the highest benchmark score — the one with the most coding capability <em>per dollar</em>. Refreshed twice a day.</p>
+      <h1>The best AI coding model, at the most sensible price.</h1>
+      <p class="lede">Only models that are close to the top on coding make the list. No cheap-but-weak picks. Among those, the one that gives you the most for your money wins. Refreshed twice a day.</p>
     </div>
   </header>
 
   <main class="wrap">
     <div id="status" class="status" role="status">Loading the latest rankings…</div>
 
+    <section id="filters-card" class="card filters-card" hidden aria-labelledby="filters-title">
+      <div class="section-head">
+        <h2 id="filters-title" class="h-small">Vendors</h2>
+        <p class="muted small">Uncheck a vendor to remove its models from the whole page. Your choice is saved in this browser.
+          <button type="button" class="link-btn" data-select="all">Show all</button> ·
+          <button type="button" class="link-btn" data-select="none">Hide all</button></p>
+      </div>
+      <div id="vendor-filters" class="vendor-list" role="group" aria-labelledby="filters-title"></div>
+    </section>
+
     <section id="hero" class="hero" hidden aria-labelledby="hero-title">
-      <p class="hero-kicker">Best value right now</p>
-      <h2 id="hero-title"><span id="hero-name"></span> <span id="hero-new" class="badge-new" hidden>NEW</span></h2>
-      <p class="hero-vendor" id="hero-vendor"></p>
-      <dl class="stats">
-        <div class="stat stat-main"><dt>Value score</dt><dd id="hero-value"></dd></div>
-        <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
-        <div class="stat"><dt>Price / 1M tokens</dt><dd id="hero-price"></dd></div>
-        <div class="stat"><dt>Benchmarks used</dt><dd id="hero-coverage"></dd></div>
-      </dl>
-      <p class="hero-note" id="hero-note"></p>
+      <p class="hero-kicker" id="hero-kicker">Best pick right now</p>
+      <div id="hero-body">
+        <h2 id="hero-title"><span id="hero-name"></span> <span id="hero-new" class="badge-new" hidden>NEW</span></h2>
+        <p class="hero-vendor" id="hero-vendor"></p>
+        <dl class="stats">
+          <div class="stat stat-main"><dt>Value score</dt><dd id="hero-value"></dd></div>
+          <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
+          <div class="stat"><dt>Of the best score</dt><dd id="hero-relative"></dd></div>
+          <div class="stat"><dt>Price / 1M tokens</dt><dd id="hero-price"></dd></div>
+        </dl>
+        <p class="hero-note" id="hero-note"></p>
+      </div>
+      <p class="hero-empty muted" id="hero-empty" hidden>All vendors are hidden. Check at least one vendor above.</p>
       <div id="new-callout" class="new-callout" hidden></div>
     </section>
 
@@ -40,19 +53,23 @@
       <h2 id="method-title">How this is calculated</h2>
       <ol class="steps">
         <li>
-          <h3>A coding score from public benchmarks</h3>
-          <p>Each model gets a <strong>coding score</strong> from 0 to 100, built from these coding benchmarks measured independently by <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis</a>:</p>
+          <h3>A coding score from independent benchmarks</h3>
+          <p>Each model gets a <strong>coding score</strong> from 0 to 100, measured independently by <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis</a>:</p>
           <ul id="method-weights" class="weights"></ul>
-          <p>Some benchmarks report 0–100 and others 0–1, so everything is converted to 0–100 first. If a model hasn't been tested on one of them yet, we don't count that as a zero. Instead, the benchmarks it <em>does</em> have share the weight. The table shows which benchmarks each model was scored on.</p>
+          <p id="method-weights-note"></p>
+        </li>
+        <li>
+          <h3>Only near-top models qualify</h3>
+          <p id="method-floor"></p>
         </li>
         <li>
           <h3>A price per million tokens</h3>
           <p id="method-price"></p>
         </li>
         <li>
-          <h3>Value = coding score ÷ price</h3>
+          <h3>Among the qualifiers, value decides</h3>
           <p class="formula"><span>value</span> = <span>coding score</span> ÷ <span>price per 1M tokens</span></p>
-          <p>A higher value means more coding capability for each dollar. A model scoring 60 at $2 has a value of 30. A model scoring 40 at $0.50 has a value of 80. The second one is weaker but gives you more for the money. The value score is not a quality ranking. To see raw quality, look at the coding score on its own, or at the vertical axis of the price-vs-score chart.</p>
+          <p>Every model that cleared the bar is already strong. What separates them is how much you pay for that strength. If two models score 76 and 80, and one costs $2 while the other costs $30, the first wins: you give up a few points and pay 15 times less. The best model overall ranks first only if nothing close to it is much cheaper.</p>
         </li>
         <li>
           <h3>Who is left out, and why</h3>
@@ -66,11 +83,6 @@
         <h2 id="explore-title">Rankings</h2>
         <p class="muted" id="count-line"></p>
       </div>
-
-      <fieldset class="filters">
-        <legend>Vendors <button type="button" class="link-btn" data-select="all">all</button> · <button type="button" class="link-btn" data-select="none">none</button></legend>
-        <div id="vendor-filters" class="vendor-list"></div>
-      </fieldset>
 
       <h3 class="chart-title">Value score, ranked</h3>
       <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Horizontal bar chart of models ranked by value score" role="img"></canvas></div>
@@ -92,7 +104,8 @@
               <th data-key="name"><button type="button">Model</button></th>
               <th data-key="vendor"><button type="button">Vendor</button></th>
               <th data-key="codingScore" class="num"><button type="button">Coding score</button></th>
-              <th data-key="coverage" class="num"><button type="button">Benchmarks</button></th>
+              <th data-key="relative" class="num"><button type="button">% of best</button></th>
+              <th data-key="coverage" class="num col-coverage"><button type="button">Benchmarks</button></th>
               <th data-key="price" class="num"><button type="button">Price / 1M</button></th>
               <th data-key="value" class="num"><button type="button">Value</button></th>
               <th data-key="isNew"><button type="button">New</button></th>
@@ -104,11 +117,11 @@
       <p class="muted" id="table-empty" hidden>No models match the current filters.</p>
 
       <details class="excluded">
-        <summary>Excluded / insufficient data (<span id="excluded-count">0</span>)</summary>
-        <p class="muted">These models are in the Artificial Analysis data but can't be ranked fairly. Each one lists the reason.</p>
+        <summary>Excluded / not ranked (<span id="excluded-count">0</span>)</summary>
+        <p class="muted">These models are in the Artificial Analysis data but aren't ranked. Most fall below the quality bar. Each one lists the reason. Vendors you've hidden are left out here too.</p>
         <div class="table-scroll">
           <table id="excluded-table" class="data-table compact">
-            <thead><tr><th>Model</th><th>Vendor</th><th>Reason</th></tr></thead>
+            <thead><tr><th>Model</th><th>Vendor</th><th class="num">Coding score</th><th>Reason</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>

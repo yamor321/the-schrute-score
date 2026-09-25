@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { ScoringConfig } from './config.js';
-import type { ExcludedModel, RankedModel } from './scoring.js';
+import type { ExcludedModel, QualityFloor, RankedModel } from './scoring.js';
 
 /** The document written to data/latest.json and data/history/*.json, and read by the dashboard. */
 export interface Snapshot {
@@ -9,6 +9,7 @@ export interface Snapshot {
   source: { name: string; url: string };
   config: ScoringConfig;
   counts: { fetched: number; ranked: number; excluded: number };
+  quality: QualityFloor | null;
   models: RankedModel[];
   excluded: ExcludedModel[];
 }

@@ -8,11 +8,16 @@ export const fixtureBody: unknown = JSON.parse(
 
 export const fixtureModels = () => parseModels(fixtureBody);
 
-/** Mirrors the committed config/scoring.yaml defaults. */
+/**
+ * A three-benchmark config with no quality floor, so tests can exercise
+ * renormalization and each exclusion rule in isolation. (The committed
+ * config/scoring.yaml is checked separately in scoring.test.ts.)
+ */
 export const defaultConfig = (overrides: Partial<ScoringConfig> = {}): ScoringConfig => ({
   excludeVendors: [],
   benchmarkWeights: { codingIndex: 0.5, liveCodeBench: 0.25, terminalBench: 0.25 },
   priceBasis: 'blended',
   minBenchmarksRequired: 1,
+  qualityFloor: 0,
   ...overrides,
 });
