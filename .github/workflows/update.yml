@@ -33,7 +33,7 @@ concurrency:
 
 jobs:
   update-data:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:
@@ -87,7 +87,7 @@ jobs:
       # Hand only this run's new files to the deploy job (not the whole history).
       - name: Upload new data files
         if: steps.update.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: data
           path: ${{ steps.update.outputs.files }}
@@ -98,7 +98,7 @@ jobs:
   # never overwrite data/latest.json, site/data.json or the live site.
   deploy-site:
     needs: update-data
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write   # commit the data files
       pages: write      # deploy to GitHub Pages
@@ -118,7 +118,7 @@ jobs:
 
       - name: Download new data files
         if: needs.update-data.outputs.changed == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: data
           path: data
@@ -139,14 +139,14 @@ jobs:
             git push
           fi
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # Keeps one tracking issue (label: pipeline-failure) instead of a new issue
   # per failed run: opens it on the first failure, comments on repeats, and
@@ -154,7 +154,7 @@ jobs:
   report-status:
     needs: [update-data, deploy-site]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       issues: write
     steps:
