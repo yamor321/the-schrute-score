@@ -90,7 +90,7 @@ h1, h2, h3 { margin: 0; line-height: 1.15; }
 
 /* ---------- Toolbar (compact, sticky) ---------- */
 .toolbar { position: sticky; top: 0; z-index: 15; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); margin-bottom: 18px; }
-.toolbar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 8px; padding-bottom: 8px; }
+.toolbar-inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 8px; padding-bottom: 8px; }
 .toolbar #search {
   margin-left: auto;
   font: inherit; font-size: 14px;
@@ -238,6 +238,11 @@ td.name[tabindex]:focus-visible { outline: 2px solid var(--green-bright); outlin
 .key-time { background: var(--time); border: 1px solid var(--rule-strong); }
 .bar-wrap { position: relative; width: 100%; }
 .scatter-wrap { position: relative; width: 100%; height: 440px; }
+.chart-key { margin: -4px 0 10px; }
+.more { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+.more .btn { margin-top: 0; }
+.extras-toggle { background: none; border: 0; padding: 0; color: var(--ink); cursor: pointer; text-align: left; font: inherit; }
+.extras-toggle:hover strong { color: var(--green); }
 .btn { margin-top: 10px; font: 500 13px var(--mono); padding: 7px 14px; border-radius: 4px; border: 1px solid var(--rule-strong); background: var(--bg); color: var(--ink); cursor: pointer; }
 .btn:hover { border-color: var(--green); color: var(--green); }
 
@@ -307,8 +312,10 @@ td.name[tabindex]:focus-visible { outline: 2px solid var(--green-bright); outlin
   .toolbar-inner { gap: 6px; padding-top: 6px; padding-bottom: 6px; }
   .switch, .pop > summary { height: 30px; padding: 0 10px; font-size: 13px; }
   .toolbar #search { width: 100%; margin-left: 0; order: 5; padding: 5px 10px; }
-  .pop { position: static; }
-  .pop-panel { left: 8px; right: 8px; width: auto; }
+  /* On phones the open panel sits in the page flow, full width, right under its button —
+     never positioned off-screen. */
+  .pop[open] { flex: 1 1 100%; }
+  .pop-panel { position: static; width: auto; margin-top: 6px; box-shadow: none; }
   .section-head h2 { font-size: 21px; }
   .chart-fig figcaption strong { font-size: 17px; }
   .data-table { font-size: 13px; }

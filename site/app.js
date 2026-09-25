@@ -3,7 +3,7 @@
 // visitor changes "Your time" (same formula as src/scoring.ts `taskCost`).
 'use strict';
 
-const BAR_DEFAULT_COUNT = 25;
+const PAGE = 10; // rows shown at first, and added per "Show more"
 const STORE_KEY = 'schrute.filters.v2';
 
 // Earthy categorical palette (light / dark), assigned by vendor size.
@@ -20,7 +20,8 @@ const state = {
   task: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 }, // overwritten from data.config.taskModel / storage
   sort: { key: 'rank', dir: 'asc' },
   search: '',
-  barShowAll: false,
+  limits: { bar: PAGE, table: PAGE }, // "Show more" paging
+  extrasOpen: false, // "Also in Cursor, but not ranked" rows
   charts: { bar: null, scatter: null },
   barModels: [],
   ranked: [], // models sorted by cost under the current task settings
@@ -378,8 +379,23 @@ function costCell(m) {
   );
 }
 
+/** Shows/labels a "Show more" row for a paged list. */
+function renderMore(which, total) {
+  const box = $(`#${which}-more`);
+  const shown = Math.min(state.limits[which], total);
+  box.hidden = total <= shown;
+  if (!box.hidden) {
+    const next = Math.min(PAGE, total - shown);
+    box.querySelector('[data-more]').textContent = `Show ${next} more`;
+    box.querySelector('[data-all]').textContent = `Show all ${total}`;
+  }
+}
+
 function renderTable() {
-  const rows = sortedTableRows();
+  const allRows = sortedTableRows();
+  // While searching, show every match; otherwise page through the list.
+  const rows = state.search.trim() ? allRows : allRows.slice(0, state.limits.table);
+  renderMore('table', state.search.trim() ? 0 : allRows.length);
   $('#ranked-body').replaceChildren(
     ...rows.map((m) =>
       el(
@@ -420,11 +436,15 @@ function renderTable() {
             el(
               'td',
               { colSpan: cols },
-              el('strong', {}, 'Also in Cursor, but not ranked'),
-              el('span', { class: 'muted' }, `${extras.length} Cursor models that didn't make the ranking, each shown once with the reason.`),
+              el(
+                'button',
+                { type: 'button', class: 'extras-toggle', ariaExpanded: String(state.extrasOpen), onclick: () => { state.extrasOpen = !state.extrasOpen; renderTable(); } },
+                el('strong', {}, `${state.extrasOpen ? '▾' : '▸'} Also in Cursor, but not ranked (${extras.length})`),
+              ),
+              el('span', { class: 'muted' }, 'Cursor models that didn\'t make the ranking, each shown once with the reason.'),
             ),
           ),
-          ...extras.map((c) => {
+          ...(state.extrasOpen || state.search.trim() ? extras : []).map((c) => {
             const r = c.representative;
             const row = r && state.data.excluded.find((e) => e.id === r.id);
             const score = r?.codingScore ?? null;
@@ -596,11 +616,9 @@ function baseTooltip(t) {
 function renderBar() {
   const t = chartTheme();
   const all = visibleModels();
-  const models = state.barShowAll ? all : all.slice(0, BAR_DEFAULT_COUNT);
+  const models = all.slice(0, state.limits.bar);
   state.barModels = models;
-  const toggle = $('#bar-toggle');
-  toggle.hidden = all.length <= BAR_DEFAULT_COUNT;
-  toggle.textContent = state.barShowAll ? `Show top ${BAR_DEFAULT_COUNT} only` : `Show all ${all.length}`;
+  renderMore('bar', all.length);
   const narrow = window.innerWidth < 600;
   $('#bar-wrap').style.height = `${Math.max(120, models.length * (narrow ? 20 : 24) + 44)}px`;
 
@@ -769,10 +787,14 @@ function wireControls() {
     state.task = { ...state.data.config.taskModel };
     onTaskChange();
   });
-  $('#bar-toggle').addEventListener('click', () => {
-    state.barShowAll = !state.barShowAll;
-    if (typeof Chart !== 'undefined') renderBar();
-  });
+  for (const btn of document.querySelectorAll('[data-more], [data-all]')) {
+    btn.addEventListener('click', () => {
+      const which = btn.dataset.more ?? btn.dataset.all;
+      state.limits[which] = btn.dataset.all ? Infinity : state.limits[which] + PAGE;
+      if (which === 'table') renderTable();
+      else if (typeof Chart !== 'undefined') renderBar();
+    });
+  }
   $('#search').addEventListener('input', (e) => {
     state.search = e.target.value;
     renderTable();
@@ -858,6 +880,7 @@ async function main() {
   status.hidden = true;
   $('#toolbar').hidden = false;
   $('#explore').hidden = false;
+  $('#details').hidden = false;
   renderFacts();
   renderVendorFilters();
   renderMethod();

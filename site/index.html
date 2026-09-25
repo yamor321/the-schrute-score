@@ -92,6 +92,20 @@
         <h2 id="explore-title">The ranking</h2>
         <p class="muted small" id="count-line"></p>
       </div>
+      <p class="muted small chart-key">Cost per finished task, cheapest first. <span class="key key-tok"></span> tokens (retries included) · <span class="key key-time"></span> your time fixing failures. Green bold names are in Cursor.</p>
+      <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Stacked bar chart of cost per finished task" role="img"></canvas></div>
+      <div class="more" id="bar-more" hidden>
+        <button type="button" class="btn" data-more="bar">Show 10 more</button>
+        <button type="button" class="link-btn small" data-all="bar">Show all</button>
+      </div>
+    </section>
+
+    <section id="details" class="panel" hidden aria-labelledby="details-title">
+      <div class="section-head">
+        <p class="section-num">02</p>
+        <h2 id="details-title">The details</h2>
+        <p class="muted small">Score, price and cost per task for each model. Tap a column to sort.</p>
+      </div>
 
       <div class="legend small">
         <span><span class="badge-cursor"><svg class="ico"><use href="#i-pointer"/></svg>Cursor</span> in Cursor</span>
@@ -118,17 +132,12 @@
         </table>
       </div>
       <p class="muted" id="table-empty" hidden>No models match the current filters.</p>
+      <div class="more" id="table-more" hidden>
+        <button type="button" class="btn" data-more="table">Show 10 more</button>
+        <button type="button" class="link-btn small" data-all="table">Show all</button>
+      </div>
 
       <div class="charts">
-        <figure class="chart-fig">
-          <figcaption>
-            <span class="section-num">02</span>
-            <strong>Cost per finished task</strong>
-            <span class="muted small">Shorter is better. <span class="key key-tok"></span> tokens (retries included) · <span class="key key-time"></span> your time fixing failures. Green bold names are in Cursor.</span>
-          </figcaption>
-          <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Stacked bar chart of cost per finished task" role="img"></canvas></div>
-          <button type="button" class="btn" id="bar-toggle" hidden></button>
-        </figure>
         <figure class="chart-fig">
           <figcaption>
             <span class="section-num">03</span>
