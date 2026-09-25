@@ -38,10 +38,12 @@ jobs:
       contents: read
     outputs:
       changed: ${{ steps.update.outputs.changed }}
+      # Human-readable cause of a failure, shown in the tracking issue (never contains the key).
+      error: ${{ steps.update.outputs.error || steps.secret.outputs.error }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -52,6 +54,19 @@ jobs:
         run: |
           npm run typecheck
           npm test
+
+      - name: Check the API key secret is set
+        id: secret
+        env:
+          ARTIFICIAL_ANALYSIS_API_KEY: ${{ secrets.ARTIFICIAL_ANALYSIS_API_KEY }}
+        run: |
+          if [ -z "$ARTIFICIAL_ANALYSIS_API_KEY" ]; then
+            msg="The ARTIFICIAL_ANALYSIS_API_KEY repository secret is not set (Settings > Secrets and variables > Actions > New repository secret)."
+            echo "::error title=Missing secret::$msg"
+            echo "error=$msg" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "Secret is set (${#ARTIFICIAL_ANALYSIS_API_KEY} characters)."
 
       - name: Fetch, score, detect new models, write data files
         id: update
@@ -92,9 +107,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -143,9 +158,10 @@ jobs:
     permissions:
       issues: write
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v8
         env:
           UPDATE_RESULT: ${{ needs.update-data.result }}
+          UPDATE_ERROR: ${{ needs.update-data.outputs.error }}
           DEPLOY_RESULT: ${{ needs.deploy-site.result }}
         with:
           script: |
@@ -163,13 +179,16 @@ jobs:
               const body = [
                 `❌ The pipeline failed in **${stage}** at ${new Date().toISOString()}.`,
                 '',
+                ...(process.env.UPDATE_ERROR ? [`**Error:** ${process.env.UPDATE_ERROR}`, ''] : []),
                 `Run log: ${runUrl}`,
                 '',
                 update === 'failure'
                   ? 'Nothing was committed or deployed — the dashboard keeps showing the last good data.'
                   : 'The data update itself succeeded; publishing it failed.',
                 '',
-                'Common causes: the `ARTIFICIAL_ANALYSIS_API_KEY` secret is missing or expired (HTTP 401/403), Artificial Analysis is down, the API response changed shape, or `config/scoring.yaml` has a mistake.',
+                deploy === 'failure'
+                  ? 'Common deploy causes: GitHub Pages is not enabled (Settings > Pages > Source: GitHub Actions), or the data commit could not be pushed.'
+                  : 'Common causes: the `ARTIFICIAL_ANALYSIS_API_KEY` secret is missing or expired (HTTP 401/403), Artificial Analysis is down, the API response changed shape, or `config/scoring.yaml` has a mistake.',
               ].join('\n');
               if (existing) {
                 await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body });

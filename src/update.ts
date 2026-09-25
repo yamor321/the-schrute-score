@@ -90,6 +90,13 @@ async function main() {
 }
 
 main().catch((err: unknown) => {
-  console.error(`Update failed: ${err instanceof Error ? err.message : String(err)}`);
+  const message = err instanceof Error ? err.message : String(err);
+  console.error(`Update failed: ${message}`);
+  if (process.env.GITHUB_ACTIONS) {
+    // Public annotation + output for the failure issue, so the cause is visible without opening
+    // the log. Error messages never contain the API key (see source/artificialAnalysis.ts).
+    console.log(`::error title=Data update failed::${message.replace(/\r?\n/g, ' ')}`);
+    setActionOutput('error', message);
+  }
   process.exit(1);
 });
