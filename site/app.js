@@ -86,6 +86,8 @@ function icon(id) {
 }
 
 const newBadge = () => el('span', { class: 'badge-new', title: 'First appeared in the latest update' }, 'NEW');
+const estBadge = (est) =>
+  el('span', { class: 'badge-est', title: `Estimated score (not from the Artificial Analysis API). ${est.note}` }, 'EST.');
 const cursorBadge = (name) =>
   el('span', { class: 'badge-cursor', title: `Available in Cursor as "${name}"` }, icon('i-pointer'), 'Cursor');
 
@@ -148,7 +150,7 @@ function renderHero() {
 
   if (top) {
     $('#hero-name').textContent = top.name;
-    $('#hero-badges').replaceChildren(...[top.cursor && cursorBadge(top.cursor), top.isNew && newBadge()].filter(Boolean));
+    $('#hero-badges').replaceChildren(...[top.cursor && cursorBadge(top.cursor), top.estimate && estBadge(top.estimate), top.isNew && newBadge()].filter(Boolean));
     $('#hero-vendor').textContent =
       `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}` +
       (top.rank !== 1 ? ` · #${top.rank} overall` : '');
@@ -170,6 +172,7 @@ function renderHero() {
         (ratio >= 1.15 ? ` for ${ratio >= 10 ? Math.round(ratio) : ratio.toFixed(1)}× less money.` : ' at a similar price.');
     }
     if (top.cursor) note += ` In Cursor, pick "${top.cursor}".`;
+    if (top.estimate) note += ` Its coding score is an estimate: ${top.estimate.note}`;
     $('#hero-note').textContent = note;
   }
 
@@ -218,8 +221,35 @@ function renderMethod() {
   const cur = state.data.cursor;
   $('#method-cursor').textContent = cur
     ? `Models marked Cursor are on Cursor's model list (checked ${cur.checked}). Cursor offers each model once, and Artificial Analysis often lists several variants of it (different reasoning effort). So every variant is marked, but a model is never added twice. ` +
-      'Cursor models that aren\'t ranked (below the bar, no price, or no benchmark data) are still shown once at the end of the table, with the reason. Cursor\'s own model, Composer, isn\'t tracked by Artificial Analysis, so it has no score.'
+      'Cursor models that aren\'t ranked (below the bar, no price, or no benchmark data) are still shown once at the end of the table, with the reason.'
     : 'No Cursor model list is configured.';
+
+  const estimated = [...state.data.models, ...state.data.excluded].filter((m) => m.estimate);
+  const estNode = $('#method-estimates');
+  estNode.replaceChildren(
+    ...(estimated.length
+      ? [
+          el('span', {}, 'A few models aren\'t in the Artificial Analysis API, so their coding score is estimated by hand (marked '),
+          estBadge({ note: '' }),
+          el('span', {}, '). How each estimate was made:'),
+          el(
+            'ul',
+            { class: 'weights' },
+            ...estimated.map((m) =>
+              el(
+                'li',
+                {},
+                el('strong', {}, `${m.name} (≈ ${fmtScore(m.codingScore)}): `),
+                m.estimate.note,
+                ' ',
+                ...m.estimate.sources.flatMap((url, i) => [i ? ' · ' : '', el('a', { href: url, rel: 'noopener' }, new URL(url).hostname)]),
+              ),
+            ),
+          ),
+        ]
+      : []),
+  );
+  estNode.hidden = !estimated.length;
 
   const parts = ['Models below the quality bar, and models with no price listed (or $0, which usually means the price isn\'t known), aren\'t ranked.'];
   if (config.excludeVendors.length) parts.push(`The site also leaves out these vendors by choice: ${config.excludeVendors.join(', ')}.`);
@@ -271,12 +301,14 @@ function sortedTableRows() {
   });
 }
 
-function nameCell(title, { cursor, isNew, sub, tooltip } = {}) {
+function nameCell(title, { cursor, isNew, estimate, sub, tooltip } = {}) {
   return el(
     'td',
     { class: 'name', title: tooltip ?? '' },
     el('span', { class: 'model' }, title),
-    cursor || isNew ? el('span', { class: 'badges' }, cursor ? cursorBadge(cursor) : null, isNew ? newBadge() : null) : null,
+    cursor || isNew || estimate
+      ? el('span', { class: 'badges' }, cursor ? cursorBadge(cursor) : null, estimate ? estBadge(estimate) : null, isNew ? newBadge() : null)
+      : null,
     sub ? el('span', { class: 'sub' }, ...[sub].flat()) : null,
   );
 }
@@ -297,6 +329,7 @@ function renderTable() {
         nameCell(m.name, {
           cursor: m.cursor,
           isNew: m.isNew,
+          estimate: m.estimate,
           sub: m.cursor && modelKeyLoose(m.cursor) !== modelKeyLoose(m.name) ? `In Cursor: ${m.cursor}` : null,
           tooltip: benchmarkLines(m).join('\n'),
         }),
@@ -411,8 +444,9 @@ function tooltipLines(m) {
   const lines = [
     `${m.vendor}${m.isNew ? ' · NEW' : ''}${m.cursor ? ` · in Cursor as "${m.cursor}"` : ''}`,
     `Value: ${fmtValue(m.value)}  (= ${fmtScore(m.codingScore)} ÷ ${fmtPrice(m.price)})`,
-    `Coding score: ${fmtScore(m.codingScore)} (${pct(relative(m.codingScore))} of the best)`,
+    `Coding score: ${fmtScore(m.codingScore)}${m.estimate ? ' (ESTIMATE)' : ''} (${pct(relative(m.codingScore))} of the best)`,
   ];
+  if (m.estimate) lines.push('  Not from the Artificial Analysis API; see the methodology section.');
   if (benchmarkKeys().length > 1) lines.push(...benchmarkLines(m).map((l) => '  ' + l));
   lines.push(
     `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})` +

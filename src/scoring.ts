@@ -1,6 +1,6 @@
 import { readBenchmark } from './benchmarks.js';
 import type { PriceBasis, ScoringConfig } from './config.js';
-import type { AaModel } from './source/artificialAnalysis.js';
+import type { AaModel, ModelEstimate } from './source/artificialAnalysis.js';
 
 export interface BenchmarkDetail {
   label: string;
@@ -40,6 +40,8 @@ export interface RankedModel {
   value: number;
   /** Set by new-model detection (see newModels.ts). */
   isNew?: boolean;
+  /** Present for hand-added models whose coding score is an estimate (config/manual-models.yaml). */
+  estimate?: ModelEstimate;
   /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
   cursor?: string;
 }
@@ -60,6 +62,7 @@ export interface ExcludedModel {
   price?: number;
   value?: number;
   isNew?: boolean;
+  estimate?: ModelEstimate;
   /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
   cursor?: string;
 }
@@ -157,7 +160,7 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
   const excluded: ExcludedModel[] = [];
 
   for (const m of models) {
-    const base = { id: m.id, name: m.name, vendor: m.vendor, releaseDate: m.releaseDate };
+    const base = { id: m.id, name: m.name, vendor: m.vendor, releaseDate: m.releaseDate, ...(m.estimate ? { estimate: m.estimate } : {}) };
 
     // 1. Vendor exclusion
     const vendorIds = [m.vendor, m.vendorSlug].filter((v): v is string => v !== null).map(normalizeVendor);
@@ -231,6 +234,7 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
       inputPrice: m.pricing.input,
       outputPrice: m.pricing.output,
       value: round(codingScore / price),
+      ...(m.estimate ? { estimate: m.estimate } : {}),
     });
   }
 
@@ -261,6 +265,7 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
         codingScore: r.codingScore,
         price: r.price,
         value: r.value,
+        ...(r.estimate ? { estimate: r.estimate } : {}),
       });
     }
   }

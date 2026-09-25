@@ -163,7 +163,7 @@ describe('scoring config', () => {
       benchmarkWeights: { codingIndex: 1 },
       priceBasis: 'blended',
       minBenchmarksRequired: 1,
-      qualityFloor: 0.9,
+      qualityFloor: 0.85,
     });
   });
 

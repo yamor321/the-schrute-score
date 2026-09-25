@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T15:12:19.313Z",
+  "generatedAt": "2026-09-25T15:21:45.637Z",
   "source": {
     "name": "Artificial Analysis",
     "url": "https://artificialanalysis.ai"
@@ -11,18 +11,18 @@
     },
     "priceBasis": "blended",
     "minBenchmarksRequired": 1,
-    "qualityFloor": 0.9
+    "qualityFloor": 0.85
   },
   "counts": {
-    "fetched": 673,
-    "ranked": 35,
-    "excluded": 638
+    "fetched": 674,
+    "ranked": 54,
+    "excluded": 620
   },
   "quality": {
-    "ratio": 0.9,
+    "ratio": 0.85,
     "bestScore": 81.6,
     "bestModel": "Claude Fable 5.1 (Adaptive Reasoning, Max Effort, Default Fallback)",
-    "minScore": 73.44
+    "minScore": 69.36
   },
   "cursor": {
     "source": "https://cursor.com/docs/models",
@@ -31,11 +31,11 @@
       {
         "name": "Composer 2.5",
         "vendor": "Cursor",
-        "variants": 0,
-        "status": "not-in-aa",
-        "bestRank": null,
+        "variants": 1,
+        "status": "ranked",
+        "bestRank": 4,
         "representative": null,
-        "detail": "Not tracked by Artificial Analysis yet, so there is no benchmark data"
+        "detail": "Ranked #4"
       },
       {
         "name": "Grok 4.7",
@@ -57,24 +57,18 @@
         "vendor": "SpaceXAI",
         "variants": 4,
         "status": "ranked",
-        "bestRank": 8,
+        "bestRank": 16,
         "representative": null,
-        "detail": "Ranked #8"
+        "detail": "Ranked #16"
       },
       {
         "name": "Grok 4.5",
         "vendor": "SpaceXAI",
         "variants": 1,
-        "status": "below-quality-floor",
-        "bestRank": null,
-        "representative": {
-          "id": "794f69b5-cede-482b-b1cc-d769478497cd",
-          "name": "Grok 4.5 (high)",
-          "codingScore": 72.4,
-          "price": 4,
-          "value": 18.1
-        },
-        "detail": "Below the quality bar: its best variant scores 72.4 (bar: 73.4)"
+        "status": "ranked",
+        "bestRank": 20,
+        "representative": null,
+        "detail": "Ranked #20"
       },
       {
         "name": "Claude 4 Sonnet",
@@ -104,7 +98,7 @@
           "price": 3,
           "value": 14.633333
         },
-        "detail": "Below the quality bar: its best variant scores 43.9 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 43.9 (bar: 69.4)"
       },
       {
         "name": "Claude 4.5 Opus",
@@ -134,7 +128,7 @@
           "price": 9,
           "value": 5.788889
         },
-        "detail": "Below the quality bar: its best variant scores 52.1 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 52.1 (bar: 69.4)"
       },
       {
         "name": "Claude 4.6 Opus",
@@ -164,52 +158,52 @@
           "price": 9,
           "value": 7
         },
-        "detail": "Below the quality bar: its best variant scores 63.0 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 63.0 (bar: 69.4)"
       },
       {
         "name": "Claude 4.7 Opus",
         "vendor": "Anthropic",
         "variants": 2,
         "status": "ranked",
-        "bestRank": 23,
+        "bestRank": 40,
         "representative": null,
-        "detail": "Ranked #23"
+        "detail": "Ranked #40"
       },
       {
         "name": "Claude Opus 4.8",
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 21,
+        "bestRank": 38,
         "representative": null,
-        "detail": "Ranked #21"
+        "detail": "Ranked #38"
       },
       {
         "name": "Claude Fable 5",
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 32,
+        "bestRank": 51,
         "representative": null,
-        "detail": "Ranked #32"
+        "detail": "Ranked #51"
       },
       {
         "name": "Claude Fable 5.1",
         "vendor": "Anthropic",
         "variants": 5,
         "status": "ranked",
-        "bestRank": 25,
+        "bestRank": 44,
         "representative": null,
-        "detail": "Ranked #25"
+        "detail": "Ranked #44"
       },
       {
         "name": "Claude Opus 5",
         "vendor": "Anthropic",
         "variants": 5,
         "status": "ranked",
-        "bestRank": 18,
+        "bestRank": 35,
         "representative": null,
-        "detail": "Ranked #18"
+        "detail": "Ranked #35"
       },
       {
         "name": "Claude Opus 5.5",
@@ -230,16 +224,10 @@
         "name": "Claude Sonnet 5",
         "vendor": "Anthropic",
         "variants": 6,
-        "status": "below-quality-floor",
-        "bestRank": null,
-        "representative": {
-          "id": "23c86e4a-c769-43c0-a056-79e3cd15834f",
-          "name": "Claude Sonnet 5 (Adaptive Reasoning, Max Effort)",
-          "codingScore": 71.5,
-          "price": 6,
-          "value": 11.916667
-        },
-        "detail": "Below the quality bar: its best variant scores 71.5 (bar: 73.4)"
+        "status": "ranked",
+        "bestRank": 24,
+        "representative": null,
+        "detail": "Ranked #24"
       },
       {
         "name": "Gemini 2.5 Flash",
@@ -299,22 +287,16 @@
           "price": 7,
           "value": 9.828571
         },
-        "detail": "Below the quality bar: its best variant scores 68.8 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 68.8 (bar: 69.4)"
       },
       {
         "name": "Gemini 3.5 Flash",
         "vendor": "Google",
         "variants": 3,
-        "status": "below-quality-floor",
-        "bestRank": null,
-        "representative": {
-          "id": "0097ebf5-124f-42f6-9463-33b00e711f03",
-          "name": "Gemini 3.5 Flash (high)",
-          "codingScore": 70.1,
-          "price": 5.25,
-          "value": 13.352381
-        },
-        "detail": "Below the quality bar: its best variant scores 70.1 (bar: 73.4)"
+        "status": "ranked",
+        "bestRank": 23,
+        "representative": null,
+        "detail": "Ranked #23"
       },
       {
         "name": "Gemini 3.6 Flash",
@@ -329,25 +311,25 @@
           "price": 2.25,
           "value": 30.755556
         },
-        "detail": "Below the quality bar: its best variant scores 69.2 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 69.2 (bar: 69.4)"
       },
       {
         "name": "Gemini 3.7 Flash",
         "vendor": "Google",
         "variants": 3,
         "status": "ranked",
-        "bestRank": 2,
+        "bestRank": 6,
         "representative": null,
-        "detail": "Ranked #2"
+        "detail": "Ranked #6"
       },
       {
         "name": "Gemini 3.8 Flash",
         "vendor": "Google",
         "variants": 3,
         "status": "ranked",
-        "bestRank": 1,
+        "bestRank": 5,
         "representative": null,
-        "detail": "Ranked #1"
+        "detail": "Ranked #5"
       },
       {
         "name": "GPT-5",
@@ -362,7 +344,7 @@
           "price": 5.625,
           "value": 6.72
         },
-        "detail": "Below the quality bar: its best variant scores 37.8 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 37.8 (bar: 69.4)"
       },
       {
         "name": "GPT-5 Mini",
@@ -377,7 +359,7 @@
           "price": 1.125,
           "value": 13.866667
         },
-        "detail": "Below the quality bar: its best variant scores 15.6 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 15.6 (bar: 69.4)"
       },
       {
         "name": "GPT-5-Codex",
@@ -482,16 +464,10 @@
         "name": "GPT-5.4",
         "vendor": "OpenAI",
         "variants": 3,
-        "status": "below-quality-floor",
-        "bestRank": null,
-        "representative": {
-          "id": "a89c4b28-2d8c-456e-88ea-255fb51fd2b6",
-          "name": "GPT-5.4 (xhigh)",
-          "codingScore": 71.1,
-          "price": 8.75,
-          "value": 8.125714
-        },
-        "detail": "Below the quality bar: its best variant scores 71.1 (bar: 73.4)"
+        "status": "ranked",
+        "bestRank": 28,
+        "representative": null,
+        "detail": "Ranked #28"
       },
       {
         "name": "GPT-5.4 Mini",
@@ -506,7 +482,7 @@
           "price": 2.625,
           "value": 21.371429
         },
-        "detail": "Below the quality bar: its best variant scores 56.1 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 56.1 (bar: 69.4)"
       },
       {
         "name": "GPT-5.4 Nano",
@@ -521,49 +497,43 @@
           "price": 0.725,
           "value": 77.37931
         },
-        "detail": "Below the quality bar: its best variant scores 56.1 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 56.1 (bar: 69.4)"
       },
       {
         "name": "GPT-5.5",
         "vendor": "OpenAI",
         "variants": 5,
         "status": "ranked",
-        "bestRank": 24,
+        "bestRank": 41,
         "representative": null,
-        "detail": "Ranked #24"
+        "detail": "Ranked #41"
       },
       {
         "name": "GPT-5.6 Luna",
         "vendor": "OpenAI",
         "variants": 6,
-        "status": "below-quality-floor",
-        "bestRank": null,
-        "representative": {
-          "id": "426d24c8-49ae-482a-b4a8-20f1c53f21c1",
-          "name": "GPT-5.6 Luna (max)",
-          "codingScore": 71.4,
-          "price": 0.7,
-          "value": 102
-        },
-        "detail": "Below the quality bar: its best variant scores 71.4 (bar: 73.4)"
+        "status": "ranked",
+        "bestRank": 3,
+        "representative": null,
+        "detail": "Ranked #3"
       },
       {
         "name": "GPT-5.6 Sol",
         "vendor": "OpenAI",
         "variants": 6,
         "status": "ranked",
-        "bestRank": 14,
+        "bestRank": 30,
         "representative": null,
-        "detail": "Ranked #14"
+        "detail": "Ranked #30"
       },
       {
         "name": "GPT-5.6 Terra",
         "vendor": "OpenAI",
         "variants": 6,
         "status": "ranked",
-        "bestRank": 12,
+        "bestRank": 25,
         "representative": null,
-        "detail": "Ranked #12"
+        "detail": "Ranked #25"
       },
       {
         "name": "GLM 5.2",
@@ -578,7 +548,7 @@
           "price": 2.9,
           "value": 23.724138
         },
-        "detail": "Below the quality bar: its best variant scores 68.8 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 68.8 (bar: 69.4)"
       },
       {
         "name": "Kimi K2.7 Code",
@@ -593,31 +563,161 @@
           "price": 2.475,
           "value": 24.565657
         },
-        "detail": "Below the quality bar: its best variant scores 60.8 (bar: 73.4)"
+        "detail": "Below the quality bar: its best variant scores 60.8 (bar: 69.4)"
       },
       {
         "name": "Kimi K3",
         "vendor": "Kimi",
         "variants": 2,
         "status": "ranked",
-        "bestRank": 13,
+        "bestRank": 27,
         "representative": null,
-        "detail": "Ranked #13"
+        "detail": "Ranked #27"
       },
       {
         "name": "Muse Spark 1.3",
         "vendor": "Meta",
         "variants": 2,
         "status": "ranked",
-        "bestRank": 5,
+        "bestRank": 11,
         "representative": null,
-        "detail": "Ranked #5"
+        "detail": "Ranked #11"
       }
     ]
   },
   "models": [
     {
       "rank": 1,
+      "id": "9ac3908c-9eb2-44db-8c01-3ec7da6fc2ae",
+      "name": "Qwen3.8-Flash-Next",
+      "vendor": "Alibaba",
+      "vendorSlug": "alibaba",
+      "releaseDate": "2026-08-26",
+      "codingScore": 73.1,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 73.1,
+          "normalized": 73.1,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 0.31,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 0.15,
+      "outputPrice": 0.47,
+      "value": 235.806452
+    },
+    {
+      "rank": 2,
+      "id": "19496b81-9f41-4214-a77a-1df803b3c5ae",
+      "name": "GLM 5.3 Flash",
+      "vendor": "Z AI",
+      "vendorSlug": "zai",
+      "releaseDate": "2026-08-26",
+      "codingScore": 71.5,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.5,
+          "normalized": 71.5,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 0.325,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 0.15,
+      "outputPrice": 0.5,
+      "value": 220
+    },
+    {
+      "rank": 3,
+      "id": "426d24c8-49ae-482a-b4a8-20f1c53f21c1",
+      "name": "GPT-5.6 Luna (max)",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-07-09",
+      "codingScore": 71.4,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.4,
+          "normalized": 71.4,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 0.7,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 0.2,
+      "outputPrice": 1.2,
+      "value": 102,
+      "cursor": "GPT-5.6 Luna"
+    },
+    {
+      "rank": 4,
+      "id": "manual-cursor-composer-2-5",
+      "name": "Composer 2.5",
+      "vendor": "Cursor",
+      "vendorSlug": "cursor",
+      "releaseDate": "2026-05-18",
+      "codingScore": 70.3,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 70.3,
+          "normalized": 70.3,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 1.5,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 0.5,
+      "outputPrice": 2.5,
+      "value": 46.866667,
+      "estimate": {
+        "note": "Not in the Artificial Analysis API. Artificial Analysis's Coding Agent Index (May 2026) scores Composer 2.5 at 62, vs 66 for Claude Opus 4.7 (max) and 65 for GPT-5.5 (xhigh). Those two score 73.6 and 74.9 on the Coding Index, about 1.13× their agent-index score; 62 × 1.13 ≈ 70.3 (range 69–71). Price is Cursor's standard tier; the \"Fast\" tier costs $3 / $15.",
+        "sources": [
+          "https://artificialanalysis.ai/articles/cursor-composer-2-5-coding-agent-index",
+          "https://cursor.com/docs/models"
+        ]
+      },
+      "isNew": true,
+      "cursor": "Composer 2.5"
+    },
+    {
+      "rank": 5,
       "id": "8a999846-4c1d-4ce7-a8b7-1310a7166fd7",
       "name": "Gemini 3.8 Flash (high)",
       "vendor": "Google",
@@ -648,7 +748,7 @@
       "cursor": "Gemini 3.8 Flash"
     },
     {
-      "rank": 2,
+      "rank": 6,
       "id": "b2331108-72ed-415a-82d1-188633875bbc",
       "name": "Gemini 3.7 Flash (high)",
       "vendor": "Google",
@@ -679,7 +779,7 @@
       "cursor": "Gemini 3.7 Flash"
     },
     {
-      "rank": 3,
+      "rank": 7,
       "id": "744fa3c1-42a7-4995-b138-fb6be11f463c",
       "name": "Gemini 3.8 Flash (medium)",
       "vendor": "Google",
@@ -710,7 +810,7 @@
       "cursor": "Gemini 3.8 Flash"
     },
     {
-      "rank": 4,
+      "rank": 8,
       "id": "f6db039b-0f3b-485c-9d7f-982988e44f26",
       "name": "Gemini 3.8 Flash (low)",
       "vendor": "Google",
@@ -741,7 +841,69 @@
       "cursor": "Gemini 3.8 Flash"
     },
     {
-      "rank": 5,
+      "rank": 9,
+      "id": "eb0d4272-7204-42b9-b875-8866fed58548",
+      "name": "Gemini 3.7 Flash (medium)",
+      "vendor": "Google",
+      "vendorSlug": "google",
+      "releaseDate": "2026-08-13",
+      "codingScore": 71.5,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.5,
+          "normalized": 71.5,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 2.25,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 0.75,
+      "outputPrice": 3.75,
+      "value": 31.777778,
+      "cursor": "Gemini 3.7 Flash"
+    },
+    {
+      "rank": 10,
+      "id": "ddfdaf64-3f8e-40a6-a492-608ee83a1351",
+      "name": "Gemini 3.7 Flash (low)",
+      "vendor": "Google",
+      "vendorSlug": "google",
+      "releaseDate": "2026-08-13",
+      "codingScore": 71,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71,
+          "normalized": 71,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 2.25,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 0.75,
+      "outputPrice": 3.75,
+      "value": 31.555556,
+      "cursor": "Gemini 3.7 Flash"
+    },
+    {
+      "rank": 11,
       "id": "d5170215-69be-4129-849b-26d8d8825bfc",
       "name": "Muse Spark 1.3 (xhigh)",
       "vendor": "Meta",
@@ -772,7 +934,7 @@
       "cursor": "Muse Spark 1.3"
     },
     {
-      "rank": 6,
+      "rank": 12,
       "id": "9999672c-b687-4026-9c15-5cef02ff53bb",
       "name": "Muse Spark 1.3 (max)",
       "vendor": "Meta",
@@ -803,7 +965,67 @@
       "cursor": "Muse Spark 1.3"
     },
     {
-      "rank": 7,
+      "rank": 13,
+      "id": "04ee6719-0327-463b-a1a1-70a6a78254f9",
+      "name": "Muse Spark 1.2 (xhigh)",
+      "vendor": "Meta",
+      "vendorSlug": "meta",
+      "releaseDate": "2026-08-05",
+      "codingScore": 72.2,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 72.2,
+          "normalized": 72.2,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 2.75,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 1.25,
+      "outputPrice": 4.25,
+      "value": 26.254545
+    },
+    {
+      "rank": 14,
+      "id": "d61493e2-43ff-460c-9054-eaf6ba317360",
+      "name": "Muse Spark 1.1 (xhigh)",
+      "vendor": "Meta",
+      "vendorSlug": "meta",
+      "releaseDate": "2026-07-09",
+      "codingScore": 71.3,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.3,
+          "normalized": 71.3,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 2.75,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 1.25,
+      "outputPrice": 4.25,
+      "value": 25.927273
+    },
+    {
+      "rank": 15,
       "id": "cd684ea4-b475-4269-b001-d469d06d8a7a",
       "name": "GLM-5.3 (max)",
       "vendor": "Z AI",
@@ -833,7 +1055,7 @@
       "value": 25.793103
     },
     {
-      "rank": 8,
+      "rank": 16,
       "id": "c8adc5cf-fd5a-407b-af51-dc3bede3e49c",
       "name": "Grok 4.6 (high)",
       "vendor": "SpaceXAI",
@@ -864,7 +1086,7 @@
       "cursor": "Grok 4.6"
     },
     {
-      "rank": 9,
+      "rank": 17,
       "id": "b112af07-3bd5-4647-b09f-b23204361bb2",
       "name": "Qwen3.8 Max (0902)",
       "vendor": "Alibaba",
@@ -894,7 +1116,7 @@
       "value": 19.05
     },
     {
-      "rank": 10,
+      "rank": 18,
       "id": "d6f43d0a-e8c4-447c-9ff7-5cf0a9d59aa3",
       "name": "Grok 4.6 (xhigh)",
       "vendor": "SpaceXAI",
@@ -925,7 +1147,7 @@
       "cursor": "Grok 4.6"
     },
     {
-      "rank": 11,
+      "rank": 19,
       "id": "26614164-6840-4e17-a65a-2deb2fe7e87b",
       "name": "Grok 4.6 (medium)",
       "vendor": "SpaceXAI",
@@ -956,7 +1178,160 @@
       "cursor": "Grok 4.6"
     },
     {
-      "rank": 12,
+      "rank": 20,
+      "id": "794f69b5-cede-482b-b1cc-d769478497cd",
+      "name": "Grok 4.5 (high)",
+      "vendor": "SpaceXAI",
+      "vendorSlug": "xai",
+      "releaseDate": "2026-07-08",
+      "codingScore": 72.4,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 72.4,
+          "normalized": 72.4,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 4,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2,
+      "outputPrice": 6,
+      "value": 18.1,
+      "cursor": "Grok 4.5"
+    },
+    {
+      "rank": 21,
+      "id": "8df710d3-9dae-4498-9b4e-9818238e6f31",
+      "name": "Qwen3.8 2.4T A95B",
+      "vendor": "Alibaba",
+      "vendorSlug": "alibaba",
+      "releaseDate": "2026-08-12",
+      "codingScore": 71.9,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.9,
+          "normalized": 71.9,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 4,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2,
+      "outputPrice": 6,
+      "value": 17.975
+    },
+    {
+      "rank": 22,
+      "id": "5e5b4ce7-bc54-47b2-b911-21b9cad8394c",
+      "name": "Qwen3.8 Max",
+      "vendor": "Alibaba",
+      "vendorSlug": "alibaba",
+      "releaseDate": "2026-08-03",
+      "codingScore": 71.8,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.8,
+          "normalized": 71.8,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 4,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2,
+      "outputPrice": 6,
+      "value": 17.95
+    },
+    {
+      "rank": 23,
+      "id": "0097ebf5-124f-42f6-9463-33b00e711f03",
+      "name": "Gemini 3.5 Flash (high)",
+      "vendor": "Google",
+      "vendorSlug": "google",
+      "releaseDate": "2026-05-19",
+      "codingScore": 70.1,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 70.1,
+          "normalized": 70.1,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 5.25,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 1.5,
+      "outputPrice": 9,
+      "value": 13.352381,
+      "cursor": "Gemini 3.5 Flash"
+    },
+    {
+      "rank": 24,
+      "id": "23c86e4a-c769-43c0-a056-79e3cd15834f",
+      "name": "Claude Sonnet 5 (Adaptive Reasoning, Max Effort)",
+      "vendor": "Anthropic",
+      "vendorSlug": "anthropic",
+      "releaseDate": "2026-06-30",
+      "codingScore": 71.5,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.5,
+          "normalized": 71.5,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 6,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2,
+      "outputPrice": 10,
+      "value": 11.916667,
+      "cursor": "Claude Sonnet 5"
+    },
+    {
+      "rank": 25,
       "id": "bcf8db0a-3bb6-4d82-9516-0f57370c85a6",
       "name": "GPT-5.6 Terra (max)",
       "vendor": "OpenAI",
@@ -987,7 +1362,38 @@
       "cursor": "GPT-5.6 Terra"
     },
     {
-      "rank": 13,
+      "rank": 26,
+      "id": "9e30696f-16fa-4b4f-ba53-161895a85fed",
+      "name": "GPT-5.6 Terra (xhigh)",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-07-09",
+      "codingScore": 70.6,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 70.6,
+          "normalized": 70.6,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 7,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2,
+      "outputPrice": 12,
+      "value": 10.085714,
+      "cursor": "GPT-5.6 Terra"
+    },
+    {
+      "rank": 27,
       "id": "f7d2fc3e-1f7b-405f-818c-07952a4af78f",
       "name": "Kimi K3 (max)",
       "vendor": "Kimi",
@@ -1018,7 +1424,69 @@
       "cursor": "Kimi K3"
     },
     {
-      "rank": 14,
+      "rank": 28,
+      "id": "a89c4b28-2d8c-456e-88ea-255fb51fd2b6",
+      "name": "GPT-5.4 (xhigh)",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-03-05",
+      "codingScore": 71.1,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.1,
+          "normalized": 71.1,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 8.75,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2.5,
+      "outputPrice": 15,
+      "value": 8.125714,
+      "cursor": "GPT-5.4"
+    },
+    {
+      "rank": 29,
+      "id": "512d17ef-13d2-4f65-bf9b-154b0dec7e8d",
+      "name": "Kimi K3 (low)",
+      "vendor": "Kimi",
+      "vendorSlug": "kimi",
+      "releaseDate": "2026-07-16",
+      "codingScore": 72,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 72,
+          "normalized": 72,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 9,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 3,
+      "outputPrice": 15,
+      "value": 8,
+      "cursor": "Kimi K3"
+    },
+    {
+      "rank": 30,
       "id": "d998db47-9b67-4727-a2bb-2e1261020ac0",
       "name": "GPT-5.6 Sol (xhigh)",
       "vendor": "OpenAI",
@@ -1049,7 +1517,7 @@
       "cursor": "GPT-5.6 Sol"
     },
     {
-      "rank": 15,
+      "rank": 31,
       "id": "d93edfe8-bf35-49ad-b56e-b18116142a1c",
       "name": "GPT-5.6 Sol (max)",
       "vendor": "OpenAI",
@@ -1080,7 +1548,7 @@
       "cursor": "GPT-5.6 Sol"
     },
     {
-      "rank": 16,
+      "rank": 32,
       "id": "8afc250d-b538-45a2-812a-4605f4ffd87e",
       "name": "GPT-5.6 Sol (high)",
       "vendor": "OpenAI",
@@ -1111,7 +1579,7 @@
       "cursor": "GPT-5.6 Sol"
     },
     {
-      "rank": 17,
+      "rank": 33,
       "id": "6f174934-5b7d-4333-86cb-f5ebf4a862e3",
       "name": "GPT-5.6 Sol (medium)",
       "vendor": "OpenAI",
@@ -1142,7 +1610,38 @@
       "cursor": "GPT-5.6 Sol"
     },
     {
-      "rank": 18,
+      "rank": 34,
+      "id": "0904b596-8932-43bd-9b21-324f128e1723",
+      "name": "GPT-5.6 Sol (low)",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-07-09",
+      "codingScore": 69.7,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 69.7,
+          "normalized": 69.7,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 12,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 4,
+      "outputPrice": 20,
+      "value": 5.808333,
+      "cursor": "GPT-5.6 Sol"
+    },
+    {
+      "rank": 35,
       "id": "b8fc61f7-5e9a-49e6-8547-6ac56db24627",
       "name": "Claude Opus 5 (Adaptive Reasoning, Max Effort)",
       "vendor": "Anthropic",
@@ -1173,7 +1672,7 @@
       "cursor": "Claude Opus 5"
     },
     {
-      "rank": 19,
+      "rank": 36,
       "id": "1305c921-7aaa-4d6d-99b5-99b3acf15e19",
       "name": "Claude Opus 5 (Adaptive Reasoning, Xhigh Effort)",
       "vendor": "Anthropic",
@@ -1204,7 +1703,7 @@
       "cursor": "Claude Opus 5"
     },
     {
-      "rank": 20,
+      "rank": 37,
       "id": "712be54a-77ae-41b2-9a58-21181479d6ee",
       "name": "Claude Opus 5 (Adaptive Reasoning, High Effort)",
       "vendor": "Anthropic",
@@ -1235,7 +1734,7 @@
       "cursor": "Claude Opus 5"
     },
     {
-      "rank": 21,
+      "rank": 38,
       "id": "992b7b84-5069-4c6a-9295-834252553d50",
       "name": "Claude Opus 4.8 (Adaptive Reasoning, Max Effort)",
       "vendor": "Anthropic",
@@ -1266,7 +1765,7 @@
       "cursor": "Claude Opus 4.8"
     },
     {
-      "rank": 22,
+      "rank": 39,
       "id": "ff51be8f-e362-4a7e-9043-687ba15de207",
       "name": "Claude Opus 5 (Adaptive Reasoning, Medium Effort)",
       "vendor": "Anthropic",
@@ -1297,7 +1796,7 @@
       "cursor": "Claude Opus 5"
     },
     {
-      "rank": 23,
+      "rank": 40,
       "id": "e9a09db3-8fd6-41dd-ba2f-20e0a2bff7f2",
       "name": "Claude Opus 4.7 (Adaptive Reasoning, Max Effort)",
       "vendor": "Anthropic",
@@ -1328,7 +1827,7 @@
       "cursor": "Claude 4.7 Opus"
     },
     {
-      "rank": 24,
+      "rank": 41,
       "id": "1f054429-397e-4fdb-9e71-67bc92c1735e",
       "name": "GPT-5.5 (xhigh)",
       "vendor": "OpenAI",
@@ -1359,7 +1858,69 @@
       "cursor": "GPT-5.5"
     },
     {
-      "rank": 25,
+      "rank": 42,
+      "id": "b13c1257-d746-4027-8fc8-4892dc14701c",
+      "name": "GPT-5.5 (high)",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-04-23",
+      "codingScore": 71.6,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.6,
+          "normalized": 71.6,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 17.5,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 5,
+      "outputPrice": 30,
+      "value": 4.091429,
+      "cursor": "GPT-5.5"
+    },
+    {
+      "rank": 43,
+      "id": "6b79f899-e3c0-45f6-923c-243faccdb2fc",
+      "name": "GPT-5.5 (medium)",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-04-23",
+      "codingScore": 71.5,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 71.5,
+          "normalized": 71.5,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 17.5,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 5,
+      "outputPrice": 30,
+      "value": 4.085714,
+      "cursor": "GPT-5.5"
+    },
+    {
+      "rank": 44,
       "id": "3e87c73e-a257-495e-9730-367a66229811",
       "name": "Claude Fable 5.1 (Adaptive Reasoning, Max Effort, Default Fallback)",
       "vendor": "Anthropic",
@@ -1390,7 +1951,7 @@
       "cursor": "Claude Fable 5.1"
     },
     {
-      "rank": 26,
+      "rank": 45,
       "id": "9b166bf3-42db-4f63-8338-1c4a1244ffe8",
       "name": "Claude Fable 5.1 (Adaptive Reasoning, Xhigh Effort, Default Fallback)",
       "vendor": "Anthropic",
@@ -1421,7 +1982,7 @@
       "cursor": "Claude Fable 5.1"
     },
     {
-      "rank": 27,
+      "rank": 46,
       "id": "9d7d72cd-d95d-45a0-b109-4ad292c9aabd",
       "name": "Claude Fable 5.1 (Adaptive Reasoning, High Effort, Default Fallback)",
       "vendor": "Anthropic",
@@ -1452,7 +2013,7 @@
       "cursor": "Claude Fable 5.1"
     },
     {
-      "rank": 28,
+      "rank": 47,
       "id": "3b7de71c-e034-4591-8ca6-6b6be2fa471f",
       "name": "Claude Fable 5.1 (Adaptive Reasoning, Medium Effort, Default Fallback)",
       "vendor": "Anthropic",
@@ -1483,7 +2044,7 @@
       "cursor": "Claude Fable 5.1"
     },
     {
-      "rank": 29,
+      "rank": 48,
       "id": "e05a4828-0536-4876-870d-a235023f992b",
       "name": "GPT-6 Astra (high)",
       "vendor": "OpenAI",
@@ -1513,7 +2074,7 @@
       "value": 2.57
     },
     {
-      "rank": 30,
+      "rank": 49,
       "id": "2f339a97-9a0d-499a-9cb5-e0db665bfa25",
       "name": "GPT-6 Astra (max)",
       "vendor": "OpenAI",
@@ -1543,7 +2104,7 @@
       "value": 2.563333
     },
     {
-      "rank": 31,
+      "rank": 50,
       "id": "e97a4ef5-e817-480e-9595-12f81dc4974f",
       "name": "GPT-6 Astra (medium)",
       "vendor": "OpenAI",
@@ -1573,7 +2134,7 @@
       "value": 2.556667
     },
     {
-      "rank": 32,
+      "rank": 51,
       "id": "cd55210d-358e-4df1-ba9c-9acb5f186cc9",
       "name": "Claude Fable 5 (Adaptive Reasoning, Max Effort, Opus 4.8 Fallback)",
       "vendor": "Anthropic",
@@ -1604,7 +2165,7 @@
       "cursor": "Claude Fable 5"
     },
     {
-      "rank": 33,
+      "rank": 52,
       "id": "1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3",
       "name": "GPT-6 Astra (xhigh)",
       "vendor": "OpenAI",
@@ -1634,7 +2195,7 @@
       "value": 2.53
     },
     {
-      "rank": 34,
+      "rank": 53,
       "id": "a3f8100d-e38f-408b-b0fa-0085dae18dc1",
       "name": "GPT-6 Astra (low)",
       "vendor": "OpenAI",
@@ -1664,7 +2225,7 @@
       "value": 2.523333
     },
     {
-      "rank": 35,
+      "rank": 54,
       "id": "05776db7-f5c0-40f7-b824-079160f8cfa8",
       "name": "Claude Fable 5.1 (Adaptive Reasoning, Low Effort, Default Fallback)",
       "vendor": "Anthropic",
@@ -1697,222 +2258,12 @@
   ],
   "excluded": [
     {
-      "id": "9ac3908c-9eb2-44db-8c01-3ec7da6fc2ae",
-      "name": "Qwen3.8-Flash-Next",
-      "vendor": "Alibaba",
-      "releaseDate": "2026-08-26",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 73.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 73.1,
-      "price": 0.31,
-      "value": 235.806452
-    },
-    {
-      "id": "794f69b5-cede-482b-b1cc-d769478497cd",
-      "name": "Grok 4.5 (high)",
-      "vendor": "SpaceXAI",
-      "releaseDate": "2026-07-08",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 72.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 72.4,
-      "price": 4,
-      "value": 18.1,
-      "cursor": "Grok 4.5"
-    },
-    {
-      "id": "04ee6719-0327-463b-a1a1-70a6a78254f9",
-      "name": "Muse Spark 1.2 (xhigh)",
-      "vendor": "Meta",
-      "releaseDate": "2026-08-05",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 72.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 72.2,
-      "price": 2.75,
-      "value": 26.254545
-    },
-    {
-      "id": "512d17ef-13d2-4f65-bf9b-154b0dec7e8d",
-      "name": "Kimi K3 (low)",
-      "vendor": "Kimi",
-      "releaseDate": "2026-07-16",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 72.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 72,
-      "price": 9,
-      "value": 8,
-      "cursor": "Kimi K3"
-    },
-    {
-      "id": "8df710d3-9dae-4498-9b4e-9818238e6f31",
-      "name": "Qwen3.8 2.4T A95B",
-      "vendor": "Alibaba",
-      "releaseDate": "2026-08-12",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.9,
-      "price": 4,
-      "value": 17.975
-    },
-    {
-      "id": "5e5b4ce7-bc54-47b2-b911-21b9cad8394c",
-      "name": "Qwen3.8 Max",
-      "vendor": "Alibaba",
-      "releaseDate": "2026-08-03",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.8,
-      "price": 4,
-      "value": 17.95
-    },
-    {
-      "id": "b13c1257-d746-4027-8fc8-4892dc14701c",
-      "name": "GPT-5.5 (high)",
-      "vendor": "OpenAI",
-      "releaseDate": "2026-04-23",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.6,
-      "price": 17.5,
-      "value": 4.091429,
-      "cursor": "GPT-5.5"
-    },
-    {
-      "id": "23c86e4a-c769-43c0-a056-79e3cd15834f",
-      "name": "Claude Sonnet 5 (Adaptive Reasoning, Max Effort)",
-      "vendor": "Anthropic",
-      "releaseDate": "2026-06-30",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.5,
-      "price": 6,
-      "value": 11.916667,
-      "cursor": "Claude Sonnet 5"
-    },
-    {
-      "id": "eb0d4272-7204-42b9-b875-8866fed58548",
-      "name": "Gemini 3.7 Flash (medium)",
-      "vendor": "Google",
-      "releaseDate": "2026-08-13",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.5,
-      "price": 2.25,
-      "value": 31.777778,
-      "cursor": "Gemini 3.7 Flash"
-    },
-    {
-      "id": "19496b81-9f41-4214-a77a-1df803b3c5ae",
-      "name": "GLM 5.3 Flash",
-      "vendor": "Z AI",
-      "releaseDate": "2026-08-26",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.5,
-      "price": 0.325,
-      "value": 220
-    },
-    {
-      "id": "6b79f899-e3c0-45f6-923c-243faccdb2fc",
-      "name": "GPT-5.5 (medium)",
-      "vendor": "OpenAI",
-      "releaseDate": "2026-04-23",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.5,
-      "price": 17.5,
-      "value": 4.085714,
-      "cursor": "GPT-5.5"
-    },
-    {
-      "id": "426d24c8-49ae-482a-b4a8-20f1c53f21c1",
-      "name": "GPT-5.6 Luna (max)",
-      "vendor": "OpenAI",
-      "releaseDate": "2026-07-09",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.4,
-      "price": 0.7,
-      "value": 102,
-      "cursor": "GPT-5.6 Luna"
-    },
-    {
-      "id": "d61493e2-43ff-460c-9054-eaf6ba317360",
-      "name": "Muse Spark 1.1 (xhigh)",
-      "vendor": "Meta",
-      "releaseDate": "2026-07-09",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.3,
-      "price": 2.75,
-      "value": 25.927273
-    },
-    {
-      "id": "a89c4b28-2d8c-456e-88ea-255fb51fd2b6",
-      "name": "GPT-5.4 (xhigh)",
-      "vendor": "OpenAI",
-      "releaseDate": "2026-03-05",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71.1,
-      "price": 8.75,
-      "value": 8.125714,
-      "cursor": "GPT-5.4"
-    },
-    {
-      "id": "ddfdaf64-3f8e-40a6-a492-608ee83a1351",
-      "name": "Gemini 3.7 Flash (low)",
-      "vendor": "Google",
-      "releaseDate": "2026-08-13",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 71.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 71,
-      "price": 2.25,
-      "value": 31.555556,
-      "cursor": "Gemini 3.7 Flash"
-    },
-    {
-      "id": "9e30696f-16fa-4b4f-ba53-161895a85fed",
-      "name": "GPT-5.6 Terra (xhigh)",
-      "vendor": "OpenAI",
-      "releaseDate": "2026-07-09",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 70.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 70.6,
-      "price": 7,
-      "value": 10.085714,
-      "cursor": "GPT-5.6 Terra"
-    },
-    {
-      "id": "0097ebf5-124f-42f6-9463-33b00e711f03",
-      "name": "Gemini 3.5 Flash (high)",
-      "vendor": "Google",
-      "releaseDate": "2026-05-19",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 70.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 70.1,
-      "price": 5.25,
-      "value": 13.352381,
-      "cursor": "Gemini 3.5 Flash"
-    },
-    {
-      "id": "0904b596-8932-43bd-9b21-324f128e1723",
-      "name": "GPT-5.6 Sol (low)",
-      "vendor": "OpenAI",
-      "releaseDate": "2026-07-09",
-      "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 69.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
-      "codingScore": 69.7,
-      "price": 12,
-      "value": 5.808333,
-      "cursor": "GPT-5.6 Sol"
-    },
-    {
       "id": "78332c88-fe60-42c8-af9d-3617e44cf1f5",
       "name": "Gemini 3.6 Flash (high)",
       "vendor": "Google",
       "releaseDate": "2026-07-21",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 69.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 69.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 69.2,
       "price": 2.25,
       "value": 30.755556,
@@ -1924,7 +2275,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-07-31",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 69.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 69.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 69.1,
       "price": 0.88,
       "value": 78.522727
@@ -1935,7 +2286,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-08-13",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 68.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 68.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 68.8,
       "price": 2.64,
       "value": 26.060606
@@ -1946,7 +2297,7 @@
       "vendor": "Google",
       "releaseDate": "2026-02-19",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 68.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 68.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 68.8,
       "price": 7,
       "value": 9.828571,
@@ -1958,7 +2309,7 @@
       "vendor": "Z AI",
       "releaseDate": "2026-06-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 68.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 68.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 68.8,
       "price": 2.9,
       "value": 23.724138,
@@ -1970,7 +2321,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 68.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 68.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 68.6,
       "price": 0.7,
       "value": 98,
@@ -1982,7 +2333,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-08-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 68.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 68.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 68.1,
       "price": 1.75,
       "value": 38.914286
@@ -1993,7 +2344,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 67.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 67.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 67.1,
       "price": 7,
       "value": 9.585714,
@@ -2005,7 +2356,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2026-07-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 66.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 66.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 66.9,
       "price": 15,
       "value": 4.46,
@@ -2017,7 +2368,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2026-06-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 66.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 66.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 66.4,
       "price": 6,
       "value": 11.066667,
@@ -2029,7 +2380,7 @@
       "vendor": "SpaceXAI",
       "releaseDate": "2026-08-12",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 66.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 66.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 66.3,
       "price": 4,
       "value": 16.575,
@@ -2041,7 +2392,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-05-19",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 66.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 66.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 66,
       "price": 5,
       "value": 13.2
@@ -2052,7 +2403,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 65.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 65.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 65.1,
       "price": 12,
       "value": 5.425,
@@ -2064,7 +2415,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-08-21",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 65.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 65.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 65,
       "price": 0.88,
       "value": 73.863636
@@ -2075,7 +2426,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 64.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 64.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 64.7,
       "price": 7,
       "value": 9.242857,
@@ -2087,7 +2438,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 63.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 63.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 63.3,
       "price": 0.7,
       "value": 90.428571,
@@ -2099,7 +2450,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2026-02-17",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 63.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 63.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 63,
       "price": 9,
       "value": 7,
@@ -2111,7 +2462,7 @@
       "vendor": "Kimi",
       "releaseDate": "2026-04-20",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 61.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 61.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 61.8,
       "price": 2.475,
       "value": 24.969697
@@ -2122,7 +2473,7 @@
       "vendor": "Multiverse Computing",
       "releaseDate": "2026-08-10",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 61.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 61.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 61.2,
       "price": 1.2,
       "value": 51
@@ -2133,7 +2484,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-04-23",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 60.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 60.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 60.9,
       "price": 17.5,
       "value": 3.48,
@@ -2145,7 +2496,7 @@
       "vendor": "Apodex",
       "releaseDate": "2026-08-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 60.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 60.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 60.8,
       "price": 1.65,
       "value": 36.848485
@@ -2156,7 +2507,7 @@
       "vendor": "Kimi",
       "releaseDate": "2026-06-12",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 60.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 60.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 60.8,
       "price": 2.475,
       "value": 24.565657,
@@ -2168,7 +2519,7 @@
       "vendor": "Xiaomi",
       "releaseDate": "2026-04-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 60.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 60.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 60.2,
       "price": 0.6525,
       "value": 92.260536
@@ -2179,7 +2530,7 @@
       "vendor": "KwaiKAT",
       "releaseDate": "2026-03-27",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 59.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 59.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 59.5,
       "price": 0.75,
       "value": 79.333333
@@ -2190,7 +2541,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-04-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 59.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 59.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 59.4,
       "price": 0.6525,
       "value": 91.034483
@@ -2201,7 +2552,7 @@
       "vendor": "Tencent",
       "releaseDate": "2026-07-06",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 58.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 58.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 58.8,
       "price": 0.36,
       "value": 163.333333
@@ -2212,7 +2563,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-04-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 58.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 58.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 58.7,
       "price": 0.6525,
       "value": 89.961686
@@ -2223,7 +2574,7 @@
       "vendor": "MiniMax",
       "releaseDate": "2026-06-01",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 58.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 58.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 58.6,
       "price": 0.75,
       "value": 78.133333
@@ -2234,7 +2585,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-08-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 58.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 58.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 58.2,
       "price": 1.75,
       "value": 33.257143
@@ -2245,7 +2596,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 58.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 58.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 58.1,
       "price": 7,
       "value": 8.3,
@@ -2257,7 +2608,7 @@
       "vendor": "InclusionAI",
       "releaseDate": "2026-09-10",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 57.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 57.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 57,
       "price": 0.1475,
       "value": 386.440678
@@ -2268,7 +2619,7 @@
       "vendor": "Xiaomi",
       "releaseDate": "2026-04-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 56.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 56.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 56.8,
       "price": 0.21,
       "value": 270.47619
@@ -2279,7 +2630,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-04-23",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 56.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 56.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 56.5,
       "price": 17.5,
       "value": 3.228571,
@@ -2291,7 +2642,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-04-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 56.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 56.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 56.2,
       "price": 0.205,
       "value": 274.146341
@@ -2302,7 +2653,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-03-17",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 56.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 56.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 56.1,
       "price": 2.625,
       "value": 21.371429,
@@ -2314,7 +2665,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-03-17",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 56.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 56.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 56.1,
       "price": 0.725,
       "value": 77.37931,
@@ -2326,7 +2677,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-08-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 56.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 56.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 56.1,
       "price": 1.75,
       "value": 32.057143
@@ -2337,7 +2688,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-06-01",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 55.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 55.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 55.9,
       "price": 1,
       "value": 55.9
@@ -2348,7 +2699,7 @@
       "vendor": "Z AI",
       "releaseDate": "2026-04-07",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 55.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 55.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 55.8,
       "price": 2.6775,
       "value": 20.840336
@@ -2359,7 +2710,7 @@
       "vendor": "InclusionAI",
       "releaseDate": "2026-09-11",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 55.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 55.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 55.6,
       "price": 0.1475,
       "value": 376.949153
@@ -2370,7 +2721,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-04-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 54.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 54.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 54.5,
       "price": 1.75,
       "value": 31.142857
@@ -2381,7 +2732,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-04-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 53.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 53.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 53.7,
       "price": 2.1,
       "value": 25.571429
@@ -2392,7 +2743,7 @@
       "vendor": "Thinking Machines",
       "releaseDate": "2026-07-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52.9,
       "price": 0.75,
       "value": 70.533333
@@ -2403,7 +2754,7 @@
       "vendor": "Upstage",
       "releaseDate": "2026-08-06",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52.7,
       "price": 0.75,
       "value": 70.266667
@@ -2414,7 +2765,7 @@
       "vendor": "MiniMax",
       "releaseDate": "2026-03-18",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52.6,
       "price": 0.75,
       "value": 70.133333
@@ -2425,7 +2776,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52.3,
       "price": 7,
       "value": 7.471429,
@@ -2437,7 +2788,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2025-09-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52.1,
       "price": 9,
       "value": 5.788889,
@@ -2449,7 +2800,7 @@
       "vendor": "Thinking Machines",
       "releaseDate": "2026-07-15",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52.1,
       "price": 2.525,
       "value": 20.633663
@@ -2460,7 +2811,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2026-04-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 52.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 52.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 52,
       "price": 0.205,
       "value": 253.658537
@@ -2471,7 +2822,7 @@
       "vendor": "SpaceXAI",
       "releaseDate": "2026-06-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 51.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 51.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 51.5,
       "price": 1.5,
       "value": 34.333333
@@ -2482,7 +2833,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 50.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 50.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 50.7,
       "price": 0.7,
       "value": 72.428571,
@@ -2494,7 +2845,7 @@
       "vendor": "InclusionAI",
       "releaseDate": "2026-08-04",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 50.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 50.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 50.6,
       "price": 0.1475,
       "value": 343.050847
@@ -2505,7 +2856,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-11-13",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 49.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 49.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 49.4,
       "price": 5.625,
       "value": 8.782222
@@ -2516,7 +2867,7 @@
       "vendor": "Google",
       "releaseDate": "2026-07-21",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 49.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 49.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 49.3,
       "price": 1.4,
       "value": 35.214286
@@ -2527,7 +2878,7 @@
       "vendor": "NVIDIA",
       "releaseDate": "2026-06-04",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 49.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 49.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 49.3,
       "price": 1.55,
       "value": 31.806452
@@ -2538,7 +2889,7 @@
       "vendor": "Meta",
       "releaseDate": "2026-08-10",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 49.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 49.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 49,
       "price": 0.8375,
       "value": 58.507463
@@ -2549,7 +2900,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-02-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 48.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 48.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 48.2,
       "price": 2.1,
       "value": 22.952381
@@ -2560,7 +2911,7 @@
       "vendor": "Mistral",
       "releaseDate": "2026-04-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 46.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 46.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 46.9,
       "price": 4.5,
       "value": 10.422222
@@ -2571,7 +2922,7 @@
       "vendor": "Kimi",
       "releaseDate": "2026-01-27",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 46.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 46.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 46.8,
       "price": 1.675,
       "value": 27.940299
@@ -2582,7 +2933,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-04-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 46.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 46.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 46.6,
       "price": 2.1,
       "value": 22.190476
@@ -2593,7 +2944,7 @@
       "vendor": "Z AI",
       "releaseDate": "2026-06-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 46.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 46.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 46.5,
       "price": 2.9,
       "value": 16.034483,
@@ -2605,7 +2956,7 @@
       "vendor": "Z AI",
       "releaseDate": "2025-09-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 45.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 45.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 45.8,
       "price": 1.375,
       "value": 33.309091
@@ -2616,7 +2967,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-02-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 45.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 45.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 45.7,
       "price": 1.8,
       "value": 25.388889
@@ -2627,7 +2978,7 @@
       "vendor": "Z AI",
       "releaseDate": "2025-12-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 45.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 45.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 45.3,
       "price": 1.4,
       "value": 32.357143
@@ -2638,7 +2989,7 @@
       "vendor": "LongCat",
       "releaseDate": "2026-06-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 45.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 45.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 45.3,
       "price": 0.75,
       "value": 60.4
@@ -2649,7 +3000,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-08-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 44.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 44.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 44.6,
       "price": 1.75,
       "value": 25.485714
@@ -2660,7 +3011,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2025-12-01",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 44.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 44.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 44.2,
       "price": 0.35,
       "value": 126.285714
@@ -2671,7 +3022,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 44.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 44.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 44.2,
       "price": 0.7,
       "value": 63.142857,
@@ -2683,7 +3034,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2025-10-15",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 43.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 43.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 43.9,
       "price": 3,
       "value": 14.633333,
@@ -2695,7 +3046,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2025-09-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 43.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 43.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 43.5,
       "price": 2.1925,
       "value": 19.840365
@@ -2706,7 +3057,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-02-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 43.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 43.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 43.3,
       "price": 1.8,
       "value": 24.055556
@@ -2717,7 +3068,7 @@
       "vendor": "InclusionAI",
       "releaseDate": "2026-05-08",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 42.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 42.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 42.8,
       "price": 1.4,
       "value": 30.571429
@@ -2728,7 +3079,7 @@
       "vendor": "SpaceXAI",
       "releaseDate": "2026-04-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 42.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 42.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 42.2,
       "price": 1.875,
       "value": 22.506667
@@ -2739,7 +3090,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-04-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 41.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 41.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 41.9,
       "price": 1.3125,
       "value": 31.92381
@@ -2750,7 +3101,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2024-12-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 39.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 39.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 39.7,
       "price": 37.5,
       "value": 1.058667
@@ -2761,7 +3112,7 @@
       "vendor": "StepFun",
       "releaseDate": "2026-05-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 39.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 39.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 39.6,
       "price": 0.675,
       "value": 58.666667
@@ -2772,7 +3123,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-06-25",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 39.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 39.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 39.4,
       "price": 17.5,
       "value": 2.251429
@@ -2783,7 +3134,7 @@
       "vendor": "Google",
       "releaseDate": "2026-04-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 39.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 39.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 39.3,
       "price": 0.235,
       "value": 167.234043
@@ -2794,7 +3145,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2026-07-09",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 39.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 39.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 39.3,
       "price": 0.7,
       "value": 56.142857,
@@ -2806,7 +3157,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-08-07",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 37.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 37.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 37.8,
       "price": 5.625,
       "value": 6.72,
@@ -2818,7 +3169,7 @@
       "vendor": "NVIDIA",
       "releaseDate": "2026-03-11",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 37.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 37.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 37.7,
       "price": 0.6,
       "value": 62.833333
@@ -2829,7 +3180,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-02-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 37.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 37.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 37,
       "price": 1.125,
       "value": 32.888889
@@ -2840,7 +3191,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-02-03",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 36.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 36.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 36.2,
       "price": 0.775,
       "value": 46.709677
@@ -2851,7 +3202,7 @@
       "vendor": "SpaceXAI",
       "releaseDate": "2026-04-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 35.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 35.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 35.2,
       "price": 1.875,
       "value": 18.773333
@@ -2862,7 +3213,7 @@
       "vendor": "Google",
       "releaseDate": "2026-03-03",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 34.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 34.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 34.7,
       "price": 0.875,
       "value": 39.657143
@@ -2873,7 +3224,7 @@
       "vendor": "Amazon",
       "releaseDate": "2025-11-27",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 34.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 34.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 34,
       "price": 5.625,
       "value": 6.044444
@@ -2884,7 +3235,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2024-09-12",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 34.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 34.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 34,
       "price": 41.25,
       "value": 0.824242
@@ -2895,7 +3246,7 @@
       "vendor": "Google",
       "releaseDate": "2025-06-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 33.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 33.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 33.3,
       "price": 5.625,
       "value": 5.92
@@ -2906,7 +3257,7 @@
       "vendor": "Google",
       "releaseDate": "2026-04-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 33.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 33.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 33.2,
       "price": 0.27,
       "value": 122.962963
@@ -2917,7 +3268,7 @@
       "vendor": "Inception",
       "releaseDate": "2026-02-20",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 31.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 31.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 31.1,
       "price": 0.5,
       "value": 62.2
@@ -2928,7 +3279,7 @@
       "vendor": "Google",
       "releaseDate": "2026-06-03",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 31.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 31.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 31,
       "price": 0.2,
       "value": 155
@@ -2939,7 +3290,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-08-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 30.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 30.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 30.4,
       "price": 0.3725,
       "value": 81.610738
@@ -2950,7 +3301,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2024-10-22",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 30.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 30.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 30.2,
       "price": 9,
       "value": 3.355556
@@ -2961,7 +3312,7 @@
       "vendor": "IBM",
       "releaseDate": "2026-08-25",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 29.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 29.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 29.9,
       "price": 0.405,
       "value": 73.82716
@@ -2972,7 +3323,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-03-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 28.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 28.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 28.7,
       "price": 0.1675,
       "value": 171.343284
@@ -2983,7 +3334,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-04-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 28.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 28.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 28.1,
       "price": 1.3125,
       "value": 21.409524
@@ -2994,7 +3345,7 @@
       "vendor": "NVIDIA",
       "releaseDate": "2026-08-11",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 26.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 26.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 26.8,
       "price": 0.145,
       "value": 184.827586
@@ -3005,7 +3356,7 @@
       "vendor": "Mistral",
       "releaseDate": "2026-03-16",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 26.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 26.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 26.6,
       "price": 0.375,
       "value": 70.933333
@@ -3016,7 +3367,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-03-17",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 26.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 26.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 26.3,
       "price": 0.14,
       "value": 187.857143
@@ -3027,7 +3378,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2024-06-21",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 26.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 26.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 26,
       "price": 9,
       "value": 2.888889
@@ -3038,7 +3389,7 @@
       "vendor": "Amazon",
       "releaseDate": "2025-11-27",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 25.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 25.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 25.9,
       "price": 5.625,
       "value": 4.604444
@@ -3049,7 +3400,7 @@
       "vendor": "Arcee AI",
       "releaseDate": "2026-04-01",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 25.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 25.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 25.8,
       "price": 0.525,
       "value": 49.142857
@@ -3060,7 +3411,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2025-01-20",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 24.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 24.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 24.6,
       "price": 3,
       "value": 8.2
@@ -3071,7 +3422,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2024-05-13",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 24.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 24.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 24.2,
       "price": 10,
       "value": 2.42
@@ -3082,7 +3433,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-03-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 23.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 23.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 23.5,
       "price": 0.21,
       "value": 111.904762
@@ -3093,7 +3444,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2024-12-26",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 23.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 23.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 23,
       "price": 0.605,
       "value": 38.016529
@@ -3104,7 +3455,7 @@
       "vendor": "Amazon",
       "releaseDate": "2025-10-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 23.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 23.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 23,
       "price": 1.4,
       "value": 16.428571
@@ -3115,7 +3466,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-03-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 22.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 22.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 22.6,
       "price": 0.09,
       "value": 251.111111
@@ -3126,7 +3477,7 @@
       "vendor": "IBM",
       "releaseDate": "2026-08-25",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 22.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 22.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 22.4,
       "price": 0.155,
       "value": 144.516129
@@ -3137,7 +3488,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2025-07-25",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 22.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 22.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 22.1,
       "price": 1.265,
       "value": 17.470356
@@ -3148,7 +3499,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2023-11-06",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 21.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 21.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 21.5,
       "price": 20,
       "value": 1.075
@@ -3159,7 +3510,7 @@
       "vendor": "DeepSeek",
       "releaseDate": "2025-03-25",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 21.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 21.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 21.2,
       "price": 1.01,
       "value": 20.990099
@@ -3170,7 +3521,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-08-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 21.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 21.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 21.2,
       "price": 0.3475,
       "value": 61.007194
@@ -3181,7 +3532,7 @@
       "vendor": "Amazon",
       "releaseDate": "2025-11-27",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 20.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 20.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 20.9,
       "price": 5.625,
       "value": 3.715556
@@ -3192,7 +3543,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-08-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 20.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 20.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 20.7,
       "price": 0.125,
       "value": 165.6
@@ -3203,7 +3554,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2026-03-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 20.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 20.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 20.3,
       "price": 0.09,
       "value": 225.555556
@@ -3214,7 +3565,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-04-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 20.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 20.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 20.2,
       "price": 1,
       "value": 20.2
@@ -3225,7 +3576,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-12-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 20.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 20.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 20.1,
       "price": 1,
       "value": 20.1
@@ -3236,7 +3587,7 @@
       "vendor": "Anthropic",
       "releaseDate": "2024-03-04",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 19.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 19.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 19.5,
       "price": 45,
       "value": 0.433333
@@ -3247,7 +3598,7 @@
       "vendor": "IBM",
       "releaseDate": "2026-08-25",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 17.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 17.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 17.5,
       "price": 0.075,
       "value": 233.333333
@@ -3258,7 +3609,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2025-09-11",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 17.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 17.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 17.4,
       "price": 0.675,
       "value": 25.777778
@@ -3269,7 +3620,7 @@
       "vendor": "Meta",
       "releaseDate": "2025-04-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 16.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 16.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 16.3,
       "price": 0.585,
       "value": 27.863248
@@ -3280,7 +3631,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-01-31",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 16.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 16.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 16.3,
       "price": 2.75,
       "value": 5.927273
@@ -3291,7 +3642,7 @@
       "vendor": "Upstage",
       "releaseDate": "2026-04-06",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 16.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 16.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 16.2,
       "price": 0.375,
       "value": 43.2
@@ -3302,7 +3653,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-08-07",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 15.6 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 15.6 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 15.6,
       "price": 1.125,
       "value": 13.866667,
@@ -3314,7 +3665,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2025-04-28",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 15.3 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 15.3 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 15.3,
       "price": 0.4,
       "value": 38.25
@@ -3325,7 +3676,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-09-17",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 14.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 14.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 14.7,
       "price": 1,
       "value": 14.7
@@ -3336,7 +3687,7 @@
       "vendor": "Celeris",
       "releaseDate": "2026-07-24",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 14.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 14.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 14.4,
       "price": 0.45,
       "value": 32
@@ -3347,7 +3698,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-12-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 14.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 14.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 14.4,
       "price": 0.2,
       "value": 72
@@ -3358,7 +3709,7 @@
       "vendor": "NVIDIA",
       "releaseDate": "2025-12-15",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 14.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 14.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 14.4,
       "price": 0.125,
       "value": 115.2
@@ -3369,7 +3720,7 @@
       "vendor": "NVIDIA",
       "releaseDate": "2026-04-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 13.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 13.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 13.8,
       "price": 0.645,
       "value": 21.395349
@@ -3380,7 +3731,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2025-04-28",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 13.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 13.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 13.8,
       "price": 2.275,
       "value": 6.065934
@@ -3391,7 +3742,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2023-03-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 13.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 13.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 13.1,
       "price": 45,
       "value": 0.291111
@@ -3402,7 +3753,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-06-20",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 12.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 12.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 12.5,
       "price": 0.1375,
       "value": 90.909091
@@ -3413,7 +3764,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2025-07-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 12.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 12.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 12.1,
       "price": 1.3,
       "value": 9.307692
@@ -3424,7 +3775,7 @@
       "vendor": "Meta",
       "releaseDate": "2024-12-06",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 11.9 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 11.9 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 11.9,
       "price": 0.715,
       "value": 16.643357
@@ -3435,7 +3786,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2024-07-18",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 11.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 11.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 11.4,
       "price": 0.375,
       "value": 30.4
@@ -3446,7 +3797,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2025-04-14",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 11.1 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 11.1 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 11.1,
       "price": 0.25,
       "value": 44.4
@@ -3457,7 +3808,7 @@
       "vendor": "OpenAI",
       "releaseDate": "2022-11-30",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 10.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 10.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 10.7,
       "price": 1,
       "value": 10.7
@@ -3468,7 +3819,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-12-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 9.7 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 9.7 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 9.7,
       "price": 0.15,
       "value": 64.666667
@@ -3479,7 +3830,7 @@
       "vendor": "IBM",
       "releaseDate": "2026-04-29",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 9.5 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 9.5 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 9.5,
       "price": 0.075,
       "value": 126.666667
@@ -3490,7 +3841,7 @@
       "vendor": "Google",
       "releaseDate": "2026-04-03",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 9.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 9.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 9.4,
       "price": 0.06,
       "value": 156.666667
@@ -3501,7 +3852,7 @@
       "vendor": "Alibaba",
       "releaseDate": "2025-04-28",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 9.0 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 9.0 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 9,
       "price": 1.14,
       "value": 7.894737
@@ -3512,7 +3863,7 @@
       "vendor": "Meta",
       "releaseDate": "2025-04-05",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 8.2 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 8.2 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 8.2,
       "price": 0.435,
       "value": 18.850575
@@ -3523,7 +3874,7 @@
       "vendor": "Meta",
       "releaseDate": "2024-07-23",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 5.4 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 5.4 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 5.4,
       "price": 0.035,
       "value": 154.285714
@@ -3534,7 +3885,7 @@
       "vendor": "Mistral",
       "releaseDate": "2025-12-02",
       "reason": "below-quality-floor",
-      "detail": "Excluded: coding score 4.8 is below the quality floor of 73.4 (90% of the best, 81.6)",
+      "detail": "Excluded: coding score 4.8 is below the quality floor of 69.4 (85% of the best, 81.6)",
       "codingScore": 4.8,
       "price": 0.1,
       "value": 48

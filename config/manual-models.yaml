@@ -1,0 +1,30 @@
+# Models that the Artificial Analysis API doesn't include, added by hand
+# with an ESTIMATED coding score. They're ranked like any other model but are
+# marked "estimate" on the dashboard, with the reasoning and sources below.
+#
+# If Artificial Analysis later adds the model to its API (same name, ignoring
+# word order / variants), their real data is used and this entry is skipped
+# automatically, so the model never appears twice. Delete the entry then.
+#
+# Fields:
+#   codingIndex   estimated Artificial Analysis Coding Index (0–100)
+#   inputPrice / outputPrice   USD per 1M tokens
+
+models:
+  - id: manual-cursor-composer-2-5
+    name: Composer 2.5
+    vendor: Cursor
+    releaseDate: 2026-05-18
+    codingIndex: 70.3
+    inputPrice: 0.5
+    outputPrice: 2.5
+    estimate: >-
+      Not in the Artificial Analysis API. Artificial Analysis's Coding Agent
+      Index (May 2026) scores Composer 2.5 at 62, vs 66 for Claude Opus 4.7
+      (max) and 65 for GPT-5.5 (xhigh). Those two score 73.6 and 74.9 on the
+      Coding Index, about 1.13× their agent-index score; 62 × 1.13 ≈ 70.3
+      (range 69–71). Price is Cursor's standard tier; the "Fast" tier costs
+      $3 / $15.
+    sources:
+      - https://artificialanalysis.ai/articles/cursor-composer-2-5-coding-agent-index
+      - https://cursor.com/docs/models

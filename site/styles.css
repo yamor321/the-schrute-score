@@ -239,6 +239,20 @@ h1, h2, h3 { margin: 0; line-height: 1.15; }
 .hero .badge-cursor { background: var(--lime); color: var(--forest); border-color: var(--lime); }
 
 /* ---------- Badges ---------- */
+.badge-est {
+  display: inline-flex; align-items: center;
+  padding: 0 5px;
+  border: 1px dashed var(--muted);
+  border-radius: 3px;
+  font: 600 11px/1.5 var(--mono);
+  letter-spacing: .04em;
+  color: var(--muted);
+  vertical-align: middle;
+  cursor: help;
+}
+.hero .badge-est { color: var(--on-forest-muted); border-color: var(--on-forest-muted); }
+.estimates { margin-top: 6px; max-width: 74ch; }
+.estimates li { margin: 4px 0; }
 .badge-new, .badge-cursor {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 1px 6px;

@@ -23,9 +23,11 @@ benchmarkWeights:
 # Quality floor: a model must reach at least this fraction of the BEST
 # model's coding score to be ranked at all. Stops cheap-but-weak models
 # from winning just by being cheap. Relative, so it rises as models improve.
-#   0.95 = only the very top tier     0.90 = near the top (default)
+#   0.95 = only the very top tier     0.90 = near the top
 #   0.85 = a bit wider                0    = no floor (pure score-per-dollar)
-qualityFloor: 0.9
+# 0.85 is set so that GPT-5.6 Luna (max, 71.4) and Cursor's Composer 2.5
+# (estimated ~70.3) make the cut: with the best at 81.6 the bar is ~69.4.
+qualityFloor: 0.85
 
 # Which price figure to divide the coding score by to get "value".
 #   blended = (input price + output price) / 2

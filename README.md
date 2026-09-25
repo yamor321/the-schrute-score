@@ -29,7 +29,7 @@ The precise version is the doc comment on `computeValueTable` in [`src/scoring.t
    - `output`: the output price only.
 
    A missing, zero or negative price excludes the model, because you can't divide by it. Artificial Analysis lists many models at $0, which usually means no price is known.
-5. **Quality floor.** Find the best coding score among the remaining (priced) models. Any model below `qualityFloor × best` is excluded. With the default `0.9` and a best score of 81.6, a model needs at least 73.4 to be ranked. This is what keeps cheap-but-weak models out. The floor is relative, so it rises automatically as better models come out.
+5. **Quality floor.** Find the best coding score among the remaining (priced) models. Any model below `qualityFloor × best` is excluded. With the current `0.85` and a best score of 81.6, a model needs at least 69.4 to be ranked. This is what keeps cheap-but-weak models out. The floor is relative, so it rises automatically as better models come out.
 6. **Value score** = `codingScore ÷ price`. Every model that got this far is already strong, so this picks the one priced most sensibly. A model at 94% of the best score for 1/13 of the price beats the best model itself.
 7. **Sort** by value, highest first (ties go to the higher coding score, then alphabetical order), and number the ranks from 1.
 
@@ -49,7 +49,7 @@ You can change what gets ranked, and how, without touching any code. Edit the fi
 excludeVendors: []
 benchmarkWeights:
   codingIndex: 1
-qualityFloor: 0.9            # must reach 90% of the best model's coding score
+qualityFloor: 0.85           # must reach 85% of the best model's coding score
 priceBasis: blended          # blended | input | output
 minBenchmarksRequired: 1
 ```
@@ -60,12 +60,12 @@ These are site-wide settings. Visitors can also hide vendors for themselves with
 
 ```yaml
 qualityFloor: 0.95   # only the very top tier
-qualityFloor: 0.9    # near the top (default)
-qualityFloor: 0.85   # a bit wider
+qualityFloor: 0.9    # near the top
+qualityFloor: 0.85   # a bit wider (current)
 qualityFloor: 0      # no bar: pure coding-score-per-dollar (favors cheap, weak models)
 ```
 
-As of September 2026, `0.9` puts Gemini 3.8 Flash (high) first. `0.95` would put Claude Opus 5 (max effort) first.
+As of September 2026: `0.85` (current) is set so that GPT-5.6 Luna (max, 71.4) and Composer 2.5 (estimated ~70.3) qualify. Qwen3.8-Flash-Next is first, and Luna is the best Cursor pick. `0.9` puts Gemini 3.8 Flash (high) first. `0.95` puts Claude Opus 5 (max effort) first.
 
 ### Why only the Coding Index by default
 
@@ -138,6 +138,14 @@ models:
 - **Variants.** Every effort/reasoning variant of a Cursor model is marked, since Cursor lets you pick the effort. Cursor's own "(Fast)", "1M" and "500k" entries are listed once.
 - **Ranked models** just get the badge. They are never added a second time.
 - **Cursor models that aren't ranked** appear once each at the end of the table, under "Also in Cursor, but not ranked", with the reason: below the bar (showing the best variant's score), no price, no Coding Index yet, or not tracked by Artificial Analysis at all (e.g. Composer). They are not repeated in the "Excluded" list.
+
+### Hand-added models (estimates)
+
+Some models aren't in the Artificial Analysis API at all, like Cursor's own **Composer 2.5**. [`config/manual-models.yaml`](config/manual-models.yaml) adds them with an **estimated** Coding Index, a price, an explanation and sources. They're ranked like any other model but marked **EST.** on the dashboard, and the methodology section shows how each estimate was made.
+
+Composer 2.5's estimate (about 70.3): Artificial Analysis's Coding Agent Index scores it 62, against 66 for Claude Opus 4.7 (max) and 65 for GPT-5.5 (xhigh). Those two models score about 1.13× higher on the Coding Index, which gives 62 × 1.13 ≈ 70.3.
+
+When Artificial Analysis adds a hand-added model to its API, their real data is used automatically and the manual entry is skipped. The run log says so, and you can then delete the entry.
 
 ---
 

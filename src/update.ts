@@ -9,6 +9,7 @@ import { appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadScoringConfig } from './config.js';
 import { applyCursor, loadCursorConfig } from './cursor.js';
+import { loadManualModels, mergeManualModels } from './manualModels.js';
 import { markNewModels } from './newModels.js';
 import { hasMeaningfulChange, readSnapshot, runStamp, writeRun, type Snapshot } from './persist.js';
 import { computeValueTable } from './scoring.js';
@@ -27,7 +28,13 @@ async function main() {
   const cfg = loadScoringConfig();
   const cursorCfg = loadCursorConfig();
   const rawBody = await fetchRaw();
-  const models = parseModels(rawBody);
+  const aaModels = parseModels(rawBody);
+  const manual = mergeManualModels(aaModels, loadManualModels());
+  if (manual.added.length) console.log(`Hand-added (estimated) models: ${manual.added.join(', ')}`);
+  if (manual.superseded.length) {
+    console.log(`Now tracked by Artificial Analysis, manual entry skipped: ${manual.superseded.join(', ')} (remove it from config/manual-models.yaml)`);
+  }
+  const models = manual.models;
   const table = computeValueTable(models, cfg);
   if (table.ranked.length === 0) {
     throw new Error(`All ${models.length} models were excluded — refusing to publish an empty ranking. Check config/scoring.yaml.`);

@@ -30,6 +30,13 @@ export interface AaModel {
   };
   /** The untouched API object, so no field is ever silently dropped. */
   raw: Record<string, unknown>;
+  /** Set only for hand-added models (config/manual-models.yaml) whose score is an estimate. */
+  estimate?: ModelEstimate;
+}
+
+export interface ModelEstimate {
+  note: string;
+  sources: string[];
 }
 
 export class AaApiError extends Error {
