@@ -1,11 +1,14 @@
 {
-  "generatedAt": "2026-09-25T22:05:48.952Z",
+  "generatedAt": "2026-09-25T22:11:15.197Z",
   "source": {
     "name": "Artificial Analysis",
     "url": "https://artificialanalysis.ai"
   },
   "config": {
     "excludeVendors": [],
+    "excludeModels": [
+      "Step 5 Preview"
+    ],
     "benchmarkWeights": {
       "codingIndex": 1
     },
@@ -17,8 +20,8 @@
   "counts": {
     "fetched": 495,
     "variants": 674,
-    "ranked": 35,
-    "excluded": 460
+    "ranked": 34,
+    "excluded": 461
   },
   "quality": {
     "ratio": 0.85,
@@ -44,27 +47,27 @@
         "vendor": "SpaceXAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 16,
+        "bestRank": 15,
         "representative": null,
-        "detail": "Ranked #16"
+        "detail": "Ranked #15"
       },
       {
         "name": "Grok 4.6",
         "vendor": "SpaceXAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 15,
+        "bestRank": 14,
         "representative": null,
-        "detail": "Ranked #15"
+        "detail": "Ranked #14"
       },
       {
         "name": "Grok 4.5",
         "vendor": "SpaceXAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 18,
+        "bestRank": 17,
         "representative": null,
-        "detail": "Ranked #18"
+        "detail": "Ranked #17"
       },
       {
         "name": "Claude 4 Sonnet",
@@ -161,39 +164,12 @@
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 31,
-        "representative": null,
-        "detail": "Ranked #31"
-      },
-      {
-        "name": "Claude Opus 4.8",
-        "vendor": "Anthropic",
-        "variants": 1,
-        "status": "ranked",
         "bestRank": 30,
         "representative": null,
         "detail": "Ranked #30"
       },
       {
-        "name": "Claude Fable 5",
-        "vendor": "Anthropic",
-        "variants": 1,
-        "status": "ranked",
-        "bestRank": 35,
-        "representative": null,
-        "detail": "Ranked #35"
-      },
-      {
-        "name": "Claude Fable 5.1",
-        "vendor": "Anthropic",
-        "variants": 1,
-        "status": "ranked",
-        "bestRank": 33,
-        "representative": null,
-        "detail": "Ranked #33"
-      },
-      {
-        "name": "Claude Opus 5",
+        "name": "Claude Opus 4.8",
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
@@ -202,22 +178,49 @@
         "detail": "Ranked #29"
       },
       {
+        "name": "Claude Fable 5",
+        "vendor": "Anthropic",
+        "variants": 1,
+        "status": "ranked",
+        "bestRank": 34,
+        "representative": null,
+        "detail": "Ranked #34"
+      },
+      {
+        "name": "Claude Fable 5.1",
+        "vendor": "Anthropic",
+        "variants": 1,
+        "status": "ranked",
+        "bestRank": 32,
+        "representative": null,
+        "detail": "Ranked #32"
+      },
+      {
+        "name": "Claude Opus 5",
+        "vendor": "Anthropic",
+        "variants": 1,
+        "status": "ranked",
+        "bestRank": 28,
+        "representative": null,
+        "detail": "Ranked #28"
+      },
+      {
         "name": "Claude Opus 5.5",
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 27,
+        "bestRank": 26,
         "representative": null,
-        "detail": "Ranked #27"
+        "detail": "Ranked #26"
       },
       {
         "name": "Claude Sonnet 5",
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 23,
+        "bestRank": 22,
         "representative": null,
-        "detail": "Ranked #23"
+        "detail": "Ranked #22"
       },
       {
         "name": "Gemini 2.5 Flash",
@@ -284,9 +287,9 @@
         "vendor": "Google",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 21,
+        "bestRank": 20,
         "representative": null,
-        "detail": "Ranked #21"
+        "detail": "Ranked #20"
       },
       {
         "name": "Gemini 3.6 Flash",
@@ -308,18 +311,18 @@
         "vendor": "Google",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 10,
+        "bestRank": 9,
         "representative": null,
-        "detail": "Ranked #10"
+        "detail": "Ranked #9"
       },
       {
         "name": "Gemini 3.8 Flash",
         "vendor": "Google",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 9,
+        "bestRank": 8,
         "representative": null,
-        "detail": "Ranked #9"
+        "detail": "Ranked #8"
       },
       {
         "name": "GPT-5",
@@ -455,9 +458,9 @@
         "vendor": "OpenAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 26,
+        "bestRank": 25,
         "representative": null,
-        "detail": "Ranked #26"
+        "detail": "Ranked #25"
       },
       {
         "name": "GPT-5.4 Mini",
@@ -494,9 +497,9 @@
         "vendor": "OpenAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 32,
+        "bestRank": 31,
         "representative": null,
-        "detail": "Ranked #32"
+        "detail": "Ranked #31"
       },
       {
         "name": "GPT-5.6 Luna",
@@ -512,18 +515,18 @@
         "vendor": "OpenAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 28,
+        "bestRank": 27,
         "representative": null,
-        "detail": "Ranked #28"
+        "detail": "Ranked #27"
       },
       {
         "name": "GPT-5.6 Terra",
         "vendor": "OpenAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 24,
+        "bestRank": 23,
         "representative": null,
-        "detail": "Ranked #24"
+        "detail": "Ranked #23"
       },
       {
         "name": "GLM 5.2",
@@ -560,18 +563,18 @@
         "vendor": "Kimi",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 25,
+        "bestRank": 24,
         "representative": null,
-        "detail": "Ranked #25"
+        "detail": "Ranked #24"
       },
       {
         "name": "Muse Spark 1.3",
         "vendor": "Meta",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 11,
+        "bestRank": 10,
         "representative": null,
-        "detail": "Ranked #11"
+        "detail": "Ranked #10"
       }
     ]
   },
@@ -1016,57 +1019,6 @@
     },
     {
       "rank": 8,
-      "id": "model:stepfun:step-5-preview",
-      "name": "Step 5 Preview",
-      "vendor": "StepFun",
-      "vendorSlug": "stepfun",
-      "releaseDate": "2026-09-18",
-      "codingScore": 75.4,
-      "benchmarks": {
-        "codingIndex": {
-          "label": "AA Coding Index",
-          "field": "artificial_analysis_coding_index",
-          "raw": 75.4,
-          "normalized": 75.4,
-          "weight": 1,
-          "effectiveWeight": 1,
-          "present": true
-        }
-      },
-      "benchmarksUsed": [
-        "codingIndex"
-      ],
-      "missingBenchmarks": [],
-      "price": 1.85,
-      "priceBasis": "blended",
-      "priceNote": null,
-      "inputPrice": 1,
-      "outputPrice": 2.7,
-      "value": 40.756757,
-      "estimate": {
-        "kind": "provisional",
-        "note": "Provisional: released 2026-09-18, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (43.7) using the 20 models with the closest Intelligence Index that have both scores: about 75.4 (typical error ±1.6). Replaced automatically once the real score is published.",
-        "sources": [
-          "https://artificialanalysis.ai/models"
-        ]
-      },
-      "variants": [
-        {
-          "id": "094ea3e3-ce41-419e-8bd1-723389663158",
-          "name": "Step 5 Preview",
-          "level": "standard",
-          "codingScore": 75.4,
-          "price": 1.85,
-          "value": 40.756757,
-          "status": "ranked"
-        }
-      ],
-      "headlineLevel": "standard",
-      "averageScore": 75.4,
-      "bestValueLevel": null
-    },
-    {
-      "rank": 9,
       "id": "model:google:gemini-3.8-flash",
       "name": "Gemini 3.8 Flash",
       "vendor": "Google",
@@ -1129,7 +1081,7 @@
       "cursor": "Gemini 3.8 Flash"
     },
     {
-      "rank": 10,
+      "rank": 9,
       "id": "model:google:gemini-3.7-flash",
       "name": "Gemini 3.7 Flash",
       "vendor": "Google",
@@ -1192,7 +1144,7 @@
       "cursor": "Gemini 3.7 Flash"
     },
     {
-      "rank": 11,
+      "rank": 10,
       "id": "model:meta:muse-spark-1.3",
       "name": "Muse Spark 1.3",
       "vendor": "Meta",
@@ -1246,7 +1198,7 @@
       "cursor": "Muse Spark 1.3"
     },
     {
-      "rank": 12,
+      "rank": 11,
       "id": "model:meta:muse-spark-1.2",
       "name": "Muse Spark 1.2",
       "vendor": "Meta",
@@ -1290,7 +1242,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 13,
+      "rank": 12,
       "id": "model:meta:muse-spark-1.1",
       "name": "Muse Spark 1.1",
       "vendor": "Meta",
@@ -1334,7 +1286,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 14,
+      "rank": 13,
       "id": "model:z-ai:glm-5.3",
       "name": "GLM-5.3",
       "vendor": "Z AI",
@@ -1387,7 +1339,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 15,
+      "rank": 14,
       "id": "model:spacexai:grok-4.6",
       "name": "Grok 4.6",
       "vendor": "SpaceXAI",
@@ -1459,7 +1411,7 @@
       "cursor": "Grok 4.6"
     },
     {
-      "rank": 16,
+      "rank": 15,
       "id": "model:spacexai:grok-4.7",
       "name": "Grok 4.7",
       "vendor": "SpaceXAI",
@@ -1520,7 +1472,7 @@
       "cursor": "Grok 4.7"
     },
     {
-      "rank": 17,
+      "rank": 16,
       "id": "model:alibaba:qwen3.8-max-0902",
       "name": "Qwen3.8 Max (0902)",
       "vendor": "Alibaba",
@@ -1564,7 +1516,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 18,
+      "rank": 17,
       "id": "model:spacexai:grok-4.5",
       "name": "Grok 4.5",
       "vendor": "SpaceXAI",
@@ -1609,7 +1561,7 @@
       "cursor": "Grok 4.5"
     },
     {
-      "rank": 19,
+      "rank": 18,
       "id": "model:alibaba:qwen3.8-2.4t-a95b",
       "name": "Qwen3.8 2.4T A95B",
       "vendor": "Alibaba",
@@ -1653,7 +1605,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 20,
+      "rank": 19,
       "id": "model:alibaba:qwen3.8-max",
       "name": "Qwen3.8 Max",
       "vendor": "Alibaba",
@@ -1697,7 +1649,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 21,
+      "rank": 20,
       "id": "model:google:gemini-3.5-flash",
       "name": "Gemini 3.5 Flash",
       "vendor": "Google",
@@ -1760,7 +1712,7 @@
       "cursor": "Gemini 3.5 Flash"
     },
     {
-      "rank": 22,
+      "rank": 21,
       "id": "model:openai:gpt-6-sol",
       "name": "GPT-6 Sol",
       "vendor": "OpenAI",
@@ -1856,7 +1808,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 23,
+      "rank": 22,
       "id": "model:anthropic:claude-sonnet-5",
       "name": "Claude Sonnet 5",
       "vendor": "Anthropic",
@@ -1946,7 +1898,7 @@
       "cursor": "Claude Sonnet 5"
     },
     {
-      "rank": 24,
+      "rank": 23,
       "id": "model:openai:gpt-5.6-terra",
       "name": "GPT-5.6 Terra",
       "vendor": "OpenAI",
@@ -2036,7 +1988,7 @@
       "cursor": "GPT-5.6 Terra"
     },
     {
-      "rank": 25,
+      "rank": 24,
       "id": "model:kimi:kimi-k3",
       "name": "Kimi K3",
       "vendor": "Kimi",
@@ -2090,7 +2042,7 @@
       "cursor": "Kimi K3"
     },
     {
-      "rank": 26,
+      "rank": 25,
       "id": "model:openai:gpt-5.4",
       "name": "GPT-5.4",
       "vendor": "OpenAI",
@@ -2153,7 +2105,7 @@
       "cursor": "GPT-5.4"
     },
     {
-      "rank": 27,
+      "rank": 26,
       "id": "model:anthropic:claude-opus-5.5",
       "name": "Claude Opus 5.5",
       "vendor": "Anthropic",
@@ -2241,7 +2193,7 @@
       "cursor": "Claude Opus 5.5"
     },
     {
-      "rank": 28,
+      "rank": 27,
       "id": "model:openai:gpt-5.6-sol",
       "name": "GPT-5.6 Sol",
       "vendor": "OpenAI",
@@ -2331,7 +2283,7 @@
       "cursor": "GPT-5.6 Sol"
     },
     {
-      "rank": 29,
+      "rank": 28,
       "id": "model:anthropic:claude-opus-5",
       "name": "Claude Opus 5",
       "vendor": "Anthropic",
@@ -2412,7 +2364,7 @@
       "cursor": "Claude Opus 5"
     },
     {
-      "rank": 30,
+      "rank": 29,
       "id": "model:anthropic:claude-opus-4.8",
       "name": "Claude Opus 4.8",
       "vendor": "Anthropic",
@@ -2457,7 +2409,7 @@
       "cursor": "Claude Opus 4.8"
     },
     {
-      "rank": 31,
+      "rank": 30,
       "id": "model:anthropic:claude-opus-4.7",
       "name": "Claude Opus 4.7",
       "vendor": "Anthropic",
@@ -2511,7 +2463,7 @@
       "cursor": "Claude 4.7 Opus"
     },
     {
-      "rank": 32,
+      "rank": 31,
       "id": "model:openai:gpt-5.5",
       "name": "GPT-5.5",
       "vendor": "OpenAI",
@@ -2592,7 +2544,7 @@
       "cursor": "GPT-5.5"
     },
     {
-      "rank": 33,
+      "rank": 32,
       "id": "model:anthropic:claude-fable-5.1",
       "name": "Claude Fable 5.1",
       "vendor": "Anthropic",
@@ -2673,7 +2625,7 @@
       "cursor": "Claude Fable 5.1"
     },
     {
-      "rank": 34,
+      "rank": 33,
       "id": "model:openai:gpt-6-astra",
       "name": "GPT-6 Astra",
       "vendor": "OpenAI",
@@ -2753,7 +2705,7 @@
       "bestValueLevel": null
     },
     {
-      "rank": 35,
+      "rank": 34,
       "id": "model:anthropic:claude-fable-5",
       "name": "Claude Fable 5",
       "vendor": "Anthropic",
@@ -14368,6 +14320,35 @@
           "price": null,
           "value": null,
           "status": "insufficient-benchmarks"
+        }
+      ],
+      "headlineLevel": "standard",
+      "averageScore": null,
+      "bestValueLevel": null
+    },
+    {
+      "id": "model:stepfun:step-5-preview",
+      "name": "Step 5 Preview",
+      "vendor": "StepFun",
+      "releaseDate": "2026-09-18",
+      "estimate": {
+        "kind": "provisional",
+        "note": "Provisional: released 2026-09-18, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (43.7) using the 20 models with the closest Intelligence Index that have both scores: about 75.4 (typical error ±1.6). Replaced automatically once the real score is published.",
+        "sources": [
+          "https://artificialanalysis.ai/models"
+        ]
+      },
+      "reason": "model-filter",
+      "detail": "Excluded by hand (excludeModels in config/scoring.yaml)",
+      "variants": [
+        {
+          "id": "094ea3e3-ce41-419e-8bd1-723389663158",
+          "name": "Step 5 Preview",
+          "level": "standard",
+          "codingScore": null,
+          "price": null,
+          "value": null,
+          "status": "model-filter"
         }
       ],
       "headlineLevel": "standard",
