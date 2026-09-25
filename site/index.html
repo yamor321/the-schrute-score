@@ -4,53 +4,151 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Schrute Score</title>
-  <meta name="description" content="The best AI coding models at a sensible price. Only near-top models qualify; among them, the best price wins. Updated twice a day from Artificial Analysis data.">
+  <meta name="description" content="The best AI coding models at a sensible price. Only near-top models qualify; among them, the best price wins. Models available in Cursor are marked. Updated twice a day from Artificial Analysis data.">
+  <meta name="theme-color" content="#123524">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥬</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..800;1,9..144,500..700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-pointer" viewBox="0 0 16 16"><path d="M3 1.5v12.2l3.2-3.1 2.1 4.6 2.1-1-2.1-4.5h4.4z" fill="currentColor"/></symbol>
+  </svg>
+
   <header class="masthead">
-    <div class="wrap">
-      <p class="eyebrow">The Schrute Score</p>
-      <h1>The best AI coding model, at the most sensible price.</h1>
-      <p class="lede">Only models that are close to the top on coding make the list. No cheap-but-weak picks. Among those, the one that gives you the most for your money wins. Refreshed twice a day.</p>
+    <div class="ledger-strip">
+      <div class="wrap strip-inner">
+        <span>Schrute Farms · Field report on AI coding models</span>
+        <span id="strip-updated">—</span>
+      </div>
+    </div>
+    <div class="wrap masthead-body">
+      <p class="wordmark">The Schrute <em>Score</em></p>
+      <h1>The best coding model,<br>at a <span class="hl">sane</span> price.</h1>
+      <p class="lede">Only models close to the top on coding qualify, so there are no cheap-but-weak picks. Among those, the one that gives you the most for your money ranks first. Models you can use in <strong>Cursor</strong> are marked.</p>
+      <dl class="facts" id="facts" hidden>
+        <div><dt>Models tracked</dt><dd id="fact-tracked">—</dd></div>
+        <div><dt>Passed the bar</dt><dd id="fact-ranked">—</dd></div>
+        <div><dt>Quality bar</dt><dd id="fact-bar">—</dd></div>
+        <div><dt>Ranked &amp; in Cursor</dt><dd id="fact-cursor">—</dd></div>
+      </dl>
     </div>
   </header>
 
   <main class="wrap">
     <div id="status" class="status" role="status">Loading the latest rankings…</div>
 
-    <section id="filters-card" class="card filters-card" hidden aria-labelledby="filters-title">
-      <div class="section-head">
-        <h2 id="filters-title" class="h-small">Vendors</h2>
-        <p class="muted small">Uncheck a vendor to remove its models from the whole page. Your choice is saved in this browser.
-          <button type="button" class="link-btn" data-select="all">Show all</button> ·
-          <button type="button" class="link-btn" data-select="none">Hide all</button></p>
+    <section id="filters-card" class="panel filters-card" hidden aria-labelledby="filters-title">
+      <div class="filters-top">
+        <h2 id="filters-title" class="section-label">Filter</h2>
+        <label class="switch">
+          <input type="checkbox" id="cursor-only">
+          <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+          <span class="switch-text"><svg class="ico"><use href="#i-pointer"/></svg> Only models I can use in Cursor</span>
+        </label>
       </div>
-      <div id="vendor-filters" class="vendor-list" role="group" aria-labelledby="filters-title"></div>
+      <div class="vendors-head">
+        <span class="muted small">Vendors. Uncheck one to remove its models from the whole page. Saved in this browser.</span>
+        <span class="small"><button type="button" class="link-btn" data-select="all">Show all</button> · <button type="button" class="link-btn" data-select="none">Hide all</button></span>
+      </div>
+      <div id="vendor-filters" class="vendor-list" role="group" aria-label="Vendors"></div>
     </section>
 
     <section id="hero" class="hero" hidden aria-labelledby="hero-title">
-      <p class="hero-kicker" id="hero-kicker">Best pick right now</p>
-      <div id="hero-body">
-        <h2 id="hero-title"><span id="hero-name"></span> <span id="hero-new" class="badge-new" hidden>NEW</span></h2>
-        <p class="hero-vendor" id="hero-vendor"></p>
-        <dl class="stats">
-          <div class="stat stat-main"><dt>Value score</dt><dd id="hero-value"></dd></div>
-          <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
-          <div class="stat"><dt>Of the best score</dt><dd id="hero-relative"></dd></div>
-          <div class="stat"><dt>Price / 1M tokens</dt><dd id="hero-price"></dd></div>
-        </dl>
-        <p class="hero-note" id="hero-note"></p>
+      <div class="hero-rank" aria-hidden="true">No.<span>1</span></div>
+      <div class="hero-main">
+        <p class="hero-kicker" id="hero-kicker">Best pick right now</p>
+        <div id="hero-body">
+          <h2 id="hero-title"><span id="hero-name"></span> <span id="hero-badges"></span></h2>
+          <p class="hero-vendor" id="hero-vendor"></p>
+          <dl class="stats">
+            <div class="stat stat-main"><dt>Value score</dt><dd id="hero-value"></dd></div>
+            <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
+            <div class="stat"><dt>Of the best score</dt><dd id="hero-relative"></dd></div>
+            <div class="stat"><dt>Price / 1M tokens</dt><dd id="hero-price"></dd></div>
+          </dl>
+          <p class="hero-note" id="hero-note"></p>
+        </div>
+        <p class="hero-empty" id="hero-empty" hidden>Nothing matches the current filters. Check at least one vendor above.</p>
+        <div id="new-callout" class="new-callout" hidden></div>
       </div>
-      <p class="hero-empty muted" id="hero-empty" hidden>All vendors are hidden. Check at least one vendor above.</p>
-      <div id="new-callout" class="new-callout" hidden></div>
     </section>
 
-    <section id="method" class="card method" aria-labelledby="method-title" hidden>
-      <h2 id="method-title">How this is calculated</h2>
+    <section id="explore" class="panel" hidden aria-labelledby="explore-title">
+      <div class="section-head">
+        <p class="section-num">01</p>
+        <h2 id="explore-title">The ranking</h2>
+        <p class="muted small" id="count-line"></p>
+      </div>
+
+      <div class="table-head">
+        <div class="legend small">
+          <span><span class="badge-cursor"><svg class="ico"><use href="#i-pointer"/></svg>Cursor</span> available in Cursor</span>
+          <span><span class="badge-new">NEW</span> appeared in the latest update</span>
+        </div>
+        <input type="search" id="search" placeholder="Search models…" aria-label="Search models">
+      </div>
+      <div class="table-scroll">
+        <table id="ranked-table" class="data-table">
+          <thead>
+            <tr>
+              <th data-key="rank" class="num" aria-sort="ascending"><button type="button">#</button></th>
+              <th data-key="name"><button type="button">Model</button></th>
+              <th data-key="vendor"><button type="button">Vendor</button></th>
+              <th data-key="codingScore" class="num"><button type="button">Coding score</button></th>
+              <th data-key="relative" class="num"><button type="button">% of best</button></th>
+              <th data-key="coverage" class="num col-coverage"><button type="button">Benchmarks</button></th>
+              <th data-key="price" class="num"><button type="button">Price / 1M</button></th>
+              <th data-key="value" class="num"><button type="button">Value</button></th>
+            </tr>
+          </thead>
+          <tbody id="ranked-body"></tbody>
+          <tbody id="cursor-extra-body" class="extra-body"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="table-empty" hidden>No models match the current filters.</p>
+
+      <div class="charts">
+        <figure class="chart-fig">
+          <figcaption>
+            <span class="section-num">02</span>
+            <strong>Value score, ranked</strong>
+            <span class="muted small">Green bold labels are models you can use in Cursor.</span>
+          </figcaption>
+          <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Horizontal bar chart of models ranked by value score" role="img"></canvas></div>
+          <button type="button" class="btn" id="bar-toggle" hidden></button>
+        </figure>
+        <figure class="chart-fig">
+          <figcaption>
+            <span class="section-num">03</span>
+            <strong>Price vs. coding score</strong>
+            <span class="muted small">Up = better at coding. Left = cheaper (log scale). Bigger = better value. ◆ = in Cursor. Hover a point for the raw numbers.</span>
+          </figcaption>
+          <div class="scatter-wrap"><canvas id="scatter-chart" aria-label="Bubble chart of price versus coding score" role="img"></canvas></div>
+        </figure>
+      </div>
+
+      <details class="excluded">
+        <summary>Excluded / not ranked (<span id="excluded-count">0</span>)</summary>
+        <p class="muted small">These models are in the Artificial Analysis data but aren't ranked. Most fall below the quality bar. Each one lists the reason. Cursor models already shown in the table above aren't repeated here, and neither are vendors you've hidden.</p>
+        <div class="table-scroll">
+          <table id="excluded-table" class="data-table compact">
+            <thead><tr><th>Model</th><th>Vendor</th><th class="num">Coding score</th><th>Reason</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section id="method" class="panel method" aria-labelledby="method-title" hidden>
+      <div class="section-head">
+        <p class="section-num">04</p>
+        <h2 id="method-title">How this is calculated</h2>
+      </div>
       <ol class="steps">
         <li>
           <h3>A coding score from independent benchmarks</h3>
@@ -72,67 +170,21 @@
           <p>Every model that cleared the bar is already strong. What separates them is how much you pay for that strength. If two models score 76 and 80, and one costs $2 while the other costs $30, the first wins: you give up a few points and pay 15 times less. The best model overall ranks first only if nothing close to it is much cheaper.</p>
         </li>
         <li>
+          <h3>Cursor models</h3>
+          <p id="method-cursor"></p>
+        </li>
+        <li>
           <h3>Who is left out, and why</h3>
           <p id="method-exclusions"></p>
         </li>
       </ol>
-    </section>
-
-    <section id="explore" class="card" hidden aria-labelledby="explore-title">
-      <div class="section-head">
-        <h2 id="explore-title">Rankings</h2>
-        <p class="muted" id="count-line"></p>
-      </div>
-
-      <h3 class="chart-title">Value score, ranked</h3>
-      <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Horizontal bar chart of models ranked by value score" role="img"></canvas></div>
-      <button type="button" class="btn" id="bar-toggle" hidden></button>
-
-      <h3 class="chart-title">Price vs. coding score</h3>
-      <p class="muted chart-sub">Up = better at coding. Left = cheaper (log scale). Bigger bubble = better value. Hover or tap a bubble to see the raw numbers.</p>
-      <div class="scatter-wrap"><canvas id="scatter-chart" aria-label="Bubble chart of price versus coding score" role="img"></canvas></div>
-
-      <div class="table-head">
-        <h3 class="chart-title">All ranked models</h3>
-        <input type="search" id="search" placeholder="Search models…" aria-label="Search models">
-      </div>
-      <div class="table-scroll">
-        <table id="ranked-table" class="data-table">
-          <thead>
-            <tr>
-              <th data-key="rank" class="num" aria-sort="ascending"><button type="button">Rank</button></th>
-              <th data-key="name"><button type="button">Model</button></th>
-              <th data-key="vendor"><button type="button">Vendor</button></th>
-              <th data-key="codingScore" class="num"><button type="button">Coding score</button></th>
-              <th data-key="relative" class="num"><button type="button">% of best</button></th>
-              <th data-key="coverage" class="num col-coverage"><button type="button">Benchmarks</button></th>
-              <th data-key="price" class="num"><button type="button">Price / 1M</button></th>
-              <th data-key="value" class="num"><button type="button">Value</button></th>
-              <th data-key="isNew"><button type="button">New</button></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="muted" id="table-empty" hidden>No models match the current filters.</p>
-
-      <details class="excluded">
-        <summary>Excluded / not ranked (<span id="excluded-count">0</span>)</summary>
-        <p class="muted">These models are in the Artificial Analysis data but aren't ranked. Most fall below the quality bar. Each one lists the reason. Vendors you've hidden are left out here too.</p>
-        <div class="table-scroll">
-          <table id="excluded-table" class="data-table compact">
-            <thead><tr><th>Model</th><th>Vendor</th><th class="num">Coding score</th><th>Reason</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </details>
     </section>
   </main>
 
   <footer class="footer">
     <div class="wrap">
       <p>Last updated <time id="updated">—</time>.</p>
-      <p>Data from <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis (artificialanalysis.ai)</a>. The value score is this project's own calculation, not an Artificial Analysis metric.</p>
+      <p>Data from <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis (artificialanalysis.ai)</a>. The value score is this project's own calculation, not an Artificial Analysis metric. Cursor model list from <a href="https://cursor.com/docs/models" rel="noopener">cursor.com/docs/models</a>, maintained by hand. This site isn't affiliated with Cursor.</p>
       <p><a href="https://github.com/yamor321/the-schrute-score" rel="noopener">Source code, methodology &amp; scoring config on GitHub</a></p>
     </div>
   </footer>

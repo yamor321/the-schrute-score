@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { ScoringConfig } from './config.js';
+import type { CursorSummary } from './cursor.js';
 import type { ExcludedModel, QualityFloor, RankedModel } from './scoring.js';
 
 /** The document written to data/latest.json and data/history/*.json, and read by the dashboard. */
@@ -10,6 +11,8 @@ export interface Snapshot {
   config: ScoringConfig;
   counts: { fetched: number; ranked: number; excluded: number };
   quality: QualityFloor | null;
+  /** Which models are available in Cursor and how each one fared. */
+  cursor: CursorSummary | null;
   models: RankedModel[];
   excluded: ExcludedModel[];
 }

@@ -15,6 +15,7 @@ const makeSnapshot = (generatedAt = '2026-09-25T05:00:00.000Z'): Snapshot => {
     config: defaultConfig(),
     counts: { fetched: 7, ranked: ranked.length, excluded: excluded.length },
     quality,
+    cursor: null,
     models: ranked,
     excluded,
   };

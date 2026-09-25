@@ -40,6 +40,8 @@ export interface RankedModel {
   value: number;
   /** Set by new-model detection (see newModels.ts). */
   isNew?: boolean;
+  /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
+  cursor?: string;
 }
 
 export type ExclusionReason = 'vendor-filter' | 'insufficient-benchmarks' | 'missing-price' | 'below-quality-floor';
@@ -54,7 +56,12 @@ export interface ExcludedModel {
   detail: string;
   /** Present when the model got far enough to be scored. */
   codingScore?: number;
+  /** Present when the model also had a usable price (i.e. it only missed the quality floor). */
+  price?: number;
+  value?: number;
   isNew?: boolean;
+  /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
+  cursor?: string;
 }
 
 export interface QualityFloor {
@@ -252,6 +259,8 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
           `Excluded: coding score ${r.codingScore.toFixed(1)} is below the quality floor of ${minScore.toFixed(1)} ` +
           `(${Math.round(cfg.qualityFloor * 100)}% of the best, ${best.codingScore.toFixed(1)})`,
         codingScore: r.codingScore,
+        price: r.price,
+        value: r.value,
       });
     }
   }

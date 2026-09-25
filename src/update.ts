@@ -8,6 +8,7 @@
 import { appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadScoringConfig } from './config.js';
+import { applyCursor, loadCursorConfig } from './cursor.js';
 import { markNewModels } from './newModels.js';
 import { hasMeaningfulChange, readSnapshot, runStamp, writeRun, type Snapshot } from './persist.js';
 import { computeValueTable } from './scoring.js';
@@ -24,6 +25,7 @@ function setActionOutput(name: string, value: string) {
 
 async function main() {
   const cfg = loadScoringConfig();
+  const cursorCfg = loadCursorConfig();
   const rawBody = await fetchRaw();
   const models = parseModels(rawBody);
   const table = computeValueTable(models, cfg);
@@ -33,7 +35,7 @@ async function main() {
 
   const latestPath = join(DATA_DIR, 'latest.json');
   const previous = readSnapshot(latestPath);
-  const marked = markNewModels(table, previous);
+  const { table: marked, cursor } = applyCursor(markNewModels(table, previous), cursorCfg);
 
   const now = new Date();
   const snapshot: Snapshot = {
@@ -42,9 +44,12 @@ async function main() {
     config: cfg,
     counts: { fetched: models.length, ranked: marked.ranked.length, excluded: marked.excluded.length },
     quality: table.quality,
+    cursor,
     models: marked.ranked,
     excluded: marked.excluded,
   };
+  const cursorRanked = cursor.models.filter((m) => m.status === 'ranked').length;
+  console.log(`Cursor: ${cursor.models.length} models listed, ${cursorRanked} ranked.`);
 
   const newCount = [...marked.ranked, ...marked.excluded].filter((m) => m.isNew).length;
   console.log(

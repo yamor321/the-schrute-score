@@ -120,6 +120,27 @@ This can't be larger than the number of weighted benchmarks. The config is valid
 
 ---
 
+## Cursor models
+
+Models you can pick in [Cursor](https://cursor.com/docs/models) are marked with a **Cursor** badge. A switch at the top of the dashboard ("Only models I can use in Cursor") limits the whole page to them. The hero then shows the best pick you can actually use in Cursor.
+
+The list is kept by hand in [`config/cursor-models.yaml`](config/cursor-models.yaml), because Cursor has no public API for it. When Cursor adds or removes a model, edit the list and commit.
+
+```yaml
+models:
+  - { name: Claude Opus 5 }                              # matched automatically
+  - { name: Gemini 3 Pro, aa: Gemini 3 Pro Preview }     # AA uses a different name
+  - { name: Composer 2.5, vendor: Cursor }               # not tracked by AA
+```
+
+**No duplicates:**
+- **Name matching.** It ignores word order, dashes and anything in parentheses. "Claude 4.5 Opus" in Cursor matches "Claude Opus 4.5 (Reasoning)" in Artificial Analysis.
+- **Variants.** Every effort/reasoning variant of a Cursor model is marked, since Cursor lets you pick the effort. Cursor's own "(Fast)", "1M" and "500k" entries are listed once.
+- **Ranked models** just get the badge. They are never added a second time.
+- **Cursor models that aren't ranked** appear once each at the end of the table, under "Also in Cursor, but not ranked", with the reason: below the bar (showing the best variant's score), no price, no Coding Index yet, or not tracked by Artificial Analysis at all (e.g. Composer). They are not repeated in the "Excluded" list.
+
+---
+
 ## Running locally
 
 Requires Node.js 20+ (CI uses 24).
@@ -153,6 +174,7 @@ npm run preview      # http://localhost:5173
 | `src/benchmarks.ts` | Config benchmark names → API fields and scales |
 | `src/scoring.ts` | The ranking methodology |
 | `src/newModels.ts` | NEW flag (diff against the previous snapshot) |
+| `src/cursor.ts` | Marks models available in Cursor (from `config/cursor-models.yaml`) |
 | `src/persist.ts` | Writes `data/raw`, `data/history`, `data/latest.json` |
 | `src/update.ts` | Pipeline entry point (`npm run update`) |
 | `scripts/copy-data.ts` | Pre-deploy copy to `site/data.json` |
@@ -196,7 +218,8 @@ Still to do by the repo owner:
 - **Variants are separate rows.** Artificial Analysis lists reasoning modes and effort levels as separate models (e.g. "(high)" vs "(low)"). They're ranked individually.
 - **The repo grows over time.** Each meaningful update commits the raw response (about 0.6 MB, compressed well by git) plus the computed table. Old files in `data/raw/` and `data/history/` can be pruned without affecting the dashboard.
 - **Cron runs in UTC**, so the Israel-time schedule shifts by an hour at each DST change. GitHub also sometimes delays scheduled runs.
-- **Chart.js loads from a CDN (jsDelivr).** If it's blocked, the page still shows the hero, methodology and full table, just without charts.
+- **Chart.js loads from a CDN (jsDelivr), and fonts from Google Fonts.** If either is blocked, the page still works: it shows the table without charts, or uses system fonts.
+- **The Cursor list is maintained by hand.** It can go stale between edits. The "checked" date in `config/cursor-models.yaml` shows when it was last compared with Cursor's docs. Cursor's own Composer model isn't tracked by Artificial Analysis, so it can't be scored. This project isn't affiliated with Cursor.
 
 ---
 
