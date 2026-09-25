@@ -21,5 +21,8 @@ export const defaultConfig = (overrides: Partial<ScoringConfig> = {}): ScoringCo
   minBenchmarksRequired: 1,
   qualityFloor: 0,
   provisionalMaxAgeDays: 0,
+  // fixCostUsd 0 ⇒ cost per task ∝ price ÷ score, i.e. the plain score-per-dollar order.
+  // Tests that exercise the time term set their own taskModel.
+  taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 0 },
   ...overrides,
 });

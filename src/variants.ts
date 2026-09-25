@@ -11,11 +11,11 @@ import type { ExcludedModel, RankedModel, ValueTable } from './scoring.js';
  *     you turn it up). A plain average would be unfair: AA tests a different
  *     set of levels per model (some include "low"/"non-reasoning", some
  *     don't), so the average mostly reflects which levels were tested.
- *   - Value = that level's coding score ÷ its price.
- *   - Every level is kept in `variants` (score, price, value, status) for the
+ *   - Cost per finished task = that level's (see scoring.ts `taskCost`).
+ *   - Every level is kept in `variants` (score, price, cost, status) for the
  *     tooltip, plus the average over tested levels, and `bestValueLevel`
- *     when a different level that also clears the bar gives clearly more per
- *     dollar (e.g. a level with a promotional price).
+ *     when a different level that also clears the bar is clearly cheaper per
+ *     finished task (e.g. a level with a promotional price).
  *
  * Parenthesized text only counts as a level when every comma-separated part
  * is an effort/reasoning word ("xhigh", "Max Effort", "Non-reasoning", "…
@@ -51,6 +51,8 @@ export interface VariantSummary {
   codingScore: number | null;
   price: number | null;
   value: number | null;
+  /** Cost per finished task at the configured defaults (null when unpriced/unscored). */
+  effectiveCost: number | null;
   status: VariantStatus;
 }
 
@@ -61,7 +63,7 @@ export interface ModelGroupInfo {
   headlineLevel: string;
   /** Mean coding score over the levels that have one. */
   averageScore: number | null;
-  /** Set when another level (also above the bar) gives ≥5% more value than the headline level. */
+  /** Set when another level (also above the bar) costs ≥5% less per finished task than the headline level. */
   bestValueLevel: string | null;
 }
 
@@ -95,17 +97,21 @@ export function groupVariants(table: ValueTable): ValueTable {
         codingScore: row.codingScore ?? null,
         price: 'price' in row && row.price !== undefined ? row.price : null,
         value: 'value' in row && row.value !== undefined ? row.value : null,
+        effectiveCost: 'effectiveCost' in row && row.effectiveCost !== undefined ? row.effectiveCost : null,
         status,
       }))
-      .sort((a, b) => (b.codingScore ?? -1) - (a.codingScore ?? -1) || (b.value ?? -1) - (a.value ?? -1));
+      .sort(
+        (a, b) =>
+          (b.codingScore ?? -1) - (a.codingScore ?? -1) || (a.effectiveCost ?? Infinity) - (b.effectiveCost ?? Infinity),
+      );
     const scored = variants.filter((v) => v.codingScore !== null).map((v) => v.codingScore!);
     const averageScore = scored.length ? round(scored.reduce((s, x) => s + x, 0) / scored.length) : null;
     for (const v of variants) familyOf.set(v.name, base);
 
     const rankedRows = rows.filter((r) => r.status === 'ranked').map((r) => r.row as RankedModel);
     if (rankedRows.length) {
-      const headline = [...rankedRows].sort((a, b) => b.codingScore - a.codingScore || b.value - a.value)[0]!;
-      const bestValue = [...rankedRows].sort((a, b) => b.value - a.value)[0]!;
+      const headline = [...rankedRows].sort((a, b) => b.codingScore - a.codingScore || a.effectiveCost - b.effectiveCost)[0]!;
+      const bestValue = [...rankedRows].sort((a, b) => a.effectiveCost - b.effectiveCost)[0]!;
       const { isNew: _n, ...rest } = headline;
       ranked.push({
         ...rest,
@@ -115,7 +121,9 @@ export function groupVariants(table: ValueTable): ValueTable {
         headlineLevel: levelLabel(splitVariant(headline.name).level),
         averageScore,
         bestValueLevel:
-          bestValue !== headline && bestValue.value >= headline.value * 1.05 ? levelLabel(splitVariant(bestValue.name).level) : null,
+          bestValue !== headline && bestValue.effectiveCost <= headline.effectiveCost * 0.95
+            ? levelLabel(splitVariant(bestValue.name).level)
+            : null,
       });
       continue;
     }
@@ -141,7 +149,7 @@ export function groupVariants(table: ValueTable): ValueTable {
     });
   }
 
-  ranked.sort((a, b) => b.value - a.value || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
+  ranked.sort((a, b) => a.effectiveCost - b.effectiveCost || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
   const order: Record<ExcludedModel['reason'], number> = {
     'below-quality-floor': 0,
     'missing-price': 1,

@@ -43,7 +43,19 @@ qualityFloor: 0.85
 # Estimates never set the quality bar. 0 = off.
 provisionalMaxAgeDays: 60
 
-# Which price figure to divide the coding score by to get "value".
+# Ranking metric: COST PER FINISHED TASK (lower = better).
+#   success chance p = coding score / 100
+#   cost = (price per 1M tokens × tokensPerTaskMillions + fixCostUsd × (1 − p)) / p
+# A smarter model fails less, so you re-prompt/fix less (fixCostUsd) and
+# re-run less (tokens ÷ p). Visitors can change both on the dashboard;
+# these are the defaults.
+#   tokensPerTaskMillions: 0.5 = a ~500K-token agentic coding task
+#   fixCostUsd: what each failed attempt costs you in time (review, re-prompt, fix)
+taskModel:
+  tokensPerTaskMillions: 0.5
+  fixCostUsd: 50
+
+# Which price figure (per 1M tokens) to use.
 #   blended = (input price + output price) / 2
 #   input   = input price per million tokens only
 #   output  = output price per million tokens only

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Schrute Score</title>
-  <meta name="description" content="The best AI coding models at a sensible price. Only near-top models qualify; among them, the best price wins. Models available in Cursor are marked. Updated twice a day from Artificial Analysis data.">
+  <meta name="description" content="Which AI coding model gets your tasks done for the least money, counting your time fixing its mistakes. Near-top models only; models in Cursor are marked. Updated twice a day from Artificial Analysis data.">
   <meta name="theme-color" content="#123524">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥬</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,54 +28,63 @@
     </div>
     <div class="wrap masthead-body">
       <p class="wordmark">The Schrute <em>Score</em></p>
-      <h1>The best coding model,<br>at a <span class="hl">sane</span> price.</h1>
-      <p class="lede">Only models close to the top on coding qualify, so there are no cheap-but-weak picks. Among those, the one that gives you the most for your money ranks first. Models you can use in <strong>Cursor</strong> are marked.</p>
+      <h1>The best coding model, at a <span class="hl">sane</span> price.</h1>
+      <p class="lede">Ranked by what a finished task really costs you: the tokens, plus your time fixing a model's mistakes.<span class="hide-sm"> Smarter models fail less, so they can win even when they cost more per token.</span></p>
       <dl class="facts" id="facts" hidden>
-        <div><dt>Models tracked</dt><dd id="fact-tracked">—</dd></div>
-        <div><dt>Passed the bar</dt><dd id="fact-ranked">—</dd></div>
+        <div><dt>Tracked</dt><dd id="fact-tracked">—</dd></div>
+        <div><dt>Ranked</dt><dd id="fact-ranked">—</dd></div>
         <div><dt>Quality bar</dt><dd id="fact-bar">—</dd></div>
-        <div><dt>Ranked &amp; in Cursor</dt><dd id="fact-cursor">—</dd></div>
+        <div><dt>In Cursor</dt><dd id="fact-cursor">—</dd></div>
       </dl>
     </div>
   </header>
 
+  <div class="toolbar" id="toolbar" hidden>
+    <div class="wrap toolbar-inner">
+      <label class="switch" title="Show only models you can pick in Cursor">
+        <input type="checkbox" id="cursor-only">
+        <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+        <span class="switch-text"><svg class="ico"><use href="#i-pointer"/></svg>Cursor only</span>
+      </label>
+
+      <details class="pop" id="pop-vendors">
+        <summary>Vendors <span class="pill-val" id="vendor-summary">all</span></summary>
+        <div class="pop-panel">
+          <div class="pop-head">
+            <span class="muted small">Uncheck to remove a vendor's models from the page.</span>
+            <span class="small"><button type="button" class="link-btn" data-select="all">All</button> · <button type="button" class="link-btn" data-select="none">None</button></span>
+          </div>
+          <div id="vendor-filters" class="vendor-list" role="group" aria-label="Vendors"></div>
+        </div>
+      </details>
+
+      <details class="pop" id="pop-task">
+        <summary>Your time <span class="pill-val" id="task-summary">—</span></summary>
+        <div class="pop-panel">
+          <p class="small muted pop-lead">How much a model's mistake costs you: each failed attempt means re-prompting, reviewing and fixing. The higher this is, the more a smarter model is worth.</p>
+          <label class="field">
+            <span>Your time per failed attempt: <output id="fix-out">$50</output></span>
+            <input type="range" id="fix-cost" min="0" max="200" step="5" value="50">
+          </label>
+          <label class="field">
+            <span>Tokens a typical task uses</span>
+            <select id="task-tokens">
+              <option value="0.1">100K (small edits)</option>
+              <option value="0.25">250K</option>
+              <option value="0.5">500K (typical agent task)</option>
+              <option value="1">1M (large refactors)</option>
+            </select>
+          </label>
+          <button type="button" class="link-btn small" id="task-reset">Reset to defaults</button>
+        </div>
+      </details>
+
+      <input type="search" id="search" placeholder="Search…" aria-label="Search models">
+    </div>
+  </div>
+
   <main class="wrap">
     <div id="status" class="status" role="status">Loading the latest rankings…</div>
-
-    <section id="filters-card" class="panel filters-card" hidden aria-labelledby="filters-title">
-      <div class="filters-top">
-        <h2 id="filters-title" class="section-label">Filter</h2>
-        <label class="switch">
-          <input type="checkbox" id="cursor-only">
-          <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-          <span class="switch-text"><svg class="ico"><use href="#i-pointer"/></svg> Only models I can use in Cursor</span>
-        </label>
-      </div>
-      <div class="vendors-head">
-        <span class="muted small">Vendors. Uncheck one to remove its models from the whole page. Saved in this browser.</span>
-        <span class="small"><button type="button" class="link-btn" data-select="all">Show all</button> · <button type="button" class="link-btn" data-select="none">Hide all</button></span>
-      </div>
-      <div id="vendor-filters" class="vendor-list" role="group" aria-label="Vendors"></div>
-    </section>
-
-    <section id="hero" class="hero" hidden aria-labelledby="hero-title">
-      <div class="hero-rank" aria-hidden="true">No.<span>1</span></div>
-      <div class="hero-main">
-        <p class="hero-kicker" id="hero-kicker">Best pick right now</p>
-        <div id="hero-body">
-          <h2 id="hero-title"><span id="hero-name"></span> <span id="hero-badges"></span></h2>
-          <p class="hero-vendor" id="hero-vendor"></p>
-          <dl class="stats">
-            <div class="stat stat-main"><dt>Value score</dt><dd id="hero-value"></dd></div>
-            <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
-            <div class="stat"><dt>Of the best score</dt><dd id="hero-relative"></dd></div>
-            <div class="stat"><dt>Price / 1M tokens</dt><dd id="hero-price"></dd></div>
-          </dl>
-          <p class="hero-note" id="hero-note"></p>
-        </div>
-        <p class="hero-empty" id="hero-empty" hidden>Nothing matches the current filters. Check at least one vendor above.</p>
-      </div>
-    </section>
 
     <section id="explore" class="panel" hidden aria-labelledby="explore-title">
       <div class="section-head">
@@ -84,27 +93,24 @@
         <p class="muted small" id="count-line"></p>
       </div>
 
-      <div class="table-head">
-        <div class="legend small">
-          <span><span class="badge-cursor"><svg class="ico"><use href="#i-pointer"/></svg>Cursor</span> available in Cursor</span>
-          <span><span class="badge-est">EST.</span> estimated score (not in the Artificial Analysis API)</span>
-          <span><span class="badge-est badge-prov">PROVISIONAL</span> new model, Coding Index not published yet (estimated)</span>
-          <span class="muted">Hover a model name to see all of its effort levels.</span>
-        </div>
-        <input type="search" id="search" placeholder="Search models…" aria-label="Search models">
+      <div class="legend small">
+        <span><span class="badge-cursor"><svg class="ico"><use href="#i-pointer"/></svg>Cursor</span> in Cursor</span>
+        <span><span class="badge-est badge-prov">PROVISIONAL</span> new, score estimated</span>
+        <span><span class="badge-est">EST.</span> not in the API, estimated</span>
+        <span class="muted hide-sm">Hover a name for every effort level.</span>
       </div>
+
       <div class="table-scroll">
         <table id="ranked-table" class="data-table">
           <thead>
             <tr>
               <th data-key="rank" class="num" aria-sort="ascending"><button type="button">#</button></th>
               <th data-key="name"><button type="button">Model</button></th>
-              <th data-key="vendor"><button type="button">Vendor</button></th>
-              <th data-key="codingScore" class="num"><button type="button">Coding score</button></th>
-              <th data-key="relative" class="num"><button type="button">% of best</button></th>
-              <th data-key="coverage" class="num col-coverage"><button type="button">Benchmarks</button></th>
-              <th data-key="price" class="num"><button type="button">Price / 1M</button></th>
-              <th data-key="value" class="num"><button type="button">Value</button></th>
+              <th data-key="vendor" class="col-vendor"><button type="button">Vendor</button></th>
+              <th data-key="codingScore" class="num"><button type="button">Score</button></th>
+              <th data-key="relative" class="num col-rel"><button type="button">% of best</button></th>
+              <th data-key="price" class="num"><button type="button">$/1M tok</button></th>
+              <th data-key="cost" class="num"><button type="button">$/task</button></th>
             </tr>
           </thead>
           <tbody id="ranked-body"></tbody>
@@ -117,28 +123,49 @@
         <figure class="chart-fig">
           <figcaption>
             <span class="section-num">02</span>
-            <strong>Value score, ranked</strong>
-            <span class="muted small">Green bold labels are models you can use in Cursor.</span>
+            <strong>Cost per finished task</strong>
+            <span class="muted small">Shorter is better. <span class="key key-tok"></span> tokens (retries included) · <span class="key key-time"></span> your time fixing failures. Green bold names are in Cursor.</span>
           </figcaption>
-          <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Horizontal bar chart of models ranked by value score" role="img"></canvas></div>
+          <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Stacked bar chart of cost per finished task" role="img"></canvas></div>
           <button type="button" class="btn" id="bar-toggle" hidden></button>
         </figure>
         <figure class="chart-fig">
           <figcaption>
             <span class="section-num">03</span>
             <strong>Price vs. coding score</strong>
-            <span class="muted small">Up = better at coding. Left = cheaper (log scale). Bigger = better value. ◆ = in Cursor. Hover a point for the raw numbers.</span>
+            <span class="muted small">Up = better at coding. Left = cheaper per token (log scale). Bigger = cheaper per finished task. ◆ = in Cursor.</span>
           </figcaption>
           <div class="scatter-wrap"><canvas id="scatter-chart" aria-label="Bubble chart of price versus coding score" role="img"></canvas></div>
         </figure>
       </div>
+    </section>
 
+    <section id="hero" class="hero" hidden aria-labelledby="hero-title">
+      <div class="hero-rank" aria-hidden="true">No.<span>1</span></div>
+      <div class="hero-main">
+        <p class="hero-kicker" id="hero-kicker">Best pick right now</p>
+        <div id="hero-body">
+          <h2 id="hero-title"><span id="hero-name"></span> <span id="hero-badges"></span></h2>
+          <p class="hero-vendor" id="hero-vendor"></p>
+          <dl class="stats">
+            <div class="stat stat-main"><dt>Per finished task</dt><dd id="hero-cost"></dd></div>
+            <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
+            <div class="stat"><dt>Of the best score</dt><dd id="hero-relative"></dd></div>
+            <div class="stat"><dt>$ / 1M tokens</dt><dd id="hero-price"></dd></div>
+          </dl>
+          <p class="hero-note" id="hero-note"></p>
+        </div>
+        <p class="hero-empty" id="hero-empty" hidden>Nothing matches the current filters.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="excluded-panel" hidden>
       <details class="excluded">
         <summary>Excluded / not ranked (<span id="excluded-count">0</span>)</summary>
-        <p class="muted small">These models are in the Artificial Analysis data but aren't ranked. Most fall below the quality bar. Each one lists the reason. Cursor models already shown in the table above aren't repeated here, and neither are vendors you've hidden.</p>
+        <p class="muted small">These models are in the Artificial Analysis data but aren't ranked. Most fall below the quality bar. Each one lists the reason. Cursor models already shown in the table aren't repeated, and neither are vendors you've hidden.</p>
         <div class="table-scroll">
           <table id="excluded-table" class="data-table compact">
-            <thead><tr><th>Model</th><th>Vendor</th><th class="num">Coding score</th><th>Reason</th></tr></thead>
+            <thead><tr><th>Model</th><th>Vendor</th><th class="num">Score</th><th>Reason</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -159,24 +186,23 @@
         </li>
         <li>
           <h3>One row per model, not per effort level</h3>
-          <p>Artificial Analysis tests many models at several effort levels (low, medium, high, xhigh, max, non-reasoning). An effort level is a setting you change per task inside the same model, so each model appears once. It's scored at its <strong>best</strong> level: what it can do when you turn it up. A plain average would be unfair, because each model is tested at a different set of levels. Hover a model name to see every level's score, price and value, plus the average. If one level gives clearly more per dollar (for example because it's discounted), that's noted there.</p>
+          <p>Many models are tested at several effort levels (low, medium, high, xhigh, max). That's a setting you change per task inside the same model, so each model appears once, scored at its <strong>best</strong> level. A plain average would be unfair, because each model is tested at a different set of levels. Hover a model name to see every level's score, price and cost per task.</p>
         </li>
         <li>
           <h3>Brand-new models don't wait</h3>
-          <p>Artificial Analysis usually publishes a new model's general Intelligence Index within a day, but its Coding Index can take longer. So a model released in the last 60 days without a Coding Index gets a <span class="badge-est badge-prov">PROVISIONAL</span> estimate. It's based on the models with the most similar Intelligence Index, and shows its typical error. The estimate is replaced automatically as soon as the real score is published, and estimates never set the quality bar.</p>
+          <p>Artificial Analysis usually publishes a new model's general Intelligence Index within a day, but its Coding Index can take longer. A model released in the last 60 days without one gets a <span class="badge-est badge-prov">PROVISIONAL</span> estimate from the models with the most similar Intelligence Index. It's replaced automatically once the real score is out, and it never sets the quality bar.</p>
         </li>
         <li>
           <h3>Only near-top models qualify</h3>
           <p id="method-floor"></p>
         </li>
         <li>
-          <h3>A price per million tokens</h3>
+          <h3>What a finished task costs you</h3>
+          <p class="formula">cost per task = (price × tokens + your time × failure chance) ÷ success chance</p>
+          <p>The cheapest model per token isn't the cheapest to work with. A weaker model gets more tasks wrong, and every miss costs you a re-prompt, a review and a fix, plus another run's tokens. We treat the coding score as the chance a model gets a task right first time (81 ⇒ 81%). Dividing by that chance counts the retries.</p>
+          <p id="method-example"></p>
           <p id="method-price"></p>
-        </li>
-        <li>
-          <h3>Among the qualifiers, value decides</h3>
-          <p class="formula"><span>value</span> = <span>coding score</span> ÷ <span>price per 1M tokens</span></p>
-          <p>Every model that cleared the bar is already strong. What separates them is how much you pay for that strength. If two models score 76 and 80, and one costs $2 while the other costs $30, the first wins: you give up a few points and pay 15 times less. The best model overall ranks first only if nothing close to it is much cheaper.</p>
+          <p>Change "Your time" at the top of the page and the whole ranking updates. At $0 per fix it's pure price per point; the more your time is worth, the more a smarter model pays for itself.</p>
         </li>
         <li>
           <h3>Cursor models</h3>
@@ -196,7 +222,7 @@
   <footer class="footer">
     <div class="wrap">
       <p>Last updated <time id="updated">—</time>.</p>
-      <p>Data from <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis (artificialanalysis.ai)</a>. The value score is this project's own calculation, not an Artificial Analysis metric. Cursor model list from <a href="https://cursor.com/docs/models" rel="noopener">cursor.com/docs/models</a>, maintained by hand. This site isn't affiliated with Cursor.</p>
+      <p>Data from <a href="https://artificialanalysis.ai" rel="noopener">Artificial Analysis (artificialanalysis.ai)</a>. The cost-per-task ranking is this project's own calculation, not an Artificial Analysis metric. Cursor model list from <a href="https://cursor.com/docs/models" rel="noopener">cursor.com/docs/models</a>, maintained by hand. Not affiliated with Cursor.</p>
       <p><a href="https://github.com/yamor321/the-schrute-score" rel="noopener">Source code, methodology &amp; scoring config on GitHub</a></p>
     </div>
   </footer>

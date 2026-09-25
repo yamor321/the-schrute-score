@@ -14,7 +14,18 @@ export interface ScoringConfig {
   qualityFloor: number;
   /** New models (released within this many days) without a Coding Index get a provisional estimate. 0 = off. */
   provisionalMaxAgeDays: number;
+  /** Inputs to "cost per finished task", the ranking metric (see scoring.ts `taskCost`). */
+  taskModel: TaskModel;
 }
+
+export interface TaskModel {
+  /** Tokens (in millions) a typical coding task burns. */
+  tokensPerTaskMillions: number;
+  /** USD value of your time each time a model gets a task wrong (re-prompt, review, fix). */
+  fixCostUsd: number;
+}
+
+export const DEFAULT_TASK_MODEL: TaskModel = { tokensPerTaskMillions: 0.5, fixCostUsd: 50 };
 
 const PRICE_BASES: readonly PriceBasis[] = ['blended', 'input', 'output'];
 
@@ -70,6 +81,19 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
     throw new Error('provisionalMaxAgeDays must be a whole number ≥ 0 (0 turns provisional estimates off)');
   }
 
+  const tm = (c.taskModel ?? {}) as Record<string, unknown>;
+  if (tm === null || typeof tm !== 'object' || Array.isArray(tm)) {
+    throw new Error('taskModel must be a mapping with tokensPerTaskMillions and fixCostUsd');
+  }
+  const tokensPerTaskMillions = tm.tokensPerTaskMillions ?? DEFAULT_TASK_MODEL.tokensPerTaskMillions;
+  if (typeof tokensPerTaskMillions !== 'number' || !Number.isFinite(tokensPerTaskMillions) || tokensPerTaskMillions <= 0) {
+    throw new Error('taskModel.tokensPerTaskMillions must be a number above 0, e.g. 0.5 for 500K tokens');
+  }
+  const fixCostUsd = tm.fixCostUsd ?? DEFAULT_TASK_MODEL.fixCostUsd;
+  if (typeof fixCostUsd !== 'number' || !Number.isFinite(fixCostUsd) || fixCostUsd < 0) {
+    throw new Error('taskModel.fixCostUsd must be a number ≥ 0 (USD per failed attempt)');
+  }
+
   return {
     excludeVendors: vendors,
     excludeModels,
@@ -78,6 +102,7 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
     minBenchmarksRequired: min,
     qualityFloor,
     provisionalMaxAgeDays,
+    taskModel: { tokensPerTaskMillions, fixCostUsd },
   };
 }
 

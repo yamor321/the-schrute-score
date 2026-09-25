@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseScoringConfig, loadScoringConfig } from '../src/config.js';
-import { computeValueTable } from '../src/scoring.js';
+import { computeValueTable, taskCost } from '../src/scoring.js';
 import { defaultConfig, fixtureModels } from './helpers.js';
 
 const byName = <T extends { name: string }>(rows: T[], name: string) => rows.find((r) => r.name === name);
@@ -156,6 +156,34 @@ describe('computeValueTable', () => {
     });
   });
 
+  describe('cost per finished task', () => {
+    it('computes tokens (retries included) and your time for failures', () => {
+      // Opus 5.5 example from the README: score 80.9, $12/1M, 0.5M tokens, $50 per fix.
+      const c = taskCost(80.9, 12, { tokensPerTaskMillions: 0.5, fixCostUsd: 50 });
+      expect(c.tokens).toBeCloseTo((12 * 0.5) / 0.809, 5); // 7.42
+      expect(c.time).toBeCloseTo((50 * 0.191) / 0.809, 5); // 11.80
+      expect(c.total).toBeCloseTo(19.22, 2);
+    });
+
+    it('golden fixture: pricing in your time lifts the stronger model', () => {
+      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 } }));
+      // Hand-computed (p = score/100):
+      // Alpha 60 @ $9:     (4.5 + 50·0.4) / 0.6            = 40.83
+      // Eta   53.33 @ 2.5: (1.25 + 50·0.4667) / 0.5333     = 46.09
+      // Gamma 50 @ $0.5:   (0.25 + 50·0.5) / 0.5           = 50.50
+      // Beta  46.67 @ $1:  (0.5 + 50·0.5333) / 0.4667      = 58.21
+      expect(ranked.map((r) => r.name)).toEqual(['Alpha Coder', 'Eta Half', 'Gamma Open', 'Beta Mini']);
+      expect(ranked.map((r) => +r.effectiveCost.toFixed(2))).toEqual([40.83, 46.09, 50.5, 58.21]);
+      const alpha = ranked[0]!;
+      expect(alpha.costBreakdown.tokens + alpha.costBreakdown.time).toBeCloseTo(alpha.effectiveCost, 5);
+    });
+
+    it('with $0 per fix it reduces to the cheapest-per-point order', () => {
+      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 0 } }));
+      expect(ranked[0]!.name).toBe('Gamma Open');
+    });
+  });
+
   it('notes when the blended price falls back to AA 3:1 blended', () => {
     const eta = byName(computeValueTable(fixtureModels(), defaultConfig()).ranked, 'Eta Half')!;
     expect(eta.priceNote).toMatch(/3:1/);
@@ -172,6 +200,7 @@ describe('scoring config', () => {
       minBenchmarksRequired: 1,
       qualityFloor: 0.85,
       provisionalMaxAgeDays: 60,
+      taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 },
     });
   });
 
@@ -186,6 +215,9 @@ describe('scoring config', () => {
     [{ benchmarkWeights: { codingIndex: 1 }, minBenchmarksRequired: 2 }, /no model could ever qualify/],
     [{ benchmarkWeights: { codingIndex: 1 }, excludeVendors: 'google' }, /must be a list/],
     [{ benchmarkWeights: { codingIndex: 1 }, qualityFloor: 90 }, /between 0 and 1/],
+    [{ benchmarkWeights: { codingIndex: 1 }, taskModel: { tokensPerTaskMillions: 0 } }, /tokensPerTaskMillions/],
+    [{ benchmarkWeights: { codingIndex: 1 }, taskModel: { fixCostUsd: -5 } }, /fixCostUsd/],
+    [{ benchmarkWeights: { codingIndex: 1 }, taskModel: 'lots' }, /taskModel/],
     [{ benchmarkWeights: { codingIndex: 1 }, qualityFloor: -0.1 }, /between 0 and 1/],
   ])('rejects invalid config %j', (input, message) => {
     expect(() => parseScoringConfig(input)).toThrow(message);

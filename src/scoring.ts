@@ -1,5 +1,5 @@
 import { readBenchmark } from './benchmarks.js';
-import type { PriceBasis, ScoringConfig } from './config.js';
+import type { PriceBasis, ScoringConfig, TaskModel } from './config.js';
 import type { AaModel, ModelEstimate } from './source/artificialAnalysis.js';
 import type { VariantSummary } from './variants.js';
 import { modelKey } from './cursor.js';
@@ -38,8 +38,11 @@ export interface RankedModel {
   priceNote: string | null;
   inputPrice: number | null;
   outputPrice: number | null;
-  /** codingScore ÷ price. Higher = more coding capability per dollar. */
+  /** codingScore ÷ price (reference only; the ranking uses effectiveCost). */
   value: number;
+  /** Cost per finished task in USD (see `taskCost`). Lower = better. This decides the rank. */
+  effectiveCost: number;
+  costBreakdown: { tokens: number; time: number };
   /** Set by new-model detection (see newModels.ts). */
   isNew?: boolean;
   /** Present for hand-added models whose coding score is an estimate (config/manual-models.yaml). */
@@ -68,6 +71,7 @@ export interface ExcludedModel {
   /** Present when the model also had a usable price (i.e. it only missed the quality floor). */
   price?: number;
   value?: number;
+  effectiveCost?: number;
   isNew?: boolean;
   estimate?: ModelEstimate;
   /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
@@ -100,6 +104,26 @@ const normalizeVendor = (v: string) => v.trim().toLowerCase();
 
 /** Trims float noise (0.21000000000000002) from published numbers; 6 decimals is far below display precision. */
 const round = (x: number) => Math.round(x * 1e6) / 1e6;
+
+export interface TaskCost {
+  /** Token spend per finished task, retries included (USD). */
+  tokens: number;
+  /** Your time fixing failures per finished task (USD). */
+  time: number;
+  total: number;
+}
+
+/**
+ * Cost to get one typical task done: (token cost + your time × failure chance)
+ * ÷ success chance, with success chance ≈ codingScore / 100. The dashboard
+ * recomputes this live with the same formula (site/app.js `taskCost`).
+ */
+export function taskCost(codingScore: number, price: number, tm: TaskModel): TaskCost {
+  const p = Math.min(1, Math.max(0.01, codingScore / 100));
+  const tokens = (price * tm.tokensPerTaskMillions) / p;
+  const time = (tm.fixCostUsd * (1 - p)) / p;
+  return { tokens: round(tokens), time: round(time), total: round(tokens + time) };
+}
 
 interface ResolvedPrice {
   price: number | null;
@@ -156,11 +180,19 @@ export function resolvePrice(model: AaModel, basis: PriceBasis): ResolvedPrice {
  *    of the field, then asks which of those is priced most sensibly. The
  *    floor is relative, so it rises automatically as better models appear.
  *
- * 6. Value score — value = codingScore / price. Higher is better: more coding
- *    capability per dollar, among models that already cleared the floor.
+ * 6. Cost per finished task (see `taskCost`) — what it costs YOU to get a
+ *    typical coding task done, counting that a weaker model fails more often:
  *
- * 7. Sort by value descending (ties: higher codingScore, then name) and
- *    assign rank 1…n.
+ *        p    = codingScore / 100          (proxy for first-try success)
+ *        cost = (price × tokensPerTaskM + fixCostUsd × (1 − p)) / p
+ *
+ *    Dividing by p counts the retries (so a stronger model also burns fewer
+ *    tokens overall); the fixCostUsd term prices in your time re-prompting
+ *    and fixing each failure. Lower is better. `value` = codingScore / price
+ *    is still recorded for reference but no longer decides the order.
+ *
+ * 7. Sort by cost per finished task ascending (ties: higher codingScore, then
+ *    name) and assign rank 1…n.
  *
  * Every excluded model is returned in `excluded` with a reason, so nothing
  * disappears from the dashboard unexplained. Every ranked row carries all
@@ -237,7 +269,8 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
       continue;
     }
 
-    // 6. Value score (the quality floor, step 5, needs every candidate first — applied below)
+    // 6. Cost per finished task (the quality floor, step 5, needs every candidate first — applied below)
+    const cost = taskCost(codingScore, price, cfg.taskModel);
     ranked.push({
       id: m.id,
       name: m.name,
@@ -254,6 +287,8 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
       inputPrice: m.pricing.input,
       outputPrice: m.pricing.output,
       value: round(codingScore / price),
+      effectiveCost: cost.total,
+      costBreakdown: { tokens: cost.tokens, time: cost.time },
       ...(m.estimate ? { estimate: m.estimate } : {}),
     });
   }
@@ -287,13 +322,14 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
         codingScore: r.codingScore,
         price: r.price,
         value: r.value,
+        effectiveCost: r.effectiveCost,
         ...(r.estimate ? { estimate: r.estimate } : {}),
       });
     }
   }
 
   // 7. Sort and rank
-  qualified.sort((a, b) => b.value - a.value || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
+  qualified.sort((a, b) => a.effectiveCost - b.effectiveCost || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
   const order: Record<ExclusionReason, number> = {
     'below-quality-floor': 0,
     'missing-price': 1,

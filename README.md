@@ -2,15 +2,15 @@
 
 **The best AI coding model, at the most sensible price.**
 
-This dashboard isn't looking for the cheapest model, and it isn't only about the top benchmark score either. Only models close to the top on coding qualify, so no cheap-but-weak picks. Among those, the one that gives the most for the money ranks first. It updates itself twice a day from [Artificial Analysis](https://artificialanalysis.ai) data. Each run finds newly released models, recomputes a transparent **value score**, and publishes a static site to GitHub Pages. It all runs on free infrastructure.
+This dashboard isn't looking for the cheapest model, and it isn't only about the top benchmark score either. Only models close to the top on coding qualify, so no cheap-but-weak picks. Among those, models are ranked by **what a finished task really costs you**: the tokens, plus your time fixing a model's mistakes. It updates itself twice a day from [Artificial Analysis](https://artificialanalysis.ai) data. Each run finds newly released models, recomputes the ranking transparently, and publishes a static site to GitHub Pages. It all runs on free infrastructure.
 
 **Live dashboard:** https://yamor321.github.io/the-schrute-score/ *(live after the first successful deploy; see [Setup](#setup-one-time))*
 
-> Data from [Artificial Analysis (artificialanalysis.ai)](https://artificialanalysis.ai). The value score is this project's own calculation, not an Artificial Analysis metric. Before promoting the dashboard widely, read [COMPLIANCE.md](COMPLIANCE.md).
+> Data from [Artificial Analysis (artificialanalysis.ai)](https://artificialanalysis.ai). The cost-per-task ranking is this project's own calculation, not an Artificial Analysis metric. Before promoting the dashboard widely, read [COMPLIANCE.md](COMPLIANCE.md).
 
 ---
 
-## How the value score is calculated
+## How the ranking is calculated
 
 The precise version is the doc comment on `computeValueTable` in [`src/scoring.ts`](src/scoring.ts). The dashboard's "How this is calculated" section explains the same steps in plain language.
 
@@ -30,8 +30,24 @@ The precise version is the doc comment on `computeValueTable` in [`src/scoring.t
 
    A missing, zero or negative price excludes the model, because you can't divide by it. Artificial Analysis lists many models at $0, which usually means no price is known.
 5. **Quality floor.** Find the best coding score among the remaining (priced) models. Any model below `qualityFloor × best` is excluded. With the current `0.85` and a best score of 81.6, a model needs at least 69.4 to be ranked. This is what keeps cheap-but-weak models out. The floor is relative, so it rises automatically as better models come out.
-6. **Value score** = `codingScore ÷ price`. Every model that got this far is already strong, so this picks the one priced most sensibly. A model at 94% of the best score for 1/13 of the price beats the best model itself.
-7. **Sort** by value, highest first (ties go to the higher coding score, then alphabetical order), and number the ranks from 1.
+6. **Cost per finished task.** The cheapest model per token isn't the cheapest to work with. A weaker model gets more tasks wrong, and every miss costs you a re-prompt, a review, a fix, and another run's tokens. So each model gets:
+
+   ```
+   p    = codingScore / 100                  (chance it gets a task right first time)
+   cost = (price × tokensPerTaskMillions + fixCostUsd × (1 − p)) / p
+   ```
+
+   Dividing by `p` counts the retries, so a stronger model also burns fewer tokens overall. The `fixCostUsd` term prices in your time. Defaults: `taskModel` in `config/scoring.yaml` (a 500K-token task, $50 per failed attempt). Visitors can change both live on the dashboard.
+
+   Example at the defaults:
+
+   | | Tokens (incl. retries) | Your time fixing | Per finished task |
+   |---|---|---|---|
+   | Claude Opus 5.5 (80.9, $12/1M) | $7.42 | $11.80 | **$19.22** |
+   | Gemini 3.8 Flash (76.3, $2.25/1M) | $1.47 | $15.53 | **$17.00** |
+
+   Opus costs about $6 more in tokens and saves about $4 of your time. At $100 per fix or 250K-token tasks, it becomes #1. At $0 per fix, the ranking reduces to plain price-per-point, where cheap flash models win.
+7. **Sort** by cost per finished task, cheapest first (ties go to the higher coding score, then alphabetical order), and number the ranks from 1. `value = codingScore ÷ price` is still stored for reference.
 
 Steps 2 and 3 describe the general mechanism for blending several benchmarks. With the default config (Coding Index only), a model either has that score or isn't ranked.
 
@@ -40,8 +56,8 @@ Every excluded model still appears on the dashboard, in a separate list with a o
 **One row per model, not per effort level.** Artificial Analysis lists effort and reasoning levels as separate entries: "GPT-5.5 (xhigh)", "GPT-5.5 (high)", "Claude Opus 5 (Adaptive Reasoning, Max Effort)", and so on. Every level is scored first (steps 1–7). Then the levels are grouped into one row per model ([`src/variants.ts`](src/variants.ts)):
 
 - **The headline score is the model's best level:** what it can do when you turn it up. A plain average would be unfair, because each model is tested at a different set of levels. Some include low or non-reasoning and some don't, so the average mostly reflects which levels were tested (e.g. GPT-5.6 Luna: max 71.4, average over its 6 levels 56.3).
-- **The model counts as ranked if its best level clears the bar.** Hovering the model name on the dashboard shows every level's score, price and value, plus the average.
-- **If a different level also clears the bar and gives at least 5% more value** (e.g. that level is discounted), the tooltip says so.
+- **The model counts as ranked if its best level clears the bar.** Hovering the model name on the dashboard shows every level's score, price and cost per task, plus the average.
+- **If a different level also clears the bar and is at least 5% cheaper per task** (e.g. that level is discounted), the tooltip says so.
 - **What counts as a level:** only parentheses made entirely of effort/reasoning words. Versions like "(May '25)" or "(0902)" stay separate models.
 
 **Brand-new models: provisional scores.** Artificial Analysis usually publishes a new model's Intelligence Index within a day but can take longer for the Coding Index. Without handling this, a new frontier model (e.g. Claude Opus 5.5 on release) would sit in "no score" for days. So every run, a model released within `provisionalMaxAgeDays` (default 60) that has an Intelligence Index but no Coding Index gets a **provisional** estimate ([`src/provisional.ts`](src/provisional.ts)):
@@ -63,11 +79,21 @@ excludeVendors: []
 benchmarkWeights:
   codingIndex: 1
 qualityFloor: 0.85           # must reach 85% of the best model's coding score
+taskModel:
+  tokensPerTaskMillions: 0.5 # tokens a typical coding task burns
+  fixCostUsd: 50             # your time per failed attempt
 priceBasis: blended          # blended | input | output
 minBenchmarksRequired: 1
 ```
 
-These are site-wide settings. Visitors can also hide vendors for themselves with the checkboxes at the top of the dashboard. That choice is saved in their own browser and changes nothing for anyone else.
+These are site-wide defaults. Visitors can also hide vendors, show only Cursor models, and change "Your time" (cost per fix and task size) from the toolbar at the top of the dashboard. Those choices are saved in their own browser and change nothing for anyone else.
+
+### Weigh quality vs. price (`taskModel`)
+
+- `fixCostUsd` is how much a model's mistake costs you: re-prompting, reviewing, fixing. The higher it is, the more a smarter model is worth. `0` means pure price per point.
+- `tokensPerTaskMillions` is how many tokens a typical task uses. Bigger tasks make token price matter more.
+
+On September 2026 data: at `$50` / `0.5` (default), MiMo-V2.6-Pro, Gemini 3.8 Flash and Muse Spark 1.3 lead, with Claude Opus 5.5 at about #11. At `$50` / `0.25` or `$100` / `0.25`, Opus 5.5 is #1.
 
 ### Set how strict the quality bar is
 
@@ -75,10 +101,10 @@ These are site-wide settings. Visitors can also hide vendors for themselves with
 qualityFloor: 0.95   # only the very top tier
 qualityFloor: 0.9    # near the top
 qualityFloor: 0.85   # a bit wider (current)
-qualityFloor: 0      # no bar: pure coding-score-per-dollar (favors cheap, weak models)
+qualityFloor: 0      # no bar (the fix-cost term still penalizes weak models)
 ```
 
-As of September 2026: `0.85` (current) is set so that GPT-5.6 Luna (max, 71.4) and Composer 2.5 (estimated ~70.3) qualify. Qwen3.8-Flash-Next is first, and Luna is the best Cursor pick. `0.9` puts Gemini 3.8 Flash (high) first. `0.95` puts Claude Opus 5 (max effort) first.
+`0.85` (current) is set so that GPT-5.6 Luna (max, 71.4) and Composer 2.5 (estimated ~70.3) qualify.
 
 ### Why only the Coding Index by default
 
@@ -242,10 +268,10 @@ Still to do by the repo owner:
 ## Known limitations
 
 - **The benchmarks belong to Artificial Analysis.** Which benchmarks exist, how they're run, and how the Coding Index is composed are Artificial Analysis's choices and can change over time. A shift in their methodology shifts these rankings.
-- **"Value" is a simplification, not an objective truth.** It depends entirely on the configured weights, quality floor and price basis. Dividing by price rewards cheap models, which is why the quality floor exists. Inside the floor, a model a few points below the best but many times cheaper will win. If you'd pay almost anything for the last few points, raise `qualityFloor`.
+- **Cost per task is a model, not a bill.** The coding score is used as the first-try success rate, which is a proxy: benchmark tasks aren't your tasks. The ranking depends on `taskModel`: the tokens per task and what your time is worth per failure. That's why both are adjustable on the page. Change them and watch the order move, rather than treating one ranking as objective truth.
 - **The floor is a hard cutoff.** A model at 73.3 is out and one at 73.5 is in, even though the difference is within benchmark noise. The excluded list shows each model's score, so near-misses are visible.
 - **Coverage.** Only models with an Artificial Analysis Coding Index result are ranked by default, which leaves out many older or less-tested models (see "Excluded" on the dashboard). If you blend several benchmarks instead, models with results on only some of them are scored on fewer data points.
-- **Price is per token, not per task.** Models that "think" longer use more tokens for the same job, so their real cost per task is higher than the per-token price suggests. The blended price here is a plain (input + output) / 2, which differs from Artificial Analysis's own 3:1 blend. It falls back to theirs only when one side is missing.
+- **Every model gets the same token count per task.** In reality, models that "think" longer use more tokens for the same job, and Cursor's caching discounts make input tokens much cheaper than list price. Neither is modelled; there's no per-model token data in the API. The blended price is a plain (input + output) / 2, which differs from Artificial Analysis's own 3:1 blend. It falls back to theirs only when one side is missing.
 - **Many models have no usable price.** Artificial Analysis lists some models at $0, usually meaning unknown or not served by a priced provider. These models are excluded, not ranked as infinitely good value.
 - **New models are only as fast as Artificial Analysis**, which aims to add models within about 24 hours of release, plus up to 12 hours until our next scheduled run.
 - **Provisional scores are estimates.** They come from the Intelligence Index, which tracks coding ability closely but not exactly. At the very top of the field, the fit extrapolates (the error shown widens accordingly). Treat a provisional rank as "roughly here" until the real score arrives.

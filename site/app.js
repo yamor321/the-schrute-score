@@ -1,9 +1,10 @@
 // The Schrute Score dashboard. Reads only the pre-computed ./data.json — no
-// API calls, no keys, no server. Everything below is presentation.
+// API calls, no keys, no server. Rankings are re-computed here when the
+// visitor changes "Your time" (same formula as src/scoring.ts `taskCost`).
 'use strict';
 
-const BAR_DEFAULT_COUNT = 40;
-const STORE_KEY = 'schrute.filters.v1';
+const BAR_DEFAULT_COUNT = 25;
+const STORE_KEY = 'schrute.filters.v2';
 
 // Earthy categorical palette (light / dark), assigned by vendor size.
 const PALETTE = {
@@ -13,41 +14,48 @@ const PALETTE = {
 
 const state = {
   data: null,
-  vendors: [],            // [{ name, count, color }] — vendors with ranked models
-  hidden: new Set(),      // vendor names the visitor unchecked
+  vendors: [], // [{ name, count, color }] — vendors with ranked models
+  hidden: new Set(), // vendor names the visitor unchecked
   cursorOnly: false,
+  task: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 }, // overwritten from data.config.taskModel / storage
   sort: { key: 'rank', dir: 'asc' },
   search: '',
   barShowAll: false,
   charts: { bar: null, scatter: null },
+  barModels: [],
+  ranked: [], // models sorted by cost under the current task settings
 };
 
 const $ = (sel) => document.querySelector(sel);
 
 // ---------- persistence (per-browser convenience only) ----------
-function loadFilters() {
+function loadPrefs() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY) ?? '{}');
     state.hidden = new Set(Array.isArray(saved.hidden) ? saved.hidden.filter((v) => typeof v === 'string') : []);
     state.cursorOnly = saved.cursorOnly === true;
+    if (saved.task && Number.isFinite(saved.task.fixCostUsd) && Number.isFinite(saved.task.tokensPerTaskMillions)) {
+      state.task = { fixCostUsd: saved.task.fixCostUsd, tokensPerTaskMillions: saved.task.tokensPerTaskMillions };
+    }
   } catch {
     /* storage unavailable or corrupt — start with defaults */
   }
 }
-function saveFilters() {
+function savePrefs() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ hidden: [...state.hidden], cursorOnly: state.cursorOnly }));
+    localStorage.setItem(STORE_KEY, JSON.stringify({ hidden: [...state.hidden], cursorOnly: state.cursorOnly, task: state.task }));
   } catch {
-    /* filters still work for this visit */
+    /* settings still work for this visit */
   }
 }
 
 // ---------- formatting ----------
 const fmtScore = (n) => n.toFixed(1);
-const fmtValue = (n) => (n >= 100 ? n.toFixed(0) : n.toFixed(1));
-// Up to 4 decimals below $1 so "value = score ÷ price" can be checked by hand.
+const fmtMoney = (n) => '$' + (n >= 100 ? n.toFixed(0) : n.toFixed(2));
+// Up to 4 decimals below $1 so the math can be checked by hand.
 const fmtPrice = (n) => '$' + (n >= 1 ? n.toFixed(2) : String(+n.toFixed(4)));
 const pct = (n) => Math.round(n * 100) + '%';
+const fmtTokens = (m) => (m >= 1 ? `${+m.toFixed(2)}M` : `${Math.round(m * 1000)}K`);
 const priceBasisLabel = {
   blended: 'blended price (the average of the input and output price)',
   input: 'input price',
@@ -102,30 +110,48 @@ function assignColors() {
 const colorOf = (vendor) => state.vendors.find((v) => v.name === vendor)?.color ?? cssVar('--muted');
 const withAlpha = (hex, a) => hex + Math.round(a * 255).toString(16).padStart(2, '0');
 
+// ---------- the metric ----------
+/** Same formula as src/scoring.ts `taskCost`. */
+function taskCost(score, price) {
+  const p = Math.min(1, Math.max(0.01, score / 100));
+  const tokens = (price * state.task.tokensPerTaskMillions) / p;
+  const time = (state.task.fixCostUsd * (1 - p)) / p;
+  return { tokens, time, total: tokens + time };
+}
+
+/** Recomputes cost and rank for every ranked model under the current "Your time" settings. */
+function rerank() {
+  for (const m of state.data.models) {
+    const c = taskCost(m.codingScore, m.price);
+    m.cost = c.total;
+    m.costTok = c.tokens;
+    m.costTime = c.time;
+    // Best-value level: another level above the bar that is ≥5% cheaper per task.
+    m.bestLevel = null;
+    let best = null;
+    for (const v of m.variants ?? []) {
+      v.cost = v.codingScore != null && v.price != null ? taskCost(v.codingScore, v.price).total : null;
+      if (v.status === 'ranked' && v.cost != null && (!best || v.cost < best.cost)) best = v;
+    }
+    if (best && best.level !== m.headlineLevel && best.cost <= m.cost * 0.95) m.bestLevel = best.level;
+  }
+  state.ranked = [...state.data.models].sort((a, b) => a.cost - b.cost || b.codingScore - a.codingScore || a.name.localeCompare(b.name));
+  state.ranked.forEach((m, i) => (m.rank = i + 1));
+}
+
 // ---------- data helpers ----------
 const benchmarkKeys = () => Object.keys(state.data.config.benchmarkWeights);
-const coverage = (m) => m.benchmarksUsed.length;
 const bestScore = () => state.data.quality?.bestScore ?? Math.max(...state.data.models.map((m) => m.codingScore));
 const relative = (score) => score / bestScore();
 const vendorShown = (vendor) => !state.hidden.has(vendor);
 const isVisible = (m) => vendorShown(m.vendor) && (!state.cursorOnly || !!m.cursor);
-const visibleModels = () => state.data.models.filter(isVisible);
+const visibleModels = () => state.ranked.filter(isVisible);
 const cursorModels = () => state.data.cursor?.models ?? [];
-
 const levelCount = (m) => m.variants?.length ?? 1;
+const leader = () => state.data.models.find((m) => m.name === state.data.quality?.bestModel);
 
-/** Cursor models with no ranked variant, shown once each below the ranking (never vendor-filtered by config). */
+/** Cursor models with no ranked level, shown once each below the ranking. */
 const cursorExtras = () => cursorModels().filter((c) => c.status !== 'ranked' && c.status !== 'vendor-filter' && vendorShown(c.vendor));
-
-function benchmarkLines(m) {
-  return benchmarkKeys().map((key) => {
-    const b = m.benchmarks[key];
-    if (!b || !b.present) return `${b ? b.label : key}: not tested (weight shared by the others)`;
-    const raw = b.raw <= 1 && b.normalized !== b.raw ? ` (raw ${b.raw})` : '';
-    const weight = benchmarkKeys().length > 1 ? ` × ${pct(b.effectiveWeight)}` : '';
-    return `${b.label}: ${fmtScore(b.normalized)}${raw}${weight}`;
-  });
-}
 
 // ---------- masthead ----------
 function renderFacts() {
@@ -134,17 +160,16 @@ function renderFacts() {
   $('#fact-ranked').textContent = counts.ranked;
   $('#fact-bar').textContent = quality && state.data.config.qualityFloor > 0 ? `≥ ${fmtScore(quality.minScore)}` : 'none';
   const inCursor = cursorModels().filter((c) => c.status === 'ranked').length;
-  $('#fact-cursor').textContent = `${inCursor} / ${cursorModels().length}`;
+  $('#fact-cursor').textContent = `${inCursor}/${cursorModels().length}`;
   $('#facts').hidden = false;
 }
 
-// ---------- hero ----------
+// ---------- winner card ----------
 function renderHero() {
-  const visible = visibleModels();
-  const top = visible[0];
+  const top = visibleModels()[0];
   $('#hero-body').hidden = !top;
   $('#hero-empty').hidden = !!top;
-  $('#hero').querySelector('.hero-rank').hidden = !top;
+  $('#hero .hero-rank').hidden = !top;
   $('#hero-kicker').textContent = state.cursorOnly
     ? 'Best pick you can use in Cursor'
     : state.hidden.size
@@ -155,29 +180,36 @@ function renderHero() {
     $('#hero-name').textContent = top.name;
     $('#hero-badges').replaceChildren(...[top.cursor && cursorBadge(top.cursor), top.estimate && estBadge(top.estimate)].filter(Boolean));
     $('#hero-vendor').textContent =
-      `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}` +
-      (top.rank !== 1 ? ` · #${top.rank} overall` : '');
-    $('#hero-value').textContent = fmtValue(top.value);
+      `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}` + (top.rank !== 1 ? ` · #${top.rank} overall` : '');
+    $('#hero-cost').textContent = fmtMoney(top.cost);
     $('#hero-score').textContent = fmtScore(top.codingScore);
     $('#hero-relative').textContent = pct(relative(top.codingScore));
     $('#hero-price').textContent = fmtPrice(top.price);
 
-    const q = state.data.quality;
-    const leader = q && state.data.models.find((m) => m.name === q.bestModel);
-    let note;
-    if (!leader || leader.id === top.id) {
-      note = 'This is also the highest-scoring model on coding. Nothing close to it is meaningfully cheaper.';
-    } else {
-      const ratio = leader.price / top.price;
-      note =
-        `The top-scoring model, ${leader.name}, scores ${fmtScore(leader.codingScore)} at ${fmtPrice(leader.price)} per 1M tokens. ` +
-        `This one reaches ${pct(relative(top.codingScore))} of that score` +
-        (ratio >= 1.15 ? ` for ${ratio >= 10 ? Math.round(ratio) : ratio.toFixed(1)}× less money.` : ' at a similar price.');
+    const lead = leader();
+    const parts = [
+      `${fmtMoney(top.costTok)} in tokens + ${fmtMoney(top.costTime)} of your time per finished task ` +
+        `(at ${fmtMoney(state.task.fixCostUsd).replace('.00', '')} per fix, ${fmtTokens(state.task.tokensPerTaskMillions)} tokens per task).`,
+    ];
+    if (lead && lead.id !== top.id) {
+      const diff = lead.cost - top.cost;
+      parts.push(
+        `The top scorer, ${lead.name} (${fmtScore(lead.codingScore)}), costs ${fmtMoney(lead.cost)} per task, ` +
+          (diff >= 0 ? `${fmtMoney(diff)} more.` : `${fmtMoney(-diff)} less, but it's hidden by your filters.`),
+      );
+    } else if (lead) {
+      parts.push('It is also the highest-scoring model.');
     }
-    if (levelCount(top) > 1) note += ` Scored at its best effort level (${top.headlineLevel}); hover the name in the table to see all ${levelCount(top)} levels.`;
-    if (top.cursor) note += ` In Cursor, pick "${top.cursor}".`;
-    if (top.estimate) note += ` Its coding score is an estimate: ${top.estimate.note}`;
-    $('#hero-note').textContent = note;
+    if (levelCount(top) > 1) parts.push(`Scored at its best effort level (${top.headlineLevel}).`);
+    if (top.cursor) parts.push(`In Cursor, pick "${top.cursor}".`);
+    if (top.estimate) {
+      parts.push(
+        top.estimate.kind === 'provisional'
+          ? 'Its coding score is provisional: Artificial Analysis hasn\'t published it yet, so it\'s estimated (hover the badge for how).'
+          : 'Its coding score is estimated by hand (hover the badge for how).',
+      );
+    }
+    $('#hero-note').textContent = parts.join(' ');
   }
   $('#hero').hidden = false;
 }
@@ -190,29 +222,28 @@ function renderMethod() {
   const total = weights.reduce((s, [, w]) => s + w, 0);
   const single = weights.length === 1;
   $('#method-weights').replaceChildren(
-    ...weights.map(([key, w]) =>
-      el('li', {}, el('strong', {}, sample.benchmarks[key]?.label ?? key), single ? '' : ` — ${pct(w / total)} of the score`),
-    ),
+    ...weights.map(([key, w]) => el('li', {}, el('strong', {}, sample.benchmarks[key]?.label ?? key), single ? '' : ` — ${pct(w / total)} of the score`)),
   );
   $('#method-weights-note').textContent = single
-    ? 'This is Artificial Analysis\'s composite coding index. It combines several independent coding evaluations into one 0–100 number, and it\'s what current frontier models are measured on. Models without a result on it aren\'t ranked.'
+    ? 'This is Artificial Analysis\'s composite coding index. It combines several independent coding evaluations into one 0–100 number, and it\'s what current frontier models are measured on. Models without a result on it aren\'t ranked (unless brand-new, see below).'
     : 'Some benchmarks report 0–100 and others 0–1, so everything is converted to 0–100 first. If a model hasn\'t been tested on one of them yet, that isn\'t counted as a zero; the benchmarks it does have share the weight.';
 
   $('#method-floor').textContent =
     quality && config.qualityFloor > 0
       ? `To be ranked at all, a model must reach at least ${pct(config.qualityFloor)} of the best coding score. ` +
         `Right now the best is ${quality.bestModel} at ${fmtScore(quality.bestScore)}, so the bar is ${fmtScore(quality.minScore)}. ` +
-        'This keeps cheap-but-weak models out: a model that is cheap only because it is much worse never wins. ' +
         'The bar is relative, so it rises automatically as better models come out.'
       : 'There is no quality bar in the current configuration. Every model with a price and a score is ranked.';
 
   $('#method-price').textContent =
-    `We use the ${priceBasisLabel[config.priceBasis]} in US dollars per million tokens, as listed by Artificial Analysis.` +
-    (config.priceBasis === 'blended' ? ' If only one of the two prices is listed, Artificial Analysis\'s own blended price is used instead.' : '');
+    `Price is the ${priceBasisLabel[config.priceBasis]} in US dollars per million tokens, as listed by Artificial Analysis. ` +
+    'It ignores Cursor\'s caching discounts, and real token use per task varies by model, so treat the dollar figures as a fair comparison rather than a bill.';
+
+  renderMethodExample();
 
   const cur = state.data.cursor;
   $('#method-cursor').textContent = cur
-    ? `Models marked Cursor are on Cursor's model list (checked ${cur.checked}). Cursor offers each model once, and Artificial Analysis often lists several variants of it (different reasoning effort). So every variant is marked, but a model is never added twice. ` +
+    ? `Models marked Cursor are on Cursor's model list (checked ${cur.checked}). Every effort level of a Cursor model is marked, but a model is never listed twice. ` +
       'Cursor models that aren\'t ranked (below the bar, no price, or no benchmark data) are still shown once at the end of the table, with the reason.'
     : 'No Cursor model list is configured.';
 
@@ -223,7 +254,7 @@ function renderMethod() {
       ? [
           el('span', {}, 'A few models aren\'t in the Artificial Analysis API, so their coding score is estimated by hand (marked '),
           estBadge({ note: '' }),
-          el('span', {}, '). How each estimate was made:'),
+          el('span', {}, '):'),
           el(
             'ul',
             { class: 'weights' },
@@ -245,12 +276,26 @@ function renderMethod() {
 
   const parts = ['Models below the quality bar, and models with no price listed (or $0, which usually means the price isn\'t known), aren\'t ranked.'];
   if (config.excludeVendors.length) parts.push(`The site also leaves out these vendors by choice: ${config.excludeVendors.join(', ')}.`);
-  parts.push('Every excluded model is listed under "Excluded / not ranked" with its reason, so nothing disappears silently.');
+  if (config.excludeModels?.length) parts.push(`And these models: ${config.excludeModels.join(', ')}.`);
+  parts.push('Every excluded model is listed under "Excluded / not ranked" with its reason.');
   $('#method-exclusions').textContent = parts.join(' ');
   $('#method').hidden = false;
 }
 
-// ---------- filters ----------
+/** Worked example comparing the top scorer (or #2) with the #1 pick at the current settings. */
+function renderMethodExample() {
+  const top = state.ranked[0];
+  const lead = leader();
+  const other = lead && lead.id !== top.id ? lead : state.ranked[1];
+  if (!top || !other) return;
+  const line = (m) =>
+    `${m.name} (score ${fmtScore(m.codingScore)}, ${fmtPrice(m.price)}/1M): ${fmtMoney(m.costTok)} tokens + ${fmtMoney(m.costTime)} your time = ${fmtMoney(m.cost)}`;
+  $('#method-example').textContent =
+    `Example at ${fmtMoney(state.task.fixCostUsd).replace('.00', '')} per fix and ${fmtTokens(state.task.tokensPerTaskMillions)} tokens per task — ` +
+    `${line(top)}; ${line(other)}.`;
+}
+
+// ---------- toolbar ----------
 function renderVendorFilters() {
   $('#cursor-only').checked = state.cursorOnly;
   $('#vendor-filters').replaceChildren(
@@ -259,7 +304,7 @@ function renderVendorFilters() {
       input.addEventListener('change', () => {
         if (input.checked) state.hidden.delete(v.name);
         else state.hidden.add(v.name);
-        saveFilters();
+        savePrefs();
         refresh();
       });
       return el(
@@ -272,6 +317,22 @@ function renderVendorFilters() {
       );
     }),
   );
+  renderToolbarSummaries();
+}
+
+function renderToolbarSummaries() {
+  const shown = state.vendors.filter((v) => vendorShown(v.name)).length;
+  $('#vendor-summary').textContent = shown === state.vendors.length ? 'all' : `${shown}/${state.vendors.length}`;
+  $('#pop-vendors').classList.toggle('is-filtered', shown !== state.vendors.length);
+  $('#task-summary').textContent = `${fmtMoney(state.task.fixCostUsd).replace('.00', '')}/fix · ${fmtTokens(state.task.tokensPerTaskMillions)}`;
+  const d = state.data.config.taskModel;
+  $('#pop-task').classList.toggle('is-filtered', state.task.fixCostUsd !== d.fixCostUsd || state.task.tokensPerTaskMillions !== d.tokensPerTaskMillions);
+  $('#fix-cost').value = state.task.fixCostUsd;
+  $('#fix-out').textContent = fmtMoney(state.task.fixCostUsd).replace('.00', '');
+  const sel = $('#task-tokens');
+  const val = String(state.task.tokensPerTaskMillions);
+  if (![...sel.options].some((o) => o.value === val)) sel.append(el('option', { value: val }, fmtTokens(state.task.tokensPerTaskMillions)));
+  sel.value = val;
 }
 
 // ---------- table ----------
@@ -283,8 +344,7 @@ const matchesSearch = (...texts) => {
 function sortedTableRows() {
   const { key, dir } = state.sort;
   const rows = visibleModels().filter((m) => matchesSearch(m.name, m.vendor, m.cursor));
-  const get = (m) =>
-    key === 'coverage' ? coverage(m) : key === 'relative' ? m.codingScore : m[key];
+  const get = (m) => (key === 'relative' ? m.codingScore : m[key]);
   const mul = dir === 'asc' ? 1 : -1;
   return rows.sort((a, b) => {
     const x = get(a), y = get(b);
@@ -294,17 +354,141 @@ function sortedTableRows() {
 }
 
 /** Model name cell. With `model`, hovering/focusing it shows the effort-level popover. */
-function nameCell(title, { cursor, estimate, sub, model } = {}) {
+function nameCell(title, { cursor, estimate, sub, model, vendor } = {}) {
   const levels = model ? levelCount(model) : 0;
   const cell = el(
     'td',
     { class: `name${levels > 1 ? ' has-levels' : ''}` },
     el('span', { class: 'model' }, title),
     cursor || estimate ? el('span', { class: 'badges' }, cursor ? cursorBadge(cursor) : null, estimate ? estBadge(estimate) : null) : null,
-    sub ? el('span', { class: 'sub' }, ...[sub].flat()) : null,
+    vendor ? el('span', { class: 'sub show-sm' }, vendor) : null,
+    sub && [sub].flat().filter(Boolean).length ? el('span', { class: 'sub' }, ...[sub].flat().filter(Boolean)) : null,
   );
   if (model) attachLevelTip(cell, model);
   return cell;
+}
+const vendorCell = (vendor) =>
+  el('td', { class: 'col-vendor' }, el('span', { class: 'vendor-cell' }, el('span', { class: 'swatch', style: `background:${colorOf(vendor)}` }), vendor));
+
+function costCell(m) {
+  return el(
+    'td',
+    { class: 'num cost', title: `${fmtMoney(m.costTok)} tokens (retries included) + ${fmtMoney(m.costTime)} your time fixing failures` },
+    el('strong', {}, fmtMoney(m.cost)),
+  );
+}
+
+function renderTable() {
+  const rows = sortedTableRows();
+  $('#ranked-body').replaceChildren(
+    ...rows.map((m) =>
+      el(
+        'tr',
+        { class: m.cursor ? 'is-cursor' : '' },
+        el('td', { class: 'num rank' }, String(m.rank)),
+        nameCell(m.name, {
+          cursor: m.cursor,
+          estimate: m.estimate,
+          model: m,
+          vendor: m.vendor,
+          sub: [
+            levelCount(m) > 1 ? `${levelCount(m)} levels · scored at ${m.headlineLevel}` : null,
+            m.bestLevel ? ` · "${m.bestLevel}" is cheaper per task now` : null,
+          ],
+        }),
+        vendorCell(m.vendor),
+        el('td', { class: 'num' }, fmtScore(m.codingScore)),
+        el('td', { class: 'num col-rel' }, pct(relative(m.codingScore))),
+        el('td', { class: 'num', title: m.priceNote ?? `${m.priceBasis} price` }, fmtPrice(m.price)),
+        costCell(m),
+      ),
+    ),
+  );
+
+  // Cursor models without a ranked level — once each, after the ranking.
+  const extras = cursorExtras().filter((c) => matchesSearch(c.name, c.vendor));
+  const statusLabel = { 'below-quality-floor': 'below the bar', 'missing-price': 'no price', 'no-score': 'no score yet', 'not-in-aa': 'no data' };
+  const order = { 'below-quality-floor': 0, 'missing-price': 1, 'no-score': 2, 'not-in-aa': 3 };
+  extras.sort((a, b) => order[a.status] - order[b.status] || (b.representative?.codingScore ?? -1) - (a.representative?.codingScore ?? -1));
+  const cols = $('#ranked-table thead tr').children.length;
+  $('#cursor-extra-body').replaceChildren(
+    ...(extras.length
+      ? [
+          el(
+            'tr',
+            { class: 'divider' },
+            el(
+              'td',
+              { colSpan: cols },
+              el('strong', {}, 'Also in Cursor, but not ranked'),
+              el('span', { class: 'muted' }, `${extras.length} Cursor models that didn't make the ranking, each shown once with the reason.`),
+            ),
+          ),
+          ...extras.map((c) => {
+            const r = c.representative;
+            const row = r && state.data.excluded.find((e) => e.id === r.id);
+            const score = r?.codingScore ?? null;
+            const cost = score != null && r?.price != null ? taskCost(score, r.price).total : null;
+            return el(
+              'tr',
+              { class: 'is-cursor' },
+              el('td', { class: 'num rank' }, '—'),
+              nameCell(c.name, {
+                cursor: c.name,
+                estimate: row?.estimate,
+                model: row ?? undefined,
+                vendor: c.vendor,
+                sub: [
+                  el('span', { class: 'status-pill', title: c.detail }, statusLabel[c.status]),
+                  ' ',
+                  c.status === 'below-quality-floor'
+                    ? `needs ${fmtScore(state.data.quality.minScore)}` + (row && levelCount(row) > 1 ? ` · best level: ${row.headlineLevel}` : '')
+                    : c.detail,
+                ],
+              }),
+              vendorCell(c.vendor),
+              el('td', { class: 'num' }, score == null ? '—' : fmtScore(score)),
+              el('td', { class: 'num col-rel' }, score == null ? '—' : pct(relative(score))),
+              el('td', { class: 'num' }, r?.price == null ? '—' : fmtPrice(r.price)),
+              el('td', { class: 'num' }, cost == null ? '—' : fmtMoney(cost)),
+            );
+          }),
+        ]
+      : []),
+  );
+  $('#table-empty').hidden = rows.length + extras.length > 0;
+
+  for (const th of document.querySelectorAll('#ranked-table th')) {
+    if (th.dataset.key === state.sort.key) th.setAttribute('aria-sort', state.sort.dir === 'asc' ? 'ascending' : 'descending');
+    else th.removeAttribute('aria-sort');
+  }
+}
+
+function renderExcluded() {
+  const shownAbove = new Set(cursorExtras().map((c) => c.representative?.id).filter(Boolean));
+  const rows = state.data.excluded.filter((m) => vendorShown(m.vendor) && !shownAbove.has(m.id) && (!state.cursorOnly || m.cursor));
+  $('#excluded-count').textContent = rows.length;
+  $('#excluded-table tbody').replaceChildren(
+    ...rows.map((m) =>
+      el(
+        'tr',
+        {},
+        nameCell(m.name, { cursor: m.cursor, estimate: m.estimate, model: m }),
+        el('td', {}, m.vendor),
+        el('td', { class: 'num' }, m.codingScore == null ? '—' : fmtScore(m.codingScore)),
+        el('td', {}, m.detail),
+      ),
+    ),
+  );
+  $('#excluded-panel').hidden = false;
+}
+
+function renderCountLine() {
+  const shown = visibleModels().length;
+  const { counts, quality, config } = state.data;
+  const bar = quality && config.qualityFloor > 0 ? `passed the quality bar (≥ ${fmtScore(quality.minScore)})` : 'are ranked';
+  $('#count-line').textContent =
+    `${shown} of the ${counts.ranked} models that ${bar}, cheapest per finished task first` + (state.cursorOnly ? ' · Cursor only.' : '.');
 }
 
 // ---------- effort-level popover ----------
@@ -332,28 +516,26 @@ function levelTipContent(m) {
       ? `${variants.length} effort levels tested. The ranking uses the best one (${m.headlineLevel})` +
         (m.averageScore != null ? `; the average over all levels is ${fmtScore(m.averageScore)}.` : '.')
       : 'One setting tested.';
-  const rows = variants.map((v) =>
-    el(
+  const rows = variants.map((v) => {
+    const cost = v.codingScore != null && v.price != null ? taskCost(v.codingScore, v.price).total : null;
+    return el(
       'tr',
-      { class: `${v.level === m.headlineLevel ? 'is-headline' : ''}${v.level === m.bestValueLevel ? ' is-bestvalue' : ''}` },
+      { class: `${v.level === m.headlineLevel ? 'is-headline' : ''}${v.level === m.bestLevel ? ' is-bestvalue' : ''}` },
       el('td', {}, v.level),
       el('td', { class: 'num' }, v.codingScore == null ? '—' : fmtScore(v.codingScore)),
       el('td', { class: 'num' }, v.price == null ? '—' : fmtPrice(v.price)),
-      el('td', { class: 'num' }, v.value == null ? '—' : fmtValue(v.value)),
+      el('td', { class: 'num' }, cost == null ? '—' : fmtMoney(cost)),
       el('td', { class: 'muted' }, statusText[v.status] ?? v.status),
-    ),
-  );
+    );
+  });
   const table = el(
     'table',
     { class: 'tip-table' },
-    el('thead', {}, el('tr', {}, el('th', {}, 'Level'), el('th', { class: 'num' }, 'Score'), el('th', { class: 'num' }, 'Price'), el('th', { class: 'num' }, 'Value'), el('th', {}, ''))),
+    el('thead', {}, el('tr', {}, el('th', {}, 'Level'), el('th', { class: 'num' }, 'Score'), el('th', { class: 'num' }, '$/1M'), el('th', { class: 'num' }, '$/task'), el('th', {}, ''))),
     el('tbody', {}, ...rows),
   );
   const notes = [];
-  if (m.bestValueLevel) {
-    const bv = variants.find((v) => v.level === m.bestValueLevel);
-    notes.push(el('p', { class: 'tip-win' }, `💡 Right now "${m.bestValueLevel}" gives the most per dollar (value ${fmtValue(bv.value)} vs ${fmtValue(m.value)}).`));
-  }
+  if (m.bestLevel) notes.push(el('p', { class: 'tip-win' }, `💡 Right now "${m.bestLevel}" is the cheapest level per finished task.`));
   if (m.estimate) notes.push(el('p', { class: 'muted' }, m.estimate.note));
   return [head, el('p', { class: 'tip-intro' }, intro), variants.length ? table : null, ...notes].filter(Boolean);
 }
@@ -381,188 +563,19 @@ function hideLevelTip() {
   if (tip) tip.hidden = true;
 }
 
-function wireLevelTips() {
-  const cellOf = (e) => e.target.closest?.('td.name');
-  document.addEventListener('pointerover', (e) => {
-    const cell = cellOf(e);
-    if (cell && tipModels.has(cell) && e.pointerType === 'mouse') showLevelTip(cell);
-  });
-  document.addEventListener('pointerout', (e) => {
-    const cell = cellOf(e);
-    if (cell && cell === tipAnchor && !cell.contains(e.relatedTarget) && e.pointerType === 'mouse') hideLevelTip();
-  });
-  document.addEventListener('focusin', (e) => {
-    const cell = cellOf(e);
-    if (cell && tipModels.has(cell)) showLevelTip(cell);
-  });
-  document.addEventListener('focusout', (e) => {
-    if (cellOf(e) === tipAnchor) hideLevelTip();
-  });
-  // Touch: tap a name to toggle.
-  document.addEventListener('click', (e) => {
-    const cell = cellOf(e);
-    if (cell && tipModels.has(cell)) {
-      if (tipAnchor === cell) hideLevelTip();
-      else showLevelTip(cell);
-    } else if (!e.target.closest?.('#level-tip')) hideLevelTip();
-  });
-  document.addEventListener('keydown', (e) => e.key === 'Escape' && hideLevelTip());
-  window.addEventListener('scroll', () => tipAnchor && hideLevelTip(), { passive: true });
-}
-const vendorCell = (vendor) =>
-  el('td', {}, el('span', { class: 'vendor-cell' }, el('span', { class: 'swatch', style: `background:${colorOf(vendor)}` }), vendor));
-
-function renderTable() {
-  const total = benchmarkKeys().length;
-  const rows = sortedTableRows();
-  $('#ranked-table').classList.toggle('single-benchmark', total === 1);
-  $('#ranked-body').replaceChildren(
-    ...rows.map((m) => {
-      const cov = coverage(m);
-      return el(
-        'tr',
-        { class: m.cursor ? 'is-cursor' : '' },
-        el('td', { class: 'num rank' }, String(m.rank)),
-        nameCell(m.name, {
-          cursor: m.cursor,
-          estimate: m.estimate,
-          model: m,
-          sub: [
-            levelCount(m) > 1 ? `${levelCount(m)} effort levels · scored at ${m.headlineLevel}` : null,
-            m.bestValueLevel ? ` · "${m.bestValueLevel}" is better value now` : null,
-            m.cursor && modelKeyLoose(m.cursor) !== modelKeyLoose(m.name) ? `${levelCount(m) > 1 ? ' · ' : ''}In Cursor: ${m.cursor}` : null,
-          ].filter(Boolean),
-        }),
-        vendorCell(m.vendor),
-        el('td', { class: 'num' }, fmtScore(m.codingScore)),
-        el('td', { class: 'num' }, pct(relative(m.codingScore))),
-        el('td', { class: `num col-coverage${cov < total ? ' coverage-thin' : ''}`, title: benchmarkLines(m).join('\n') }, `${cov}/${total}`),
-        el('td', { class: 'num', title: m.priceNote ?? `${m.priceBasis} price` }, fmtPrice(m.price)),
-        el('td', { class: 'num value' }, el('strong', {}, fmtValue(m.value))),
-      );
-    }),
-  );
-
-  // Cursor models without a ranked variant — once each, after the ranking.
-  const extras = cursorExtras().filter((c) => matchesSearch(c.name, c.vendor, c.representative?.name));
-  const statusLabel = {
-    'below-quality-floor': 'below the bar',
-    'missing-price': 'no price',
-    'no-score': 'no score yet',
-    'not-in-aa': 'no data',
-  };
-  const order = { 'below-quality-floor': 0, 'missing-price': 1, 'no-score': 2, 'not-in-aa': 3 };
-  extras.sort((a, b) => order[a.status] - order[b.status] || (b.representative?.codingScore ?? -1) - (a.representative?.codingScore ?? -1));
-  const cols = $('#ranked-table thead tr').children.length;
-  $('#cursor-extra-body').replaceChildren(
-    ...(extras.length
-      ? [
-          el(
-            'tr',
-            { class: 'divider' },
-            el(
-              'td',
-              { colSpan: cols },
-              el('strong', {}, 'Also in Cursor, but not ranked'),
-              el('span', { class: 'muted' }, `${extras.length} Cursor models that didn't make the ranking. Each is shown once, with the reason.`),
-            ),
-          ),
-          ...extras.map((c) => {
-            const r = c.representative;
-            const score = r?.codingScore ?? null;
-            const row = r && state.data.excluded.find((e) => e.id === r.id);
-            return el(
-              'tr',
-              { class: 'is-cursor' },
-              el('td', { class: 'num rank' }, '—'),
-              nameCell(c.name, {
-                cursor: c.name,
-                estimate: row?.estimate,
-                model: row ?? undefined,
-                sub: [
-                  el('span', { class: 'status-pill', title: c.detail }, statusLabel[c.status]),
-                  ' ',
-                  c.status === 'below-quality-floor'
-                    ? `needs ${fmtScore(state.data.quality.minScore)}` + (row && levelCount(row) > 1 ? ` · best level: ${row.headlineLevel}` : '')
-                    : c.detail,
-                ],
-              }),
-              vendorCell(c.vendor),
-              el('td', { class: 'num' }, score == null ? '—' : fmtScore(score)),
-              el('td', { class: 'num' }, score == null ? '—' : pct(relative(score))),
-              el('td', { class: 'num col-coverage' }, '—'),
-              el('td', { class: 'num' }, r?.price == null ? '—' : fmtPrice(r.price)),
-              el('td', { class: 'num' }, r?.value == null ? '—' : fmtValue(r.value)),
-            );
-          }),
-        ]
-      : []),
-  );
-  $('#table-empty').hidden = rows.length + extras.length > 0;
-
-  for (const th of document.querySelectorAll('#ranked-table th')) {
-    if (th.dataset.key === state.sort.key) th.setAttribute('aria-sort', state.sort.dir === 'asc' ? 'ascending' : 'descending');
-    else th.removeAttribute('aria-sort');
-  }
-}
-
-/** Loose name comparison (mirrors src/cursor.ts modelKey) to skip a redundant "In Cursor:" line. */
-function modelKeyLoose(name) {
-  return name.toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/[-_]/g, ' ').split(/\s+/).filter(Boolean).sort().join(' ');
-}
-
-function renderExcluded() {
-  // Cursor models already shown once in the table aren't repeated here.
-  const shownAbove = new Set(cursorExtras().map((c) => c.representative?.id).filter(Boolean));
-  const rows = state.data.excluded.filter((m) => vendorShown(m.vendor) && !shownAbove.has(m.id) && (!state.cursorOnly || m.cursor));
-  $('#excluded-count').textContent = rows.length;
-  $('#excluded-table tbody').replaceChildren(
-    ...rows.map((m) =>
-      el(
-        'tr',
-        {},
-        nameCell(m.name, { cursor: m.cursor, estimate: m.estimate, model: m }),
-        el('td', {}, m.vendor),
-        el('td', { class: 'num' }, m.codingScore == null ? '—' : fmtScore(m.codingScore)),
-        el('td', {}, m.detail),
-      ),
-    ),
-  );
-}
-
-function renderCountLine() {
-  const shown = visibleModels().length;
-  const { counts, quality, config } = state.data;
-  const bar = quality && config.qualityFloor > 0 ? `passed the quality bar (≥ ${fmtScore(quality.minScore)})` : 'are ranked';
-  $('#count-line').textContent =
-    `Showing ${shown} of the ${counts.ranked} models that ${bar}` + (state.cursorOnly ? ', limited to models available in Cursor.' : '.');
-}
-
 // ---------- charts ----------
 function chartTheme() {
-  return { ink: cssVar('--ink'), muted: cssVar('--muted'), grid: cssVar('--rule'), paper: cssVar('--paper'), green: cssVar('--green'), mono: cssVar('--mono') };
+  return { ink: cssVar('--ink'), muted: cssVar('--muted'), grid: cssVar('--rule'), paper: cssVar('--paper'), green: cssVar('--green'), mono: cssVar('--mono'), time: cssVar('--time') };
 }
 
 function tooltipLines(m) {
   const lines = [
     `${m.vendor}${m.cursor ? ` · in Cursor as "${m.cursor}"` : ''}`,
-    `Value: ${fmtValue(m.value)}  (= ${fmtScore(m.codingScore)} ÷ ${fmtPrice(m.price)})`,
-    `Coding score: ${fmtScore(m.codingScore)}${m.estimate ? (m.estimate.kind === 'provisional' ? ' (PROVISIONAL)' : ' (ESTIMATE)') : ''} (${pct(relative(m.codingScore))} of the best)`,
+    `Per finished task: ${fmtMoney(m.cost)}  = ${fmtMoney(m.costTok)} tokens + ${fmtMoney(m.costTime)} your time`,
+    `Coding score: ${fmtScore(m.codingScore)}${m.estimate ? (m.estimate.kind === 'provisional' ? ' (provisional)' : ' (estimate)') : ''} · ${pct(relative(m.codingScore))} of the best`,
+    `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})`,
   ];
-  if (m.estimate) lines.push('  Not a published Artificial Analysis score; see the methodology section.');
-  if (benchmarkKeys().length > 1) lines.push(...benchmarkLines(m).map((l) => '  ' + l));
-  lines.push(
-    `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})` +
-      (m.inputPrice != null && m.outputPrice != null ? ` — in ${fmtPrice(m.inputPrice)}, out ${fmtPrice(m.outputPrice)}` : ''),
-  );
-  if (levelCount(m) > 1) {
-    lines.push(`Effort levels (ranked on ${m.headlineLevel}):`);
-    for (const v of m.variants) {
-      const mark = v.level === m.headlineLevel ? '▸' : ' ';
-      lines.push(`${mark} ${v.level}: ${v.codingScore == null ? '—' : fmtScore(v.codingScore)}` + (v.value == null ? '' : `  · value ${fmtValue(v.value)}`));
-    }
-    if (m.bestValueLevel) lines.push(`"${m.bestValueLevel}" gives the most per dollar right now.`);
-  }
+  if (levelCount(m) > 1) lines.push(`Scored at "${m.headlineLevel}" (${levelCount(m)} levels — hover the name in the table)`);
   return lines;
 }
 
@@ -588,20 +601,23 @@ function renderBar() {
   const toggle = $('#bar-toggle');
   toggle.hidden = all.length <= BAR_DEFAULT_COUNT;
   toggle.textContent = state.barShowAll ? `Show top ${BAR_DEFAULT_COUNT} only` : `Show all ${all.length}`;
-  $('#bar-wrap').style.height = `${Math.max(120, models.length * 24 + 44)}px`;
+  const narrow = window.innerWidth < 600;
+  $('#bar-wrap').style.height = `${Math.max(120, models.length * (narrow ? 20 : 24) + 44)}px`;
 
-  const maxLen = window.innerWidth < 600 ? 22 : 44;
+  const maxLen = narrow ? 18 : 40;
   const data = {
     labels: models.map((m) => (m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name)),
-    datasets: [{ data: models.map((m) => m.value), backgroundColor: models.map((m) => colorOf(m.vendor)), borderRadius: 2, maxBarThickness: 18 }],
+    datasets: [
+      { label: 'Tokens', data: models.map((m) => m.costTok), backgroundColor: models.map((m) => colorOf(m.vendor)), borderRadius: 0, maxBarThickness: 16, stack: 'c' },
+      { label: 'Your time', data: models.map((m) => m.costTime), backgroundColor: t.time, borderRadius: 0, maxBarThickness: 16, stack: 'c' },
+    ],
   };
   if (state.charts.bar) {
     state.charts.bar.data = data;
-    state.barModels = models;
     state.charts.bar.update('none');
     return;
   }
-  const chart = new Chart($('#bar-chart'), {
+  state.charts.bar = new Chart($('#bar-chart'), {
     type: 'bar',
     data,
     options: {
@@ -615,23 +631,25 @@ function renderBar() {
           ...baseTooltip(t),
           callbacks: {
             title: (items) => state.barModels[items[0].dataIndex].name,
-            label: (item) => tooltipLines(state.barModels[item.dataIndex]),
+            label: (item) => (item.datasetIndex === 0 ? tooltipLines(state.barModels[item.dataIndex]) : null),
           },
+          filter: (item) => item.datasetIndex === 0,
         },
       },
       scales: {
         x: {
-          title: { display: true, text: 'Value score (coding score ÷ price)', color: t.muted },
-          ticks: { color: t.muted, font: { family: t.mono } },
+          stacked: true,
+          title: { display: true, text: 'USD per finished task (lower is better)', color: t.muted },
+          ticks: { color: t.muted, font: { family: t.mono }, callback: (v) => '$' + v },
           grid: { color: t.grid },
           border: { color: t.grid },
         },
         y: {
+          stacked: true,
           ticks: {
             autoSkip: false,
-            // Cursor models: green + bold label.
             color: (ctx) => (state.barModels[ctx.index]?.cursor ? t.green : t.ink),
-            font: (ctx) => ({ size: 12, weight: state.barModels[ctx.index]?.cursor ? '600' : '400' }),
+            font: (ctx) => ({ size: narrow ? 11 : 12, weight: state.barModels[ctx.index]?.cursor ? '600' : '400' }),
           },
           grid: { display: false },
           border: { color: t.grid },
@@ -639,21 +657,19 @@ function renderBar() {
       },
     },
   });
-
-  state.charts.bar = chart;
 }
 
 function renderScatter() {
   const t = chartTheme();
   const models = visibleModels();
-  const maxValue = Math.max(...state.data.models.map((m) => m.value));
+  const minCost = Math.min(...state.ranked.map((m) => m.cost));
   const datasets = state.vendors
     .filter((v) => vendorShown(v.name))
     .map((v) => ({
       label: v.name,
       data: models
         .filter((m) => m.vendor === v.name)
-        .map((m) => ({ x: m.price, y: m.codingScore, r: 5 + 13 * Math.sqrt(m.value / maxValue), model: m })),
+        .map((m) => ({ x: m.price, y: m.codingScore, r: 4 + 12 * Math.pow(minCost / m.cost, 2), model: m })),
       backgroundColor: withAlpha(v.color, 0.5),
       borderColor: v.color,
       borderWidth: (ctx) => (ctx.raw?.model?.cursor ? 2 : 1),
@@ -677,10 +693,7 @@ function renderScatter() {
         legend: { display: false },
         tooltip: {
           ...baseTooltip(t),
-          callbacks: {
-            title: (items) => items[0].raw.model.name,
-            label: (item) => tooltipLines(item.raw.model),
-          },
+          callbacks: { title: (items) => items[0].raw.model.name, label: (item) => tooltipLines(item.raw.model) },
         },
       },
       scales: {
@@ -710,31 +723,51 @@ function destroyCharts() {
 }
 
 // ---------- wiring ----------
-/** Re-renders everything that depends on the filters. */
+/** Re-renders everything that depends on filters or task settings. */
 function refresh() {
-  renderHero();
+  renderToolbarSummaries();
   renderCountLine();
+  renderTable();
   if (typeof Chart !== 'undefined') {
     renderBar();
     renderScatter();
   }
-  renderTable();
+  renderHero();
   renderExcluded();
+  renderMethodExample();
+}
+
+function onTaskChange() {
+  rerank();
+  savePrefs();
+  refresh();
 }
 
 function wireControls() {
   for (const btn of document.querySelectorAll('[data-select]')) {
     btn.addEventListener('click', () => {
       state.hidden = btn.dataset.select === 'all' ? new Set() : new Set(state.vendors.map((v) => v.name));
-      saveFilters();
+      savePrefs();
       renderVendorFilters();
       refresh();
     });
   }
   $('#cursor-only').addEventListener('change', (e) => {
     state.cursorOnly = e.target.checked;
-    saveFilters();
+    savePrefs();
     refresh();
+  });
+  $('#fix-cost').addEventListener('input', (e) => {
+    state.task.fixCostUsd = Number(e.target.value);
+    onTaskChange();
+  });
+  $('#task-tokens').addEventListener('change', (e) => {
+    state.task.tokensPerTaskMillions = Number(e.target.value);
+    onTaskChange();
+  });
+  $('#task-reset').addEventListener('click', () => {
+    state.task = { ...state.data.config.taskModel };
+    onTaskChange();
   });
   $('#bar-toggle').addEventListener('click', () => {
     state.barShowAll = !state.barShowAll;
@@ -748,10 +781,45 @@ function wireControls() {
     th.querySelector('button').addEventListener('click', () => {
       const key = th.dataset.key;
       if (state.sort.key === key) state.sort.dir = state.sort.dir === 'asc' ? 'desc' : 'asc';
-      else state.sort = { key, dir: ['name', 'vendor', 'rank', 'price'].includes(key) ? 'asc' : 'desc' };
+      else state.sort = { key, dir: ['name', 'vendor', 'rank', 'price', 'cost'].includes(key) ? 'asc' : 'desc' };
       renderTable();
     });
   }
+
+  // Toolbar popovers: one open at a time; close on outside click or Escape.
+  const pops = [...document.querySelectorAll('details.pop')];
+  for (const p of pops) p.addEventListener('toggle', () => p.open && pops.forEach((o) => o !== p && (o.open = false)));
+
+  // Level popover (hover on desktop, tap on touch, focus for keyboard).
+  const cellOf = (e) => e.target.closest?.('td.name');
+  document.addEventListener('pointerover', (e) => {
+    const cell = cellOf(e);
+    if (cell && tipModels.has(cell) && e.pointerType === 'mouse') showLevelTip(cell);
+  });
+  document.addEventListener('pointerout', (e) => {
+    const cell = cellOf(e);
+    if (cell && cell === tipAnchor && !cell.contains(e.relatedTarget) && e.pointerType === 'mouse') hideLevelTip();
+  });
+  document.addEventListener('focusin', (e) => {
+    const cell = cellOf(e);
+    if (cell && tipModels.has(cell)) showLevelTip(cell);
+  });
+  document.addEventListener('focusout', (e) => cellOf(e) === tipAnchor && hideLevelTip());
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest?.('details.pop')) pops.forEach((p) => (p.open = false));
+    const cell = cellOf(e);
+    if (cell && tipModels.has(cell)) {
+      if (tipAnchor === cell) hideLevelTip();
+      else showLevelTip(cell);
+    } else if (!e.target.closest?.('#level-tip')) hideLevelTip();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    hideLevelTip();
+    pops.forEach((p) => (p.open = false));
+  });
+  window.addEventListener('scroll', () => tipAnchor && hideLevelTip(), { passive: true });
+
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     assignColors();
     renderVendorFilters();
@@ -773,22 +841,22 @@ async function main() {
     return;
   }
 
+  state.data.config.taskModel ??= { tokensPerTaskMillions: 0.5, fixCostUsd: 50 };
+  state.task = { ...state.data.config.taskModel };
   const counts = new Map();
   for (const m of state.data.models) counts.set(m.vendor, (counts.get(m.vendor) ?? 0) + 1);
-  state.vendors = [...counts]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([name, count]) => ({ name, count, color: '' }));
+  state.vendors = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([name, count]) => ({ name, count, color: '' }));
   assignColors();
-  loadFilters();
+  loadPrefs();
+  rerank();
 
   const updated = new Date(state.data.generatedAt);
-  const stamp = updated.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
   $('#updated').dateTime = state.data.generatedAt;
-  $('#updated').textContent = `${stamp} (${relativeTime(updated)})`;
+  $('#updated').textContent = `${updated.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} (${relativeTime(updated)})`;
   $('#strip-updated').textContent = `Updated ${relativeTime(updated)}`;
 
   status.hidden = true;
-  $('#filters-card').hidden = false;
+  $('#toolbar').hidden = false;
   $('#explore').hidden = false;
   renderFacts();
   renderVendorFilters();
@@ -796,14 +864,13 @@ async function main() {
 
   if (typeof Chart === 'undefined') {
     for (const id of ['#bar-wrap', '.scatter-wrap']) {
-      $(id).replaceChildren(el('p', { class: 'muted' }, 'Charts could not load (Chart.js blocked or offline). The table above has all the data.'));
+      $(id).replaceChildren(el('p', { class: 'muted' }, 'Charts could not load (Chart.js blocked or offline). The table has all the data.'));
     }
   } else {
     Chart.defaults.font.family = cssVar('--sans');
     Chart.defaults.color = cssVar('--muted');
   }
   wireControls();
-  wireLevelTips();
   refresh();
 }
 

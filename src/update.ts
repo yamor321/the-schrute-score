@@ -76,7 +76,11 @@ async function main() {
       `${marked.ranked.length} ranked, ${marked.excluded.length} excluded, ${newCount} new.`,
   );
   const top = marked.ranked[0]!;
-  console.log(`#1 by value: ${top.name} (${top.vendor}) — score ${top.codingScore.toFixed(1)}, $${top.price}/1M, value ${top.value.toFixed(2)}`);
+  console.log(
+    `#1 by cost per finished task: ${top.name} (${top.vendor}) — score ${top.codingScore.toFixed(1)}, ` +
+      `$${top.price}/1M, $${top.effectiveCost.toFixed(2)} per task ` +
+      `(${cfg.taskModel.tokensPerTaskMillions}M tokens, $${cfg.taskModel.fixCostUsd} per fix)`,
+  );
 
   if (!hasMeaningfulChange(previous, snapshot)) {
     console.log('No meaningful change since the last snapshot — nothing written.');
