@@ -15,6 +15,7 @@ export const fixtureModels = () => parseModels(fixtureBody);
  */
 export const defaultConfig = (overrides: Partial<ScoringConfig> = {}): ScoringConfig => ({
   excludeVendors: [],
+  excludeModels: [],
   benchmarkWeights: { codingIndex: 0.5, liveCodeBench: 0.25, terminalBench: 0.25 },
   priceBasis: 'blended',
   minBenchmarksRequired: 1,

@@ -148,7 +148,7 @@ export function applyCursor(table: ValueTable, cfg: CursorConfig): { table: Valu
           (minScore !== undefined ? ` (bar: ${minScore.toFixed(1)})` : ''),
       };
     }
-    const vendorOut = pick('vendor-filter');
+    const vendorOut = pick('vendor-filter') ?? pick('model-filter');
     if (vendorOut) {
       return { ...base, status: 'vendor-filter', bestRank: null, representative: rep(vendorOut), detail: vendorOut.detail };
     }

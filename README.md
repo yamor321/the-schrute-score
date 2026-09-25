@@ -92,6 +92,15 @@ excludeVendors: [deepseek, qwen, google, zhipu]
 
 Use the vendor name as shown on the dashboard's filter chips (`Google`, `DeepSeek`, `Z AI`), or Artificial Analysis's slug (`google`, `deepseek`, `zai`). Case doesn't matter. Qwen models are listed under the vendor **Alibaba** (`alibaba`), so exclude that name to remove them.
 
+### Exclude specific models
+
+```yaml
+excludeModels:
+  - Step 5 Preview
+```
+
+Use the model name as shown on the dashboard. Every effort level of that model is removed, and matching ignores case, word order and dashes. Excluded models appear in the "Excluded" list as "excluded by hand".
+
 ### Retune the weights
 
 Weights don't need to add up to 1. They are relative:

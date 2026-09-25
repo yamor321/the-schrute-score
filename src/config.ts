@@ -5,6 +5,8 @@ export type PriceBasis = 'blended' | 'input' | 'output';
 
 export interface ScoringConfig {
   excludeVendors: string[];
+  /** Specific models to drop, by name (all effort levels). */
+  excludeModels: string[];
   benchmarkWeights: Record<string, number>;
   priceBasis: PriceBasis;
   minBenchmarksRequired: number;
@@ -24,6 +26,10 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
   const excludeVendors = c.excludeVendors ?? [];
   if (!Array.isArray(excludeVendors)) throw new Error('excludeVendors must be a list, e.g. [deepseek, qwen]');
   const vendors = excludeVendors.map((v) => String(v).trim()).filter((v) => v !== '');
+
+  const excludeModelsRaw = c.excludeModels ?? [];
+  if (!Array.isArray(excludeModelsRaw)) throw new Error('excludeModels must be a list, e.g. ["Step 5 Preview"]');
+  const excludeModels = excludeModelsRaw.map((v) => String(v).trim()).filter((v) => v !== '');
 
   const weights = c.benchmarkWeights;
   if (weights === null || typeof weights !== 'object' || Array.isArray(weights)) {
@@ -66,6 +72,7 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
 
   return {
     excludeVendors: vendors,
+    excludeModels,
     benchmarkWeights,
     priceBasis: priceBasis as PriceBasis,
     minBenchmarksRequired: min,

@@ -121,7 +121,7 @@ export function groupVariants(table: ValueTable): ValueTable {
     }
 
     // Not ranked at any level: one excluded row for the model, using its most informative level.
-    const priority: ExcludedModel['reason'][] = ['below-quality-floor', 'missing-price', 'insufficient-benchmarks', 'vendor-filter'];
+    const priority: ExcludedModel['reason'][] = ['below-quality-floor', 'missing-price', 'insufficient-benchmarks', 'model-filter', 'vendor-filter'];
     const excl = rows.map((r) => r.row as ExcludedModel);
     const rep = priority
       .map((reason) => excl.filter((e) => e.reason === reason).sort((a, b) => (b.codingScore ?? -1) - (a.codingScore ?? -1))[0])
@@ -132,7 +132,8 @@ export function groupVariants(table: ValueTable): ValueTable {
       ...rest,
       id,
       name: base,
-      detail: variants.length > 1 && rep.reason !== 'vendor-filter' ? `${rep.detail} — best level: ${repLevel}` : rep.detail,
+      detail:
+        variants.length > 1 && rep.reason !== 'vendor-filter' && rep.reason !== 'model-filter' ? `${rep.detail} — best level: ${repLevel}` : rep.detail,
       variants,
       headlineLevel: repLevel,
       averageScore,
@@ -145,7 +146,8 @@ export function groupVariants(table: ValueTable): ValueTable {
     'below-quality-floor': 0,
     'missing-price': 1,
     'insufficient-benchmarks': 2,
-    'vendor-filter': 3,
+    'model-filter': 3,
+    'vendor-filter': 4,
   };
   excluded.sort((a, b) => order[a.reason] - order[b.reason] || (b.codingScore ?? 0) - (a.codingScore ?? 0) || a.name.localeCompare(b.name));
 

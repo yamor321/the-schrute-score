@@ -324,6 +324,7 @@ function levelTipContent(m) {
     'missing-price': 'no price',
     'insufficient-benchmarks': 'no score',
     'vendor-filter': 'vendor excluded',
+    'model-filter': 'excluded by hand',
   };
   const head = el('div', { class: 'tip-head' }, el('strong', {}, m.name), el('span', { class: 'muted' }, ` · ${m.vendor}`));
   const intro =

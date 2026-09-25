@@ -6,6 +6,12 @@
 # Match is case-insensitive. Example: [deepseek, alibaba, google, zai]
 excludeVendors: []
 
+# Specific models to exclude, by name as shown on the dashboard. All of a
+# model's effort levels go with it. Matching ignores case, word order and
+# dashes. Example: ["Step 5 Preview", "Qwen3.8 Max"]
+excludeModels:
+  - Step 5 Preview   # StepFun preview release; removed by the owner
+
 # Which benchmark fields (from the Artificial Analysis API) feed the
 # composite "coding score," and how much each one counts.
 # Default: the Artificial Analysis Coding Index alone. It is AA's current

@@ -67,6 +67,12 @@ describe('computeValueTable', () => {
     expect(byName(excluded, 'Gamma Open')!.detail).toMatch(/vendor filter/);
   });
 
+  it('excludes specific models by name, ignoring case, word order and variants', () => {
+    const { ranked, excluded } = computeValueTable(fixtureModels(), defaultConfig({ excludeModels: ['coder ALPHA'] }));
+    expect(ranked.map((r) => r.name)).not.toContain('Alpha Coder');
+    expect(excluded.find((e) => e.name === 'Alpha Coder')).toMatchObject({ reason: 'model-filter' });
+  });
+
   it('excludes models below minBenchmarksRequired and says why', () => {
     const { ranked, excluded } = computeValueTable(fixtureModels(), defaultConfig({ minBenchmarksRequired: 3 }));
     // Only Alpha and Gamma have all three benchmarks.
@@ -160,6 +166,7 @@ describe('scoring config', () => {
   it('loads the committed config/scoring.yaml', () => {
     expect(loadScoringConfig()).toEqual({
       excludeVendors: [],
+      excludeModels: ['Step 5 Preview'],
       benchmarkWeights: { codingIndex: 1 },
       priceBasis: 'blended',
       minBenchmarksRequired: 1,

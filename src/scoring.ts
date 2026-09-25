@@ -2,6 +2,7 @@ import { readBenchmark } from './benchmarks.js';
 import type { PriceBasis, ScoringConfig } from './config.js';
 import type { AaModel, ModelEstimate } from './source/artificialAnalysis.js';
 import type { VariantSummary } from './variants.js';
+import { modelKey } from './cursor.js';
 
 export interface BenchmarkDetail {
   label: string;
@@ -52,7 +53,7 @@ export interface RankedModel {
   bestValueLevel?: string | null;
 }
 
-export type ExclusionReason = 'vendor-filter' | 'insufficient-benchmarks' | 'missing-price' | 'below-quality-floor';
+export type ExclusionReason = 'vendor-filter' | 'model-filter' | 'insufficient-benchmarks' | 'missing-price' | 'below-quality-floor';
 
 export interface ExcludedModel {
   id: string;
@@ -123,6 +124,8 @@ export function resolvePrice(model: AaModel, basis: PriceBasis): ResolvedPrice {
  *
  * 1. Vendor exclusion — drop any model whose creator name or slug matches an
  *    entry in `cfg.excludeVendors` (case-insensitive, whitespace-trimmed).
+ *    Also drop any model named in `cfg.excludeModels` (matched ignoring case,
+ *    word order, dashes and effort-level parentheses).
  *
  * 2. Thin-evidence exclusion — count how many of the benchmarks named in
  *    `cfg.benchmarkWeights` have a non-null value for the model. If fewer than
@@ -166,6 +169,7 @@ export function resolvePrice(model: AaModel, basis: PriceBasis): ResolvedPrice {
  */
 export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueTable {
   const excludedVendors = new Set(cfg.excludeVendors.map(normalizeVendor));
+  const excludedModels = new Set(cfg.excludeModels.map(modelKey));
   const benchmarkKeys = Object.keys(cfg.benchmarkWeights);
   const ranked: Omit<RankedModel, 'rank'>[] = [];
   const excluded: ExcludedModel[] = [];
@@ -177,6 +181,11 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
     const vendorIds = [m.vendor, m.vendorSlug].filter((v): v is string => v !== null).map(normalizeVendor);
     if (vendorIds.some((v) => excludedVendors.has(v))) {
       excluded.push({ ...base, reason: 'vendor-filter', detail: `Excluded: vendor filter (${m.vendor})` });
+      continue;
+    }
+    // …and specific models removed by name (all of their effort levels).
+    if (excludedModels.has(modelKey(m.name))) {
+      excluded.push({ ...base, reason: 'model-filter', detail: 'Excluded by hand (excludeModels in config/scoring.yaml)' });
       continue;
     }
 
@@ -289,7 +298,8 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
     'below-quality-floor': 0,
     'missing-price': 1,
     'insufficient-benchmarks': 2,
-    'vendor-filter': 3,
+    'model-filter': 3,
+    'vendor-filter': 4,
   };
   excluded.sort(
     (a, b) => order[a.reason] - order[b.reason] || (b.codingScore ?? 0) - (a.codingScore ?? 0) || a.name.localeCompare(b.name),
