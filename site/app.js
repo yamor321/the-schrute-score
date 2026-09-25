@@ -85,9 +85,10 @@ function icon(id) {
   return svg;
 }
 
-const newBadge = () => el('span', { class: 'badge-new', title: 'First appeared in the latest update' }, 'NEW');
 const estBadge = (est) =>
-  el('span', { class: 'badge-est', title: `Estimated score (not from the Artificial Analysis API). ${est.note}` }, 'EST.');
+  est.kind === 'provisional'
+    ? el('span', { class: 'badge-est badge-prov', title: est.note }, 'PROVISIONAL')
+    : el('span', { class: 'badge-est', title: `Estimated score (not from the Artificial Analysis API). ${est.note}` }, 'EST.');
 const cursorBadge = (name) =>
   el('span', { class: 'badge-cursor', title: `Available in Cursor as "${name}"` }, icon('i-pointer'), 'Cursor');
 
@@ -110,6 +111,8 @@ const vendorShown = (vendor) => !state.hidden.has(vendor);
 const isVisible = (m) => vendorShown(m.vendor) && (!state.cursorOnly || !!m.cursor);
 const visibleModels = () => state.data.models.filter(isVisible);
 const cursorModels = () => state.data.cursor?.models ?? [];
+
+const levelCount = (m) => m.variants?.length ?? 1;
 
 /** Cursor models with no ranked variant, shown once each below the ranking (never vendor-filtered by config). */
 const cursorExtras = () => cursorModels().filter((c) => c.status !== 'ranked' && c.status !== 'vendor-filter' && vendorShown(c.vendor));
@@ -150,7 +153,7 @@ function renderHero() {
 
   if (top) {
     $('#hero-name').textContent = top.name;
-    $('#hero-badges').replaceChildren(...[top.cursor && cursorBadge(top.cursor), top.estimate && estBadge(top.estimate), top.isNew && newBadge()].filter(Boolean));
+    $('#hero-badges').replaceChildren(...[top.cursor && cursorBadge(top.cursor), top.estimate && estBadge(top.estimate)].filter(Boolean));
     $('#hero-vendor').textContent =
       `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}` +
       (top.rank !== 1 ? ` · #${top.rank} overall` : '');
@@ -171,21 +174,10 @@ function renderHero() {
         `This one reaches ${pct(relative(top.codingScore))} of that score` +
         (ratio >= 1.15 ? ` for ${ratio >= 10 ? Math.round(ratio) : ratio.toFixed(1)}× less money.` : ' at a similar price.');
     }
+    if (levelCount(top) > 1) note += ` Scored at its best effort level (${top.headlineLevel}); hover the name in the table to see all ${levelCount(top)} levels.`;
     if (top.cursor) note += ` In Cursor, pick "${top.cursor}".`;
     if (top.estimate) note += ` Its coding score is an estimate: ${top.estimate.note}`;
     $('#hero-note').textContent = note;
-  }
-
-  const fresh = visible.filter((m) => m.isNew);
-  const freshExcluded = state.data.excluded.filter((m) => m.isNew && vendorShown(m.vendor));
-  const callout = $('#new-callout');
-  callout.hidden = !(fresh.length || freshExcluded.length);
-  if (!callout.hidden) {
-    callout.replaceChildren(newBadge(), ' ');
-    if (fresh.length) callout.append(`New since the last update: ${fresh.map((m) => `${m.name} (#${m.rank})`).join(', ')}.`);
-    if (freshExcluded.length) {
-      callout.append(` ${freshExcluded.length} other new model${freshExcluded.length === 1 ? ' is' : 's are'} not ranked (see "Excluded").`);
-    }
   }
   $('#hero').hidden = false;
 }
@@ -224,7 +216,7 @@ function renderMethod() {
       'Cursor models that aren\'t ranked (below the bar, no price, or no benchmark data) are still shown once at the end of the table, with the reason.'
     : 'No Cursor model list is configured.';
 
-  const estimated = [...state.data.models, ...state.data.excluded].filter((m) => m.estimate);
+  const estimated = [...state.data.models, ...state.data.excluded].filter((m) => m.estimate?.kind === 'manual');
   const estNode = $('#method-estimates');
   estNode.replaceChildren(
     ...(estimated.length
@@ -301,16 +293,120 @@ function sortedTableRows() {
   });
 }
 
-function nameCell(title, { cursor, isNew, estimate, sub, tooltip } = {}) {
-  return el(
+/** Model name cell. With `model`, hovering/focusing it shows the effort-level popover. */
+function nameCell(title, { cursor, estimate, sub, model } = {}) {
+  const levels = model ? levelCount(model) : 0;
+  const cell = el(
     'td',
-    { class: 'name', title: tooltip ?? '' },
+    { class: `name${levels > 1 ? ' has-levels' : ''}` },
     el('span', { class: 'model' }, title),
-    cursor || isNew || estimate
-      ? el('span', { class: 'badges' }, cursor ? cursorBadge(cursor) : null, estimate ? estBadge(estimate) : null, isNew ? newBadge() : null)
-      : null,
+    cursor || estimate ? el('span', { class: 'badges' }, cursor ? cursorBadge(cursor) : null, estimate ? estBadge(estimate) : null) : null,
     sub ? el('span', { class: 'sub' }, ...[sub].flat()) : null,
   );
+  if (model) attachLevelTip(cell, model);
+  return cell;
+}
+
+// ---------- effort-level popover ----------
+const tipModels = new WeakMap();
+let tipAnchor = null;
+
+function attachLevelTip(cell, model) {
+  tipModels.set(cell, model);
+  cell.tabIndex = 0;
+}
+
+function levelTipContent(m) {
+  const variants = m.variants ?? [];
+  const statusText = {
+    ranked: 'passes the bar',
+    'below-quality-floor': 'below the bar',
+    'missing-price': 'no price',
+    'insufficient-benchmarks': 'no score',
+    'vendor-filter': 'vendor excluded',
+  };
+  const head = el('div', { class: 'tip-head' }, el('strong', {}, m.name), el('span', { class: 'muted' }, ` · ${m.vendor}`));
+  const intro =
+    variants.length > 1
+      ? `${variants.length} effort levels tested. The ranking uses the best one (${m.headlineLevel})` +
+        (m.averageScore != null ? `; the average over all levels is ${fmtScore(m.averageScore)}.` : '.')
+      : 'One setting tested.';
+  const rows = variants.map((v) =>
+    el(
+      'tr',
+      { class: `${v.level === m.headlineLevel ? 'is-headline' : ''}${v.level === m.bestValueLevel ? ' is-bestvalue' : ''}` },
+      el('td', {}, v.level),
+      el('td', { class: 'num' }, v.codingScore == null ? '—' : fmtScore(v.codingScore)),
+      el('td', { class: 'num' }, v.price == null ? '—' : fmtPrice(v.price)),
+      el('td', { class: 'num' }, v.value == null ? '—' : fmtValue(v.value)),
+      el('td', { class: 'muted' }, statusText[v.status] ?? v.status),
+    ),
+  );
+  const table = el(
+    'table',
+    { class: 'tip-table' },
+    el('thead', {}, el('tr', {}, el('th', {}, 'Level'), el('th', { class: 'num' }, 'Score'), el('th', { class: 'num' }, 'Price'), el('th', { class: 'num' }, 'Value'), el('th', {}, ''))),
+    el('tbody', {}, ...rows),
+  );
+  const notes = [];
+  if (m.bestValueLevel) {
+    const bv = variants.find((v) => v.level === m.bestValueLevel);
+    notes.push(el('p', { class: 'tip-win' }, `💡 Right now "${m.bestValueLevel}" gives the most per dollar (value ${fmtValue(bv.value)} vs ${fmtValue(m.value)}).`));
+  }
+  if (m.estimate) notes.push(el('p', { class: 'muted' }, m.estimate.note));
+  return [head, el('p', { class: 'tip-intro' }, intro), variants.length ? table : null, ...notes].filter(Boolean);
+}
+
+function showLevelTip(cell) {
+  const m = tipModels.get(cell);
+  const tip = $('#level-tip');
+  if (!m || !tip) return;
+  tipAnchor = cell;
+  tip.replaceChildren(...levelTipContent(m));
+  tip.hidden = false;
+  const r = cell.getBoundingClientRect();
+  const w = tip.offsetWidth;
+  const h = tip.offsetHeight;
+  const left = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
+  const below = r.bottom + 6;
+  const top = below + h > window.innerHeight - 8 ? Math.max(8, r.top - h - 6) : below;
+  tip.style.left = `${left + window.scrollX}px`;
+  tip.style.top = `${top + window.scrollY}px`;
+}
+
+function hideLevelTip() {
+  tipAnchor = null;
+  const tip = $('#level-tip');
+  if (tip) tip.hidden = true;
+}
+
+function wireLevelTips() {
+  const cellOf = (e) => e.target.closest?.('td.name');
+  document.addEventListener('pointerover', (e) => {
+    const cell = cellOf(e);
+    if (cell && tipModels.has(cell) && e.pointerType === 'mouse') showLevelTip(cell);
+  });
+  document.addEventListener('pointerout', (e) => {
+    const cell = cellOf(e);
+    if (cell && cell === tipAnchor && !cell.contains(e.relatedTarget) && e.pointerType === 'mouse') hideLevelTip();
+  });
+  document.addEventListener('focusin', (e) => {
+    const cell = cellOf(e);
+    if (cell && tipModels.has(cell)) showLevelTip(cell);
+  });
+  document.addEventListener('focusout', (e) => {
+    if (cellOf(e) === tipAnchor) hideLevelTip();
+  });
+  // Touch: tap a name to toggle.
+  document.addEventListener('click', (e) => {
+    const cell = cellOf(e);
+    if (cell && tipModels.has(cell)) {
+      if (tipAnchor === cell) hideLevelTip();
+      else showLevelTip(cell);
+    } else if (!e.target.closest?.('#level-tip')) hideLevelTip();
+  });
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && hideLevelTip());
+  window.addEventListener('scroll', () => tipAnchor && hideLevelTip(), { passive: true });
 }
 const vendorCell = (vendor) =>
   el('td', {}, el('span', { class: 'vendor-cell' }, el('span', { class: 'swatch', style: `background:${colorOf(vendor)}` }), vendor));
@@ -328,10 +424,13 @@ function renderTable() {
         el('td', { class: 'num rank' }, String(m.rank)),
         nameCell(m.name, {
           cursor: m.cursor,
-          isNew: m.isNew,
           estimate: m.estimate,
-          sub: m.cursor && modelKeyLoose(m.cursor) !== modelKeyLoose(m.name) ? `In Cursor: ${m.cursor}` : null,
-          tooltip: benchmarkLines(m).join('\n'),
+          model: m,
+          sub: [
+            levelCount(m) > 1 ? `${levelCount(m)} effort levels · scored at ${m.headlineLevel}` : null,
+            m.bestValueLevel ? ` · "${m.bestValueLevel}" is better value now` : null,
+            m.cursor && modelKeyLoose(m.cursor) !== modelKeyLoose(m.name) ? `${levelCount(m) > 1 ? ' · ' : ''}In Cursor: ${m.cursor}` : null,
+          ].filter(Boolean),
         }),
         vendorCell(m.vendor),
         el('td', { class: 'num' }, fmtScore(m.codingScore)),
@@ -370,17 +469,20 @@ function renderTable() {
           ...extras.map((c) => {
             const r = c.representative;
             const score = r?.codingScore ?? null;
+            const row = r && state.data.excluded.find((e) => e.id === r.id);
             return el(
               'tr',
               { class: 'is-cursor' },
               el('td', { class: 'num rank' }, '—'),
               nameCell(c.name, {
                 cursor: c.name,
+                estimate: row?.estimate,
+                model: row ?? undefined,
                 sub: [
                   el('span', { class: 'status-pill', title: c.detail }, statusLabel[c.status]),
                   ' ',
                   c.status === 'below-quality-floor'
-                    ? `needs ${fmtScore(state.data.quality.minScore)}` + (r.name !== c.name ? ` · best variant: ${r.name}` : '')
+                    ? `needs ${fmtScore(state.data.quality.minScore)}` + (row && levelCount(row) > 1 ? ` · best level: ${row.headlineLevel}` : '')
                     : c.detail,
                 ],
               }),
@@ -418,7 +520,7 @@ function renderExcluded() {
       el(
         'tr',
         {},
-        nameCell(m.name, { cursor: m.cursor, isNew: m.isNew }),
+        nameCell(m.name, { cursor: m.cursor, estimate: m.estimate, model: m }),
         el('td', {}, m.vendor),
         el('td', { class: 'num' }, m.codingScore == null ? '—' : fmtScore(m.codingScore)),
         el('td', {}, m.detail),
@@ -442,16 +544,24 @@ function chartTheme() {
 
 function tooltipLines(m) {
   const lines = [
-    `${m.vendor}${m.isNew ? ' · NEW' : ''}${m.cursor ? ` · in Cursor as "${m.cursor}"` : ''}`,
+    `${m.vendor}${m.cursor ? ` · in Cursor as "${m.cursor}"` : ''}`,
     `Value: ${fmtValue(m.value)}  (= ${fmtScore(m.codingScore)} ÷ ${fmtPrice(m.price)})`,
-    `Coding score: ${fmtScore(m.codingScore)}${m.estimate ? ' (ESTIMATE)' : ''} (${pct(relative(m.codingScore))} of the best)`,
+    `Coding score: ${fmtScore(m.codingScore)}${m.estimate ? (m.estimate.kind === 'provisional' ? ' (PROVISIONAL)' : ' (ESTIMATE)') : ''} (${pct(relative(m.codingScore))} of the best)`,
   ];
-  if (m.estimate) lines.push('  Not from the Artificial Analysis API; see the methodology section.');
+  if (m.estimate) lines.push('  Not a published Artificial Analysis score; see the methodology section.');
   if (benchmarkKeys().length > 1) lines.push(...benchmarkLines(m).map((l) => '  ' + l));
   lines.push(
     `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})` +
       (m.inputPrice != null && m.outputPrice != null ? ` — in ${fmtPrice(m.inputPrice)}, out ${fmtPrice(m.outputPrice)}` : ''),
   );
+  if (levelCount(m) > 1) {
+    lines.push(`Effort levels (ranked on ${m.headlineLevel}):`);
+    for (const v of m.variants) {
+      const mark = v.level === m.headlineLevel ? '▸' : ' ';
+      lines.push(`${mark} ${v.level}: ${v.codingScore == null ? '—' : fmtScore(v.codingScore)}` + (v.value == null ? '' : `  · value ${fmtValue(v.value)}`));
+    }
+    if (m.bestValueLevel) lines.push(`"${m.bestValueLevel}" gives the most per dollar right now.`);
+  }
   return lines;
 }
 
@@ -481,7 +591,7 @@ function renderBar() {
 
   const maxLen = window.innerWidth < 600 ? 22 : 44;
   const data = {
-    labels: models.map((m) => (m.isNew ? '🆕 ' : '') + (m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name)),
+    labels: models.map((m) => (m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name)),
     datasets: [{ data: models.map((m) => m.value), backgroundColor: models.map((m) => colorOf(m.vendor)), borderRadius: 2, maxBarThickness: 18 }],
   };
   if (state.charts.bar) {
@@ -692,6 +802,7 @@ async function main() {
     Chart.defaults.color = cssVar('--muted');
   }
   wireControls();
+  wireLevelTips();
   refresh();
 }
 

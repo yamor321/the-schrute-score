@@ -1,6 +1,7 @@
 import { readBenchmark } from './benchmarks.js';
 import type { PriceBasis, ScoringConfig } from './config.js';
 import type { AaModel, ModelEstimate } from './source/artificialAnalysis.js';
+import type { VariantSummary } from './variants.js';
 
 export interface BenchmarkDetail {
   label: string;
@@ -44,6 +45,11 @@ export interface RankedModel {
   estimate?: ModelEstimate;
   /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
   cursor?: string;
+  /** Set after grouping effort levels into one model (see variants.ts). */
+  variants?: VariantSummary[];
+  headlineLevel?: string;
+  averageScore?: number | null;
+  bestValueLevel?: string | null;
 }
 
 export type ExclusionReason = 'vendor-filter' | 'insufficient-benchmarks' | 'missing-price' | 'below-quality-floor';
@@ -65,6 +71,11 @@ export interface ExcludedModel {
   estimate?: ModelEstimate;
   /** Cursor model name, when this model can be picked in Cursor (see cursor.ts). */
   cursor?: string;
+  /** Set after grouping effort levels into one model (see variants.ts). */
+  variants?: VariantSummary[];
+  headlineLevel?: string;
+  averageScore?: number | null;
+  bestValueLevel?: string | null;
 }
 
 export interface QualityFloor {
@@ -135,8 +146,8 @@ export function resolvePrice(model: AaModel, basis: PriceBasis): ResolvedPrice {
  *                3:1 blended price is used instead (and noted on the row).
  *    A missing, zero or negative price excludes the model (cannot divide by it).
  *
- * 5. Quality floor — find the best codingScore among the models still in
- *    (priced and eligible). Any model scoring below
+ * 5. Quality floor — find the best MEASURED codingScore among the models
+ *    still in (priced and eligible; estimated scores don't set the bar). Any model scoring below
  *    `cfg.qualityFloor × bestScore` is excluded. This keeps cheap-but-weak
  *    models out: the ranking only compares models that are close to the top
  *    of the field, then asks which of those is priced most sensibly. The
@@ -242,7 +253,9 @@ export function computeValueTable(models: AaModel[], cfg: ScoringConfig): ValueT
   let quality: QualityFloor | null = null;
   let qualified = ranked;
   if (ranked.length > 0) {
-    const best = ranked.reduce((a, b) => (b.codingScore > a.codingScore ? b : a));
+    // The bar is set by measured scores only — an estimate must never raise it for everyone else.
+    const measured = ranked.filter((r) => !r.estimate);
+    const best = (measured.length ? measured : ranked).reduce((a, b) => (b.codingScore > a.codingScore ? b : a));
     quality = {
       ratio: cfg.qualityFloor,
       bestScore: best.codingScore,

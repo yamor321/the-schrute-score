@@ -164,6 +164,7 @@ describe('scoring config', () => {
       priceBasis: 'blended',
       minBenchmarksRequired: 1,
       qualityFloor: 0.85,
+      provisionalMaxAgeDays: 60,
     });
   });
 

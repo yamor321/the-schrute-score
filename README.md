@@ -37,7 +37,20 @@ Steps 2 and 3 describe the general mechanism for blending several benchmarks. Wi
 
 Every excluded model still appears on the dashboard, in a separate list with a one-line reason. Every ranked row carries its raw inputs: each benchmark's raw and normalized value, the weight actually applied, which benchmarks were missing, and the price and its basis. Anyone can check the math.
 
-**New models.** Each run compares the current model ids with the previous `data/latest.json`. A model that wasn't there before gets `isNew: true` and a NEW badge. The flag lasts **one update cycle** (about 12 hours). On the very first run nothing is flagged.
+**One row per model, not per effort level.** Artificial Analysis lists effort and reasoning levels as separate entries: "GPT-5.5 (xhigh)", "GPT-5.5 (high)", "Claude Opus 5 (Adaptive Reasoning, Max Effort)", and so on. Every level is scored first (steps 1–7). Then the levels are grouped into one row per model ([`src/variants.ts`](src/variants.ts)):
+
+- **The headline score is the model's best level:** what it can do when you turn it up. A plain average would be unfair, because each model is tested at a different set of levels. Some include low or non-reasoning and some don't, so the average mostly reflects which levels were tested (e.g. GPT-5.6 Luna: max 71.4, average over its 6 levels 56.3).
+- **The model counts as ranked if its best level clears the bar.** Hovering the model name on the dashboard shows every level's score, price and value, plus the average.
+- **If a different level also clears the bar and gives at least 5% more value** (e.g. that level is discounted), the tooltip says so.
+- **What counts as a level:** only parentheses made entirely of effort/reasoning words. Versions like "(May '25)" or "(0902)" stay separate models.
+
+**Brand-new models: provisional scores.** Artificial Analysis usually publishes a new model's Intelligence Index within a day but can take longer for the Coding Index. Without handling this, a new frontier model (e.g. Claude Opus 5.5 on release) would sit in "no score" for days. So every run, a model released within `provisionalMaxAgeDays` (default 60) that has an Intelligence Index but no Coding Index gets a **provisional** estimate ([`src/provisional.ts`](src/provisional.ts)):
+- **How:** a linear fit of Coding Index against Intelligence Index over the 20 models with the closest Intelligence Index that have both scores. The error widens when extrapolating past the best-known models.
+- **Marking:** the dashboard shows it as **PROVISIONAL**, with the typical error.
+- **Replacement:** it's replaced automatically on the first run after the real score is published.
+- **Safety:** estimates never set the quality bar.
+
+**New-model detection** still runs in the data (`isNew` in `latest.json`, one cycle long, matched by model and by level ids). The dashboard doesn't show a badge for it.
 
 ---
 
@@ -181,7 +194,10 @@ npm run preview      # http://localhost:5173
 | `src/source/artificialAnalysis.ts` | API client: retries with backoff, never retries 401/403, keeps unknown fields in `raw` |
 | `src/benchmarks.ts` | Config benchmark names → API fields and scales |
 | `src/scoring.ts` | The ranking methodology |
-| `src/newModels.ts` | NEW flag (diff against the previous snapshot) |
+| `src/variants.ts` | Groups effort levels into one row per model |
+| `src/provisional.ts` | Provisional Coding Index for brand-new models |
+| `src/manualModels.ts` | Hand-added models with estimated scores (`config/manual-models.yaml`) |
+| `src/newModels.ts` | `isNew` flag in the data (diff against the previous snapshot) |
 | `src/cursor.ts` | Marks models available in Cursor (from `config/cursor-models.yaml`) |
 | `src/persist.ts` | Writes `data/raw`, `data/history`, `data/latest.json` |
 | `src/update.ts` | Pipeline entry point (`npm run update`) |
@@ -222,8 +238,9 @@ Still to do by the repo owner:
 - **Coverage.** Only models with an Artificial Analysis Coding Index result are ranked by default, which leaves out many older or less-tested models (see "Excluded" on the dashboard). If you blend several benchmarks instead, models with results on only some of them are scored on fewer data points.
 - **Price is per token, not per task.** Models that "think" longer use more tokens for the same job, so their real cost per task is higher than the per-token price suggests. The blended price here is a plain (input + output) / 2, which differs from Artificial Analysis's own 3:1 blend. It falls back to theirs only when one side is missing.
 - **Many models have no usable price.** Artificial Analysis lists some models at $0, usually meaning unknown or not served by a priced provider. These models are excluded, not ranked as infinitely good value.
-- **New-model detection is only as fast as Artificial Analysis**, which aims to add models within about 24 hours of release, plus up to 12 hours until our next scheduled run. The NEW flag lasts one cycle (about 12 hours). A longer window is a possible future extension; see the comment in `src/newModels.ts`.
-- **Variants are separate rows.** Artificial Analysis lists reasoning modes and effort levels as separate models (e.g. "(high)" vs "(low)"). They're ranked individually.
+- **New models are only as fast as Artificial Analysis**, which aims to add models within about 24 hours of release, plus up to 12 hours until our next scheduled run.
+- **Provisional scores are estimates.** They come from the Intelligence Index, which tracks coding ability closely but not exactly. At the very top of the field, the fit extrapolates (the error shown widens accordingly). Treat a provisional rank as "roughly here" until the real score arrives.
+- **"Best level" favors the top setting.** In practice you may run a model at a lower effort for speed, where it scores lower. Price per token is the same across levels, but higher levels use more tokens per task, so they cost more per task than the per-token price suggests.
 - **The repo grows over time.** Each meaningful update commits the raw response (about 0.6 MB, compressed well by git) plus the computed table. Old files in `data/raw/` and `data/history/` can be pruned without affecting the dashboard.
 - **Cron runs in UTC**, so the Israel-time schedule shifts by an hour at each DST change. GitHub also sometimes delays scheduled runs.
 - **Chart.js loads from a CDN (jsDelivr), and fonts from Google Fonts.** If either is blocked, the page still works: it shows the table without charts, or uses system fonts.

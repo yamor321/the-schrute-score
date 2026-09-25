@@ -10,6 +10,8 @@ export interface ScoringConfig {
   minBenchmarksRequired: number;
   /** 0–1: a model must reach this fraction of the best model's coding score to be ranked (0 = no floor). */
   qualityFloor: number;
+  /** New models (released within this many days) without a Coding Index get a provisional estimate. 0 = off. */
+  provisionalMaxAgeDays: number;
 }
 
 const PRICE_BASES: readonly PriceBasis[] = ['blended', 'input', 'output'];
@@ -57,12 +59,18 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
     throw new Error(`qualityFloor must be a number between 0 and 1, e.g. 0.9 for 90% (got ${JSON.stringify(qualityFloor)})`);
   }
 
+  const provisionalMaxAgeDays = c.provisionalMaxAgeDays ?? 60;
+  if (typeof provisionalMaxAgeDays !== 'number' || !Number.isInteger(provisionalMaxAgeDays) || provisionalMaxAgeDays < 0) {
+    throw new Error('provisionalMaxAgeDays must be a whole number ≥ 0 (0 turns provisional estimates off)');
+  }
+
   return {
     excludeVendors: vendors,
     benchmarkWeights,
     priceBasis: priceBasis as PriceBasis,
     minBenchmarksRequired: min,
     qualityFloor,
+    provisionalMaxAgeDays,
   };
 }
 

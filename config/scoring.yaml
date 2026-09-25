@@ -29,6 +29,14 @@ benchmarkWeights:
 # (estimated ~70.3) make the cut: with the best at 81.6 the bar is ~69.4.
 qualityFloor: 0.85
 
+# Brand-new models: Artificial Analysis often publishes a new model's
+# Intelligence Index days before its Coding Index. Models released within
+# this many days that have no Coding Index yet get a PROVISIONAL estimate
+# (from models with a similar Intelligence Index), clearly marked on the
+# dashboard and replaced automatically once the real score is out.
+# Estimates never set the quality bar. 0 = off.
+provisionalMaxAgeDays: 60
+
 # Which price figure to divide the coding score by to get "value".
 #   blended = (input price + output price) / 2
 #   input   = input price per million tokens only

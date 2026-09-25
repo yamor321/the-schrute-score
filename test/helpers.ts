@@ -19,5 +19,6 @@ export const defaultConfig = (overrides: Partial<ScoringConfig> = {}): ScoringCo
   priceBasis: 'blended',
   minBenchmarksRequired: 1,
   qualityFloor: 0,
+  provisionalMaxAgeDays: 0,
   ...overrides,
 });

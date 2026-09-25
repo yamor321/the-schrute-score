@@ -10,6 +10,8 @@ import { join } from 'node:path';
 import { loadScoringConfig } from './config.js';
 import { applyCursor, loadCursorConfig } from './cursor.js';
 import { loadManualModels, mergeManualModels } from './manualModels.js';
+import { groupVariants } from './variants.js';
+import { fillProvisionalCodingIndex } from './provisional.js';
 import { markNewModels } from './newModels.js';
 import { hasMeaningfulChange, readSnapshot, runStamp, writeRun, type Snapshot } from './persist.js';
 import { computeValueTable } from './scoring.js';
@@ -34,8 +36,13 @@ async function main() {
   if (manual.superseded.length) {
     console.log(`Now tracked by Artificial Analysis, manual entry skipped: ${manual.superseded.join(', ')} (remove it from config/manual-models.yaml)`);
   }
-  const models = manual.models;
-  const table = computeValueTable(models, cfg);
+  const provisional = fillProvisionalCodingIndex(manual.models, { now: new Date(), maxAgeDays: cfg.provisionalMaxAgeDays });
+  for (const p of provisional.filled) {
+    console.log(`Provisional Coding Index for ${p.name}: ≈${p.estimate} ±${p.typicalError} (from Intelligence Index ${p.intelligenceIndex})`);
+  }
+  const models = provisional.models;
+  // Score every effort level, then collapse levels into one row per model.
+  const table = groupVariants(computeValueTable(models, cfg));
   if (table.ranked.length === 0) {
     throw new Error(`All ${models.length} models were excluded — refusing to publish an empty ranking. Check config/scoring.yaml.`);
   }
@@ -49,7 +56,12 @@ async function main() {
     generatedAt: now.toISOString(),
     source: { name: 'Artificial Analysis', url: 'https://artificialanalysis.ai' },
     config: cfg,
-    counts: { fetched: models.length, ranked: marked.ranked.length, excluded: marked.excluded.length },
+    counts: {
+      fetched: marked.ranked.length + marked.excluded.length,
+      variants: models.length,
+      ranked: marked.ranked.length,
+      excluded: marked.excluded.length,
+    },
     quality: table.quality,
     cursor,
     models: marked.ranked,
@@ -60,7 +72,8 @@ async function main() {
 
   const newCount = [...marked.ranked, ...marked.excluded].filter((m) => m.isNew).length;
   console.log(
-    `Fetched ${models.length} models → ${marked.ranked.length} ranked, ${marked.excluded.length} excluded, ${newCount} new.`,
+    `Fetched ${models.length} entries = ${snapshot.counts.fetched} models (effort levels grouped) → ` +
+      `${marked.ranked.length} ranked, ${marked.excluded.length} excluded, ${newCount} new.`,
   );
   const top = marked.ranked[0]!;
   console.log(`#1 by value: ${top.name} (${top.vendor}) — score ${top.codingScore.toFixed(1)}, $${top.price}/1M, value ${top.value.toFixed(2)}`);

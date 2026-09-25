@@ -74,7 +74,6 @@
           <p class="hero-note" id="hero-note"></p>
         </div>
         <p class="hero-empty" id="hero-empty" hidden>Nothing matches the current filters. Check at least one vendor above.</p>
-        <div id="new-callout" class="new-callout" hidden></div>
       </div>
     </section>
 
@@ -89,7 +88,8 @@
         <div class="legend small">
           <span><span class="badge-cursor"><svg class="ico"><use href="#i-pointer"/></svg>Cursor</span> available in Cursor</span>
           <span><span class="badge-est">EST.</span> estimated score (not in the Artificial Analysis API)</span>
-          <span><span class="badge-new">NEW</span> appeared in the latest update</span>
+          <span><span class="badge-est badge-prov">PROVISIONAL</span> new model, Coding Index not published yet (estimated)</span>
+          <span class="muted">Hover a model name to see all of its effort levels.</span>
         </div>
         <input type="search" id="search" placeholder="Search models…" aria-label="Search models">
       </div>
@@ -158,6 +158,14 @@
           <p id="method-weights-note"></p>
         </li>
         <li>
+          <h3>One row per model, not per effort level</h3>
+          <p>Artificial Analysis tests many models at several effort levels (low, medium, high, xhigh, max, non-reasoning). An effort level is a setting you change per task inside the same model, so each model appears once. It's scored at its <strong>best</strong> level: what it can do when you turn it up. A plain average would be unfair, because each model is tested at a different set of levels. Hover a model name to see every level's score, price and value, plus the average. If one level gives clearly more per dollar (for example because it's discounted), that's noted there.</p>
+        </li>
+        <li>
+          <h3>Brand-new models don't wait</h3>
+          <p>Artificial Analysis usually publishes a new model's general Intelligence Index within a day, but its Coding Index can take longer. So a model released in the last 60 days without a Coding Index gets a <span class="badge-est badge-prov">PROVISIONAL</span> estimate. It's based on the models with the most similar Intelligence Index, and shows its typical error. The estimate is replaced automatically as soon as the real score is published, and estimates never set the quality bar.</p>
+        </li>
+        <li>
           <h3>Only near-top models qualify</h3>
           <p id="method-floor"></p>
         </li>
@@ -182,6 +190,8 @@
       </ol>
     </section>
   </main>
+
+  <div id="level-tip" class="level-tip" role="tooltip" hidden></div>
 
   <footer class="footer">
     <div class="wrap">

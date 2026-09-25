@@ -35,6 +35,8 @@ export interface AaModel {
 }
 
 export interface ModelEstimate {
+  /** manual = hand-added model (config/manual-models.yaml); provisional = new model awaiting AA's Coding Index. */
+  kind: 'manual' | 'provisional';
   note: string;
   sources: string[];
 }

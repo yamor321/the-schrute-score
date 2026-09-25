@@ -1,13 +1,23 @@
 import type { ValueTable } from './scoring.js';
 import type { Snapshot } from './persist.js';
 
-/** Every model id the previous run saw — ranked or excluded. */
-export function idsInSnapshot(snapshot: Pick<Snapshot, 'models' | 'excluded'>): Set<string> {
-  return new Set([...snapshot.models.map((m) => m.id), ...snapshot.excluded.map((m) => m.id)]);
+type Rows = Pick<Snapshot, 'models' | 'excluded'>;
+
+/** Every id the previous run saw — models, and the individual effort levels inside them. */
+export function idsInSnapshot(snapshot: Rows): Set<string> {
+  const ids = new Set<string>();
+  for (const row of [...snapshot.models, ...snapshot.excluded]) {
+    ids.add(row.id);
+    for (const v of row.variants ?? []) ids.add(v.id);
+  }
+  return ids;
 }
 
 /**
  * Flags models that were not present in the previous `data/latest.json`.
+ * A model counts as already seen if its own id or any of its effort levels'
+ * ids appeared before, so adding a new effort level to a known model does
+ * not make the model "new".
  *
  * The flag is ONE-CYCLE-ONLY: detection always diffs against the immediately
  * prior snapshot, so a model is `isNew` on the first run that sees it and
@@ -19,15 +29,15 @@ export function idsInSnapshot(snapshot: Pick<Snapshot, 'models' | 'excluded'>): 
  *
  * Extension point: for a longer window (e.g. "new for 3 days"), store a
  * `firstSeen: Record<id, ISO date>` map in the snapshot, carry it forward
- * each run, and replace the `!previous.has(id)` test below with
- * `now - firstSeen[id] < window`.
+ * each run, and replace the `seen` test below with `now - firstSeen[id] < window`.
  */
-export function markNewModels(table: ValueTable, previous: Pick<Snapshot, 'models' | 'excluded'> | null): ValueTable {
+export function markNewModels(table: ValueTable, previous: Rows | null): ValueTable {
   if (!previous) return table;
   const seen = idsInSnapshot(previous);
-  const flag = <T extends { id: string; isNew?: boolean }>(row: T): T => {
+  const flag = <T extends { id: string; isNew?: boolean; variants?: { id: string }[] }>(row: T): T => {
     const { isNew: _stale, ...rest } = row;
-    return (seen.has(row.id) ? rest : { ...rest, isNew: true }) as T;
+    const known = seen.has(row.id) || (row.variants ?? []).some((v) => seen.has(v.id));
+    return (known ? rest : { ...rest, isNew: true }) as T;
   };
   return { ...table, ranked: table.ranked.map(flag), excluded: table.excluded.map(flag) };
 }

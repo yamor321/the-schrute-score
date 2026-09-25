@@ -251,7 +251,36 @@ h1, h2, h3 { margin: 0; line-height: 1.15; }
   cursor: help;
 }
 .hero .badge-est { color: var(--on-forest-muted); border-color: var(--on-forest-muted); }
+.badge-prov { color: var(--amber); border-color: var(--amber); background: var(--amber-soft); border-style: solid; }
+.hero .badge-prov { color: var(--forest); background: var(--amber-soft); border-color: var(--amber-soft); }
 .estimates { margin-top: 6px; max-width: 74ch; }
+
+/* Effort-level popover */
+td.name.has-levels .model { text-decoration: underline dotted var(--muted); text-underline-offset: 4px; cursor: help; }
+td.name[tabindex]:focus-visible { outline: 2px solid var(--green-bright); outline-offset: -2px; }
+.level-tip {
+  position: absolute; z-index: 20;
+  width: min(440px, calc(100vw - 16px));
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-top: 3px solid var(--green);
+  border-radius: 4px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / .18);
+  padding: 12px 14px;
+  font-size: 13.5px;
+}
+.level-tip p { margin: 6px 0 0; }
+.tip-head strong { font: 700 16px/1.2 var(--serif); }
+.tip-intro { color: var(--muted); }
+.tip-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.tip-table th { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--rule-strong); }
+.tip-table td { padding: 4px 6px; border-bottom: 1px solid var(--rule); }
+.tip-table .num { text-align: right; font-family: var(--mono); }
+.tip-table tr.is-headline td { font-weight: 600; background: var(--green-soft); }
+.tip-table tr.is-headline td:first-child::before { content: "▸ "; color: var(--green); }
+.tip-table tr.is-bestvalue td:first-child::after { content: " 💡"; }
+.tip-win { color: var(--green); font-weight: 500; }
 .estimates li { margin: 4px 0; }
 .badge-new, .badge-cursor {
   display: inline-flex; align-items: center; gap: 4px;

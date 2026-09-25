@@ -44,6 +44,7 @@ export function parseManualModels(input: unknown): AaModel[] {
       pricing: { input, output, blended3to1: null },
       raw: { manual: true, ...e },
       estimate: {
+        kind: 'manual' as const,
         note: e.estimate.trim().replace(/\s+/g, ' '),
         sources: Array.isArray(e.sources) ? e.sources.filter((s): s is string => typeof s === 'string') : [],
       },

@@ -9,7 +9,8 @@ export interface Snapshot {
   generatedAt: string;
   source: { name: string; url: string };
   config: ScoringConfig;
-  counts: { fetched: number; ranked: number; excluded: number };
+  /** `fetched` counts models (effort levels grouped); `variants` counts the individual entries. */
+  counts: { fetched: number; variants?: number; ranked: number; excluded: number };
   quality: QualityFloor | null;
   /** Which models are available in Cursor and how each one fared. */
   cursor: CursorSummary | null;
