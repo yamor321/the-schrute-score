@@ -70,4 +70,18 @@ describe('config/cursor-models.yaml', () => {
     const keys = cfg.models.map((m) => modelKey(m.aa ?? m.name));
     expect(new Set(keys).size).toBe(keys.length);
   });
+
+  it('loads `checked` as a plain YYYY-MM-DD date, not a Date object\'s toString()', () => {
+    // The committed file writes an unquoted date (e.g. `checked: 2026-09-25`), which
+    // js-yaml parses as a native Date, not a string.
+    const cfg = loadCursorConfig();
+    expect(cfg.checked).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('normalizes a YAML-parsed Date the same way, without falling back to Date#toString()', () => {
+    // Simulates what js-yaml actually hands parseCursorConfig for an unquoted date scalar.
+    const cfg = parseCursorConfig({ source: 'https://example.com', checked: new Date('2026-09-25T00:00:00.000Z'), models: [{ name: 'X' }] });
+    expect(cfg.checked).toBe('2026-09-25');
+    expect(cfg.checked).not.toMatch(/GMT|Coordinated/);
+  });
 });

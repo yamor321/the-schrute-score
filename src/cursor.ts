@@ -62,7 +62,11 @@ export function parseCursorConfig(input: unknown): CursorConfig {
       ...(typeof e.vendor === 'string' && e.vendor.trim() ? { vendor: e.vendor.trim() } : {}),
     };
   });
-  return { source: String(c.source ?? ''), checked: String(c.checked ?? ''), models };
+  // YAML parses an unquoted "2026-09-25" as a Date, not a string — stringifying
+  // that with String() gives "Fri Sep 25 2026 00:00:00 GMT+0000 (...)" instead
+  // of the plain date. Normalize both cases to a plain string (dates as YYYY-MM-DD).
+  const str = (v: unknown): string => (v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'string' ? v : '');
+  return { source: str(c.source), checked: str(c.checked), models };
 }
 
 export function loadCursorConfig(path = 'config/cursor-models.yaml'): CursorConfig {
