@@ -760,9 +760,21 @@ function renderBar() {
   // Bars = how much more each model costs per finished task than the #1 shown, so #1 is always the
   // shortest and the gaps are readable. The label at the end of each bar gives the total cost.
   state.barBase = models[0]?.cost ?? 0;
-  const maxLen = narrow ? 14 : 36;
+  // Blind end-truncation can drop exactly the version number that distinguishes two models
+  // (e.g. "Claude Opus 5.5" and "Claude Opus 5" both becoming "Claude Opus 5…"). Keep the
+  // last word (almost always the version/variant) and trim the middle instead.
+  const maxLen = narrow ? 22 : 36;
+  const shorten = (name) => {
+    if (name.length <= maxLen) return name;
+    const lastSpace = name.lastIndexOf(' ');
+    if (lastSpace <= 0) return name.slice(0, maxLen - 1) + '…';
+    const last = name.slice(lastSpace + 1);
+    const budget = maxLen - last.length - 2; // "…" + the joining space
+    if (budget < 3) return name.slice(0, maxLen - 1) + '…';
+    return `${name.slice(0, budget)}…${last}`;
+  };
   const data = {
-    labels: models.map((m) => `${m.rank}. ${m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name}`),
+    labels: models.map((m) => `${m.rank}. ${shorten(m.name)}`),
     datasets: [
       {
         label: 'Extra cost vs #1',
