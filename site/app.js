@@ -203,7 +203,7 @@ function renderHero() {
       `by ${top.vendor}${top.releaseDate ? ` · released ${top.releaseDate}` : ''}` + (top.rank !== 1 ? ` · #${top.rank} overall` : '');
     $('#hero-cost').textContent = fmtMoney(top.cost);
     $('#hero-score').textContent = fmtScore(top.score);
-    $('#hero-score-label').textContent = tasksPicked() ? 'Score for your work' : 'Coding score';
+    $('#hero-score-label').textContent = tasksPicked() ? 'Success rate, your work' : 'Coding score';
     $('#hero-relative').textContent = pct(relative(top.score));
     $('#hero-price').textContent = fmtPrice(top.price);
 
@@ -350,10 +350,13 @@ function renderToolbarSummaries() {
   const shown = state.vendors.filter((v) => vendorShown(v.name)).length;
   $('#vendor-summary').textContent = shown === state.vendors.length ? 'all' : `${shown}/${state.vendors.length}`;
   $('#pop-vendors').classList.toggle('is-filtered', shown !== state.vendors.length);
-  $('#tasks-summary').textContent = !tasksPicked() ? 'all work' : state.tasks.size === 1 ? pickedLabels()[0].split(' ')[0] : `${state.tasks.size} picked`;
+  $('#tasks-summary').textContent = !tasksPicked() ? 'all work' : state.tasks.size === 1 ? pickedLabels()[0].split(/[\s,&]/)[0] : `${state.tasks.size} picked`;
   $('#pop-tasks').classList.toggle('is-filtered', tasksPicked());
   const scoreHead = $('#ranked-table th[data-key="codingScore"] button');
-  if (scoreHead) scoreHead.textContent = tasksPicked() ? 'Your score' : 'Score';
+  if (scoreHead) {
+    scoreHead.textContent = tasksPicked() ? 'Success %' : 'Score';
+    scoreHead.title = tasksPicked() ? 'Success rate on the benchmark(s) for the work you picked' : 'General coding score (AA Coding Index)';
+  }
 }
 
 const sourceOf = (key) => (state.data.taskSources ?? []).find((s) => s.key === key);
@@ -721,7 +724,7 @@ function tooltipLines(m) {
     `Price: ${fmtPrice(m.price)} / 1M tokens (${m.priceBasis})`,
   ];
   if (tasksPicked() && m.taskScores) {
-    lines.splice(3, 0, `Score for your work: ${fmtScore(m.score)} · ${pct(relative(m.score))} of the best`);
+    lines.splice(3, 0, `Success rate on your work: ${fmtScore(m.score)}% · ${pct(relative(m.score))} of the best`);
     for (const t of taskTypes().filter((x) => state.tasks.has(x.key))) {
       const st = m.taskStatus?.[t.key];
       lines.push(`  ${t.label}: ${fmtScore(m.taskScores[t.key])}${st ? ` (${statusText[st].replace(/^\S+ /, '')})` : ''}`);
@@ -864,7 +867,7 @@ function renderScatter() {
       hoverBorderWidth: 2,
     }));
 
-  const yTitle = tasksPicked() ? 'Score for your work' : 'Coding score';
+  const yTitle = tasksPicked() ? 'Success rate on your work (%)' : 'Coding score';
   if (state.charts.scatter) {
     state.charts.scatter.data.datasets = datasets;
     state.charts.scatter.options.scales.y.title.text = yTitle;

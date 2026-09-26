@@ -9,21 +9,25 @@ import type { TaskBenchmark } from './taskBenchmarks.js';
 /**
  * Kinds of development work (config/task-types.yaml) visitors can pick on
  * the dashboard. Each type is scored by benchmarks built for that work
- * ("sources"). Picking types swaps the general coding score for their
- * average in the cost-per-task formula; nothing else changes.
+ * ("sources"). Each source is a SUCCESS RATE on that kind of task, and it
+ * replaces the general coding score as p — the chance a model gets the task
+ * right first time — in the cost-per-task formula. Nothing else changes.
  *
- * Per model and source:
- *   measured  → the model's result, put on the coding-score scale
- *               (same mean and spread across the ranked models that have it):
- *               x′ = μ_CI + (x − μ_s) / σ_s × σ_CI
- *   estimated → from the model's general coding score, shrunk toward the
- *               average by how well the two agree (Pearson r across models
- *               that have both), minus one standard error of that estimate:
- *               μ_CI + r × (CI − μ_CI) − σ_CI × √(1 − r²)
- *               (conservative: unmeasured models don't get the benefit of
- *               the doubt over measured ones)
- * A type's score is the mean over its sources; its status is measured (all
- * sources measured), partial, or estimated (none).
+ * Per model and source (rates in 0–1):
+ *   measured  → the model's own result: pass rate (SWE-Atlas, DeepSWE,
+ *               Terminal-Bench, SciCode), precision at full recall (ITBench),
+ *               or for LMArena WebDev the Elo win chance against the average
+ *               ranked model: 1 / (1 + 10^((R̄ − R)/400)).
+ *   estimated → linear fit of the source's rate on the coding score across
+ *               the models that have both, minus one residual standard
+ *               deviation (conservative: an unmeasured model doesn't get the
+ *               benefit of the doubt over a measured one).
+ * A type's score is 100 × the mean rate over its sources; its status is
+ * measured (all sources measured), partial, or estimated (none).
+ *
+ * (An earlier version mapped every result onto the coding-score scale; that
+ * squeezed a 40% vs 63% gap on codebase QnA into ~3 points, so picking a
+ * kind of work barely moved the ranking.)
  */
 
 export interface TaskType {
@@ -107,10 +111,8 @@ export interface ModelTaskScores {
 
 const round = (x: number, d = 6) => Math.round(x * 10 ** d) / 10 ** d;
 const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
-const sd = (xs: number[]) => {
-  const m = mean(xs);
-  return Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / xs.length);
-};
+/** Success rates are kept inside (0.02, 0.99) so the cost formula never divides by ~0. */
+const clamp = (p: number) => Math.min(0.99, Math.max(0.02, p));
 function pearson(xs: number[], ys: number[]): number {
   const mx = mean(xs);
   const my = mean(ys);
@@ -142,6 +144,7 @@ export function computeTaskScores(
   const extScores = new Map(external.map((b) => [b.key, new Map(Object.entries(b.scores).map(([n, v]) => [modelKey(n), v]))]));
   const used = [...new Set(types.flatMap((t) => t.sources))];
 
+  /** Result on the source's own scale (percent for rates, Elo for WebDev), or null if not measured. */
   const raw = (r: RankedModel, s: string): number | null => {
     if (s === 'codingIndex') return r.codingScore;
     if (s in API_SOURCES) {
@@ -151,27 +154,32 @@ export function computeTaskScores(
     return extScores.get(s)?.get(modelKey(r.name)) ?? null;
   };
 
-  const ciAll = ranked.map((r) => r.codingScore);
-  const muCI = mean(ciAll);
-  const sdCI = sd(ciAll);
-
-  // Per source: which ranked models were measured, their values on the coding-score scale, and the fit to CI.
-  const perSource = new Map<string, { mapped: Map<string, number>; fitR: number | null }>();
+  // Per source: each measured model's success rate (0–1), plus a conservative estimator for the rest.
+  const perSource = new Map<string, { rate: Map<string, number>; estimate: (ci: number) => number; fitR: number | null }>();
   const sources: SourceSummary[] = [];
   for (const s of used) {
     const have = ranked.map((r) => ({ r, v: raw(r, s) })).filter((x): x is { r: RankedModel; v: number } => x.v !== null);
-    const mapped = new Map<string, number>();
-    let fitR: number | null = null;
-    if (s === 'codingIndex') {
-      for (const { r, v } of have) mapped.set(r.id, v);
-      fitR = 1;
-    } else if (have.length >= 3 && sd(have.map((x) => x.v)) > 0 && sdCI > 0) {
-      const mu = mean(have.map((x) => x.v));
-      const sigma = sd(have.map((x) => x.v));
-      for (const { r, v } of have) mapped.set(r.id, muCI + ((v - mu) / sigma) * sdCI);
-      fitR = round(pearson(have.map((x) => x.v), have.map((x) => x.r.codingScore)), 2);
+    const isElo = ext.get(s)?.kind === 'elo';
+    const eloMean = isElo && have.length ? mean(have.map((x) => x.v)) : 0;
+    const toRate = (v: number) => clamp(isElo ? 1 / (1 + 10 ** ((eloMean - v) / 400)) : v / 100);
+    const rate = new Map(have.map(({ r, v }) => [r.id, toRate(v)] as const));
+
+    let estimate = (ci: number) => clamp(ci / 100);
+    let fitR: number | null = s === 'codingIndex' ? 1 : null;
+    if (s !== 'codingIndex' && have.length >= 3) {
+      const xs = have.map((x) => x.r.codingScore);
+      const ys = have.map((x) => rate.get(x.r.id)!);
+      const mx = mean(xs);
+      const my = mean(ys);
+      const sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0);
+      const slope = sxx ? xs.reduce((a, x, i) => a + (x - mx) * (ys[i]! - my), 0) / sxx : 0;
+      const intercept = my - slope * mx;
+      const residualSd = Math.sqrt(ys.reduce((a, y, i) => a + (y - (intercept + slope * xs[i]!)) ** 2, 0) / Math.max(1, ys.length - 2));
+      // Prediction from the coding score minus one residual SD: no benefit of the doubt when unmeasured.
+      estimate = (ci) => clamp(intercept + slope * ci - residualSd);
+      fitR = round(pearson(xs, ys), 2);
     }
-    perSource.set(s, { mapped, fitR });
+    perSource.set(s, { rate, estimate, fitR });
     const meta = ext.get(s) ?? { ...API_SOURCES[s]!, asOf: null, note: undefined };
     sources.push({
       key: s,
@@ -181,7 +189,7 @@ export function computeTaskScores(
       asOf: meta.asOf ?? null,
       measures: meta.measures,
       ...(meta.note ? { note: meta.note } : {}),
-      measured: mapped.size,
+      measured: rate.size,
       fitR,
     });
   }
@@ -190,24 +198,20 @@ export function computeTaskScores(
   for (const r of ranked) {
     const scores: Record<string, number> = {};
     const status: Record<string, TaskStatus> = {};
-    const measuredSources = used.filter((s) => perSource.get(s)!.mapped.has(r.id));
+    const measuredSources = used.filter((s) => perSource.get(s)!.rate.has(r.id));
     for (const t of types) {
       let measured = 0;
       const vals = t.sources.map((s) => {
         const src = perSource.get(s)!;
-        const m = src.mapped.get(r.id);
-        if (m !== undefined) {
+        const v = src.rate.get(r.id);
+        if (v !== undefined) {
           measured++;
-          return m;
+          return v;
         }
-        // Estimate from the general coding score: the regression prediction (shrunk toward the
-        // average by the source's agreement with it), minus one standard error of that prediction.
-        // A model that hasn't been measured doesn't get the benefit of the doubt over one that has.
-        const rho = Math.max(0, src.fitR ?? 1);
-        const residualSd = sdCI * Math.sqrt(1 - rho * rho);
-        return muCI + rho * (r.codingScore - muCI) - residualSd;
+        return src.estimate(r.codingScore);
       });
-      scores[t.key] = round(mean(vals));
+      // Stored as a percentage so the dashboard uses it exactly like a coding score (p = score / 100).
+      scores[t.key] = round(mean(vals) * 100, 4);
       status[t.key] = measured === t.sources.length ? 'measured' : measured > 0 ? 'partial' : 'estimated';
     }
     perModel.set(r.id, { scores, status, measuredSources });

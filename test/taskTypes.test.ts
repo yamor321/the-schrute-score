@@ -52,32 +52,37 @@ describe('computeTaskScores', () => {
     expect(by['Alpha']!.status.general).toBe('measured');
   });
 
-  it('uses the direct measurement when a model has one, on the coding-score scale', () => {
+  it('uses the benchmark\'s own success rate as the score when a model was measured', () => {
     const { by } = run();
     expect(by['Delta']!.status.explore).toBe('measured');
-    // Delta tops the leaderboard, so it scores highest for this kind of work despite the lowest coding score.
-    expect(by['Delta']!.scores.explore!).toBeGreaterThan(by['Alpha']!.scores.explore!);
-    // The measured models' mapped mean equals the pool's coding-score mean (74.4).
-    const mapped = ['Alpha', 'Beta', 'Delta'].map((n) => by[n]!.scores.explore!);
-    expect(mapped.reduce((a, b) => a + b, 0) / 3).toBeCloseTo(74.4, 5);
+    // Direct pass rates, not squeezed onto the coding-score scale.
+    expect(by['Delta']!.scores.explore).toBe(70);
+    expect(by['Alpha']!.scores.explore).toBe(60);
+    expect(by['Beta']!.scores.explore).toBe(50);
+    expect(by['Alpha']!.scores.infra).toBe(80); // Terminal-Bench 0.8
   });
 
-  it('estimates unmeasured models conservatively from their coding score', () => {
+  it('estimates unmeasured models from a fit on the coding score, minus one residual SD', () => {
     const { by, sources } = run();
     const qna = sources.find((s) => s.key === 'qna')!;
     expect(qna.measured).toBe(3);
     expect(by['Gamma']!.status.explore).toBe('estimated');
-    // r is negative here (Delta), so the prediction is the pool average (74.4), minus one
-    // standard error — with no usable fit that's the full spread of coding scores (σ = √11.44).
+    // Fit over Alpha (80, .6), Beta (75, .5), Delta (70, .7): slope −0.01, intercept 1.35,
+    // residual SD √(0.015/1) ≈ 0.1225 → Gamma (CI 75): 0.60 − 0.1225 = 0.4775.
     expect(qna.fitR!).toBeLessThan(0);
-    expect(by['Gamma']!.scores.explore!).toBeCloseTo(74.4 - Math.sqrt(11.44), 5);
+    expect(by['Gamma']!.scores.explore!).toBeCloseTo(47.75, 1);
+    // A model measured at the average (Alpha, 60%) beats the unmeasured model's conservative estimate.
+    expect(by['Alpha']!.scores.explore!).toBeGreaterThan(by['Gamma']!.scores.explore!);
   });
 
-  it('a model measured at the average result outscores an unmeasured model\'s conservative estimate', () => {
-    const { by } = run();
-    // Alpha scored exactly the leaderboard average (60) → mapped to the pool mean 74.4; Gamma is unmeasured.
-    expect(by['Alpha']!.scores.explore!).toBeCloseTo(74.4, 5);
-    expect(by['Alpha']!.scores.explore!).toBeGreaterThan(by['Gamma']!.scores.explore!);
+  it('turns an Elo rating into the chance of beating the average model', () => {
+    const arena: TaskBenchmark = { ...board, key: 'arena', kind: 'elo', scores: { Alpha: 1600, Beta: 1500, Delta: 1400 } };
+    const t = parseTaskTypes({ types: [{ key: 'ui', label: 'UI', description: 'd', sources: ['arena'] }] }, ['arena']);
+    const table = groupVariants(computeValueTable(models, defaultConfig({ benchmarkWeights: { codingIndex: 1 } })));
+    const res = computeTaskScores(table.ranked, models, t, [arena]);
+    const ui = (n: string) => res.perModel.get(table.ranked.find((r) => r.name === n)!.id)!.scores.ui!;
+    expect(ui('Beta')).toBeCloseTo(50, 3); // at the average rating → 50%
+    expect(ui('Alpha')).toBeCloseTo(100 / (1 + 10 ** (-100 / 400)), 3); // +100 Elo ≈ 64%
   });
 
   it('marks a type partial when only some of its sources were measured', () => {

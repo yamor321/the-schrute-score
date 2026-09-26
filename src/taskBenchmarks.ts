@@ -18,6 +18,8 @@ export interface TaskBenchmark {
   checked?: string | null;
   measures: string;
   note?: string;
+  /** 'rate' = a percentage of tasks solved (default); 'elo' = an arena rating. */
+  kind?: 'rate' | 'elo';
   /** Our model name → score on the benchmark's own scale. */
   scores: Record<string, number>;
   /** Names whose score is the vendor's own report rather than an independent run. */

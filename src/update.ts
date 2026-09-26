@@ -77,6 +77,7 @@ async function main() {
       url: 'https://arena.ai/leaderboard/code/webdev',
       asOf: webdev.asOf,
       measures: 'Blind pairwise votes by developers on web apps built by two anonymous models (Bradley-Terry rating).',
+      kind: 'elo',
       scores: webdev.scores,
       vendorReported: [],
     },

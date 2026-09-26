@@ -79,8 +79,9 @@ Measured on (September 2026):
 
 - **Why not the earlier mix of general benchmarks:** before this, each type was a hand-weighted mix of the five benchmarks in the AA API. Checked against SWE-Atlas, the "explore" mix agreed with real codebase-understanding results at only **r = 0.34** (11 models), worse than the plain coding score (0.61). Dedicated benchmarks replace it.
 - **Measured vs. estimated:**
-  - A model with a result gets it, put on the coding-score scale.
-  - A model without one is **estimated** from its coding score: the regression prediction (shrunk by the agreement r) **minus one standard error**. A model that hasn't been measured doesn't get the benefit of the doubt over one that has.
+  - These benchmarks are **success rates on that kind of task**: codebase questions answered, incidents diagnosed, repo changes passing hidden tests. A model's rate replaces the general coding score as `p`, the chance it gets your task right first time, in the cost formula. For LMArena WebDev, which is an Elo rating, `p` is the chance developers prefer its web app over the average ranked model's: `1 / (1 + 10^((R̄ − R)/400))`.
+  - A model without a result is **estimated**: a linear fit of the rate on the coding score across the measured models, **minus one residual standard deviation**. A model that hasn't been measured doesn't get the benefit of the doubt over one that has.
+  - (An earlier version mapped every result onto the coding-score scale. That squeezed Opus 5's 63% vs Gemini 3.8 Flash's 47% on codebase QnA into ~3 points, so picking a kind of work barely changed the top of the ranking.)
   - Every score on the dashboard is tagged **✓ measured**, **◐ partly measured** or **~ estimated**.
   - A "Show only models measured on the picked work" switch hides the estimates.
 - **Freshness:**
@@ -96,7 +97,13 @@ Measured on (September 2026):
   - At Anthropic the daily uses are debugging 55%, code understanding 42% and new features 37%. ([Anthropic](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic))
   - Stack Overflow 2025 splits AI use by workflow stage: search, docs, learning a codebase, debugging, testing, writing, review, deploy/monitoring. ([SO 2025](https://survey.stackoverflow.co/2025/ai))
   - Benchmarks now target these actions separately: SWE-bench (fixes in existing repos), FeatureBench (new features), SWE-Refactor, Terminal-Bench (CLI/infra), [SWE-Atlas Codebase QnA](https://arxiv.org/abs/2605.08366) (comprehension; top models ~30–35%), [OpenRCA](https://github.com/microsoft/OpenRCA) (root cause from logs, metrics and traces), SciCode.
-- **How a result enters the score:** `x′ = μ_CI + (x − μ_b)/σ_b × σ_CI`, so it has the same mean and spread as the coding score across the ranked models. A type with two benchmarks averages them. Picking several types averages them too. Only the score in the cost formula changes; the quality bar stays on the general coding score.
+- **Combining:** a type with two benchmarks averages their rates, and picking several types averages them too. Only `p` in the cost formula changes; the quality bar stays on the general coding score.
+- **Example (September 2026):**
+  - Explore a codebase: Claude Opus 5 (63%) is #1.
+  - UI: Claude Opus 5.5 is #1.
+  - Production investigation: Gemini 3.8 Flash (52.5%) is #1.
+  - Infra: Qwen3.8-Flash-Next is #1.
+  - Nothing picked: MiMo-V2.6-Pro is #1.
 
 **One row per model, not per effort level.** Artificial Analysis lists effort and reasoning levels as separate entries: "GPT-5.5 (xhigh)", "GPT-5.5 (high)", "Claude Opus 5 (Adaptive Reasoning, Max Effort)", and so on. Every level is scored first (steps 1–7). Then the levels are grouped into one row per model ([`src/variants.ts`](src/variants.ts)):
 
