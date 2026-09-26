@@ -3,7 +3,15 @@ import { parseScoringConfig, loadScoringConfig } from '../src/config.js';
 import { computeValueTable, taskCost } from '../src/scoring.js';
 import { defaultConfig, fixtureModels } from './helpers.js';
 
-const byName = <T extends { name: string }>(rows: T[], name: string) => rows.find((r) => r.name === name);
+/** A task model with a given token size and fix cost (hourly/minutes chosen so fixCostUsd matches). */
+const tm = (tokensPerTaskMillions: number, fixCostUsd: number) => ({
+  tokensPerTaskMillions,
+  developerHourlyUsd: fixCostUsd * 3,
+  minutesPerFailedAttempt: 20,
+  fixCostUsd,
+});
+
+const byName =<T extends { name: string }>(rows: T[], name: string) => rows.find((r) => r.name === name);
 
 describe('computeValueTable', () => {
   it('golden fixture: ranks by codingScore / price with hand-computed values', () => {
@@ -159,14 +167,14 @@ describe('computeValueTable', () => {
   describe('cost per finished task', () => {
     it('computes tokens (retries included) and your time for failures', () => {
       // Opus 5.5 example from the README: score 80.9, $12/1M, 0.5M tokens, $50 per fix.
-      const c = taskCost(80.9, 12, { tokensPerTaskMillions: 0.5, fixCostUsd: 50 });
+      const c = taskCost(80.9, 12, tm(0.5, 50));
       expect(c.tokens).toBeCloseTo((12 * 0.5) / 0.809, 5); // 7.42
       expect(c.time).toBeCloseTo((50 * 0.191) / 0.809, 5); // 11.80
       expect(c.total).toBeCloseTo(19.22, 2);
     });
 
     it('golden fixture: pricing in your time lifts the stronger model', () => {
-      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 } }));
+      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ taskModel: tm(0.5, 50) }));
       // Hand-computed (p = score/100):
       // Alpha 60 @ $9:     (4.5 + 50·0.4) / 0.6            = 40.83
       // Eta   53.33 @ 2.5: (1.25 + 50·0.4667) / 0.5333     = 46.09
@@ -179,7 +187,7 @@ describe('computeValueTable', () => {
     });
 
     it('with $0 per fix it reduces to the cheapest-per-point order', () => {
-      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 0 } }));
+      const { ranked } = computeValueTable(fixtureModels(), defaultConfig({ taskModel: tm(0.5, 0) }));
       expect(ranked[0]!.name).toBe('Gamma Open');
     });
   });
@@ -200,8 +208,13 @@ describe('scoring config', () => {
       minBenchmarksRequired: 1,
       qualityFloor: 0.85,
       provisionalMaxAgeDays: 60,
-      taskModel: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 },
+      taskModel: { tokensPerTaskMillions: 0.27, developerHourlyUsd: 78, minutesPerFailedAttempt: 20, fixCostUsd: 26 },
     });
+  });
+
+  it('derives the fix cost from hourly cost × minutes per failed attempt', () => {
+    const cfg = parseScoringConfig({ benchmarkWeights: { codingIndex: 1 }, taskModel: { developerHourlyUsd: 90, minutesPerFailedAttempt: 15 } });
+    expect(cfg.taskModel).toEqual({ tokensPerTaskMillions: 0.27, developerHourlyUsd: 90, minutesPerFailedAttempt: 15, fixCostUsd: 22.5 });
   });
 
   it('defaults qualityFloor to 0 when omitted', () => {
@@ -216,7 +229,8 @@ describe('scoring config', () => {
     [{ benchmarkWeights: { codingIndex: 1 }, excludeVendors: 'google' }, /must be a list/],
     [{ benchmarkWeights: { codingIndex: 1 }, qualityFloor: 90 }, /between 0 and 1/],
     [{ benchmarkWeights: { codingIndex: 1 }, taskModel: { tokensPerTaskMillions: 0 } }, /tokensPerTaskMillions/],
-    [{ benchmarkWeights: { codingIndex: 1 }, taskModel: { fixCostUsd: -5 } }, /fixCostUsd/],
+    [{ benchmarkWeights: { codingIndex: 1 }, taskModel: { developerHourlyUsd: -5 } }, /developerHourlyUsd/],
+    [{ benchmarkWeights: { codingIndex: 1 }, taskModel: { minutesPerFailedAttempt: 'lots' } }, /minutesPerFailedAttempt/],
     [{ benchmarkWeights: { codingIndex: 1 }, taskModel: 'lots' }, /taskModel/],
     [{ benchmarkWeights: { codingIndex: 1 }, qualityFloor: -0.1 }, /between 0 and 1/],
   ])('rejects invalid config %j', (input, message) => {

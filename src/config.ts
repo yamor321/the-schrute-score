@@ -21,11 +21,19 @@ export interface ScoringConfig {
 export interface TaskModel {
   /** Tokens (in millions) a typical coding task burns. */
   tokensPerTaskMillions: number;
-  /** USD value of your time each time a model gets a task wrong (re-prompt, review, fix). */
+  /** Fully loaded cost of one developer hour, USD. */
+  developerHourlyUsd: number;
+  /** Developer minutes lost per failed attempt (spot it, re-prompt, re-review, or fix by hand). */
+  minutesPerFailedAttempt: number;
+  /** Derived: developerHourlyUsd × minutesPerFailedAttempt / 60. */
   fixCostUsd: number;
 }
 
-export const DEFAULT_TASK_MODEL: TaskModel = { tokensPerTaskMillions: 0.5, fixCostUsd: 50 };
+export const DEFAULT_TASK_MODEL = { tokensPerTaskMillions: 0.27, developerHourlyUsd: 78, minutesPerFailedAttempt: 20 };
+
+export function withFixCost(t: Omit<TaskModel, 'fixCostUsd'>): TaskModel {
+  return { ...t, fixCostUsd: Math.round(((t.developerHourlyUsd * t.minutesPerFailedAttempt) / 60) * 100) / 100 };
+}
 
 const PRICE_BASES: readonly PriceBasis[] = ['blended', 'input', 'output'];
 
@@ -83,16 +91,18 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
 
   const tm = (c.taskModel ?? {}) as Record<string, unknown>;
   if (tm === null || typeof tm !== 'object' || Array.isArray(tm)) {
-    throw new Error('taskModel must be a mapping with tokensPerTaskMillions and fixCostUsd');
+    throw new Error('taskModel must be a mapping with tokensPerTaskMillions, developerHourlyUsd and minutesPerFailedAttempt');
   }
-  const tokensPerTaskMillions = tm.tokensPerTaskMillions ?? DEFAULT_TASK_MODEL.tokensPerTaskMillions;
-  if (typeof tokensPerTaskMillions !== 'number' || !Number.isFinite(tokensPerTaskMillions) || tokensPerTaskMillions <= 0) {
-    throw new Error('taskModel.tokensPerTaskMillions must be a number above 0, e.g. 0.5 for 500K tokens');
-  }
-  const fixCostUsd = tm.fixCostUsd ?? DEFAULT_TASK_MODEL.fixCostUsd;
-  if (typeof fixCostUsd !== 'number' || !Number.isFinite(fixCostUsd) || fixCostUsd < 0) {
-    throw new Error('taskModel.fixCostUsd must be a number ≥ 0 (USD per failed attempt)');
-  }
+  const num = (key: keyof typeof DEFAULT_TASK_MODEL, ok: (v: number) => boolean, hint: string): number => {
+    const v = tm[key] ?? DEFAULT_TASK_MODEL[key];
+    if (typeof v !== 'number' || !Number.isFinite(v) || !ok(v)) throw new Error(`taskModel.${key} must be ${hint}`);
+    return v;
+  };
+  const taskModel = withFixCost({
+    tokensPerTaskMillions: num('tokensPerTaskMillions', (v) => v > 0, 'a number above 0, e.g. 0.27 for 270K tokens'),
+    developerHourlyUsd: num('developerHourlyUsd', (v) => v >= 0, 'a number ≥ 0 (USD per hour, employer cost)'),
+    minutesPerFailedAttempt: num('minutesPerFailedAttempt', (v) => v >= 0, 'a number ≥ 0 (minutes)'),
+  });
 
   return {
     excludeVendors: vendors,
@@ -102,7 +112,7 @@ export function parseScoringConfig(input: unknown): ScoringConfig {
     minBenchmarksRequired: min,
     qualityFloor,
     provisionalMaxAgeDays,
-    taskModel: { tokensPerTaskMillions, fixCostUsd },
+    taskModel,
   };
 }
 

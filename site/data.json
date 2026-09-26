@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T23:18:27.933Z",
+  "generatedAt": "2026-09-26T08:26:36.723Z",
   "source": {
     "name": "Artificial Analysis",
     "url": "https://artificialanalysis.ai"
@@ -17,8 +17,10 @@
     "qualityFloor": 0.85,
     "provisionalMaxAgeDays": 60,
     "taskModel": {
-      "tokensPerTaskMillions": 0.5,
-      "fixCostUsd": 50
+      "tokensPerTaskMillions": 0.27,
+      "developerHourlyUsd": 78,
+      "minutesPerFailedAttempt": 20,
+      "fixCostUsd": 26
     }
   },
   "counts": {
@@ -35,7 +37,7 @@
   },
   "cursor": {
     "source": "https://cursor.com/docs/models",
-    "checked": "Fri Sep 25 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+    "checked": "Fri Sep 25 2026 03:00:00 GMT+0300 (Israel Daylight Time)",
     "models": [
       {
         "name": "Composer 2.5",
@@ -213,9 +215,9 @@
         "vendor": "Anthropic",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 11,
+        "bestRank": 12,
         "representative": null,
-        "detail": "Ranked #11"
+        "detail": "Ranked #12"
       },
       {
         "name": "Claude Sonnet 5",
@@ -519,9 +521,9 @@
         "vendor": "OpenAI",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 18,
+        "bestRank": 19,
         "representative": null,
-        "detail": "Ranked #18"
+        "detail": "Ranked #19"
       },
       {
         "name": "GPT-5.6 Terra",
@@ -567,9 +569,9 @@
         "vendor": "Kimi",
         "variants": 1,
         "status": "ranked",
-        "bestRank": 19,
+        "bestRank": 18,
         "representative": null,
-        "detail": "Ranked #19"
+        "detail": "Ranked #18"
       },
       {
         "name": "Muse Spark 1.3",
@@ -612,10 +614,10 @@
       "inputPrice": 0.435,
       "outputPrice": 0.87,
       "value": 116.934866,
-      "effectiveCost": 15.958388,
+      "effectiveCost": 8.306913,
       "costBreakdown": {
-        "tokens": 0.427588,
-        "time": 15.530799
+        "tokens": 0.230898,
+        "time": 8.076016
       },
       "estimate": {
         "kind": "provisional",
@@ -632,7 +634,7 @@
           "codingScore": 76.3,
           "price": 0.6525,
           "value": 116.934866,
-          "effectiveCost": 15.958388,
+          "effectiveCost": 8.306913,
           "status": "ranked"
         }
       ],
@@ -669,10 +671,10 @@
       "inputPrice": 0.75,
       "outputPrice": 3.75,
       "value": 33.911111,
-      "effectiveCost": 17.005242,
+      "effectiveCost": 8.872215,
       "costBreakdown": {
-        "tokens": 1.474443,
-        "time": 15.530799
+        "tokens": 0.796199,
+        "time": 8.076016
       },
       "variants": [
         {
@@ -682,7 +684,7 @@
           "codingScore": 76.3,
           "price": 2.25,
           "value": 33.911111,
-          "effectiveCost": 17.005242,
+          "effectiveCost": 8.872215,
           "status": "ranked"
         },
         {
@@ -692,7 +694,7 @@
           "codingScore": 74.1,
           "price": 2.25,
           "value": 32.933333,
-          "effectiveCost": 18.994602,
+          "effectiveCost": 9.907557,
           "status": "ranked"
         },
         {
@@ -702,7 +704,7 @@
           "codingScore": 73.5,
           "price": 2.25,
           "value": 32.666667,
-          "effectiveCost": 19.557823,
+          "effectiveCost": 10.20068,
           "status": "ranked"
         }
       ],
@@ -740,10 +742,10 @@
       "inputPrice": 1.25,
       "outputPrice": 4.25,
       "value": 27.818182,
-      "effectiveCost": 17.156863,
+      "effectiveCost": 8.957516,
       "costBreakdown": {
-        "tokens": 1.797386,
-        "time": 15.359477
+        "tokens": 0.970588,
+        "time": 7.986928
       },
       "variants": [
         {
@@ -753,7 +755,7 @@
           "codingScore": 76.5,
           "price": 2.75,
           "value": 27.818182,
-          "effectiveCost": 17.156863,
+          "effectiveCost": 8.957516,
           "status": "ranked"
         },
         {
@@ -763,7 +765,7 @@
           "codingScore": 75.8,
           "price": 2.75,
           "value": 27.563636,
-          "effectiveCost": 17.777045,
+          "effectiveCost": 9.280343,
           "status": "ranked"
         }
       ],
@@ -801,10 +803,10 @@
       "inputPrice": 0.75,
       "outputPrice": 3.75,
       "value": 33.822222,
-      "effectiveCost": 17.18134,
+      "effectiveCost": 8.963863,
       "costBreakdown": {
-        "tokens": 1.478318,
-        "time": 15.703022
+        "tokens": 0.798292,
+        "time": 8.165572
       },
       "variants": [
         {
@@ -814,7 +816,7 @@
           "codingScore": 76.1,
           "price": 2.25,
           "value": 33.822222,
-          "effectiveCost": 17.18134,
+          "effectiveCost": 8.963863,
           "status": "ranked"
         },
         {
@@ -824,7 +826,7 @@
           "codingScore": 71.5,
           "price": 2.25,
           "value": 31.777778,
-          "effectiveCost": 21.503497,
+          "effectiveCost": 11.213287,
           "status": "ranked"
         },
         {
@@ -834,7 +836,7 @@
           "codingScore": 71,
           "price": 2.25,
           "value": 31.555556,
-          "effectiveCost": 22.007042,
+          "effectiveCost": 11.475352,
           "status": "ranked"
         }
       ],
@@ -872,10 +874,10 @@
       "inputPrice": 2,
       "outputPrice": 6,
       "value": 19.2,
-      "effectiveCost": 17.708333,
+      "effectiveCost": 9.260417,
       "costBreakdown": {
-        "tokens": 2.604167,
-        "time": 15.104167
+        "tokens": 1.40625,
+        "time": 7.854167
       },
       "variants": [
         {
@@ -885,7 +887,7 @@
           "codingScore": 76.8,
           "price": 4,
           "value": 19.2,
-          "effectiveCost": 17.708333,
+          "effectiveCost": 9.260417,
           "status": "ranked"
         },
         {
@@ -895,7 +897,7 @@
           "codingScore": 75.9,
           "price": 4,
           "value": 18.975,
-          "effectiveCost": 18.511199,
+          "effectiveCost": 9.678524,
           "status": "ranked"
         },
         {
@@ -905,7 +907,7 @@
           "codingScore": 74.4,
           "price": 4,
           "value": 18.6,
-          "effectiveCost": 19.892473,
+          "effectiveCost": 10.397849,
           "status": "ranked"
         },
         {
@@ -915,7 +917,7 @@
           "codingScore": 66.3,
           "price": 4,
           "value": 16.575,
-          "effectiveCost": 28.431373,
+          "effectiveCost": 14.844646,
           "status": "below-quality-floor"
         }
       ],
@@ -953,10 +955,10 @@
       "inputPrice": 2,
       "outputPrice": 6,
       "value": 19.075,
-      "effectiveCost": 18.152031,
+      "effectiveCost": 9.491481,
       "costBreakdown": {
-        "tokens": 2.621232,
-        "time": 15.530799
+        "tokens": 1.415465,
+        "time": 8.076016
       },
       "estimate": {
         "kind": "provisional",
@@ -973,7 +975,7 @@
           "codingScore": 76.3,
           "price": 4,
           "value": 19.075,
-          "effectiveCost": 18.152031,
+          "effectiveCost": 9.491481,
           "status": "ranked"
         },
         {
@@ -983,7 +985,7 @@
           "codingScore": 76.3,
           "price": 4,
           "value": 19.075,
-          "effectiveCost": 18.152031,
+          "effectiveCost": 9.491481,
           "status": "ranked"
         }
       ],
@@ -1021,10 +1023,10 @@
       "inputPrice": 2,
       "outputPrice": 6,
       "value": 19.05,
-      "effectiveCost": 18.24147,
+      "effectiveCost": 9.538058,
       "costBreakdown": {
-        "tokens": 2.624672,
-        "time": 15.616798
+        "tokens": 1.417323,
+        "time": 8.120735
       },
       "variants": [
         {
@@ -1034,7 +1036,7 @@
           "codingScore": 76.2,
           "price": 4,
           "value": 19.05,
-          "effectiveCost": 18.24147,
+          "effectiveCost": 9.538058,
           "status": "ranked"
         }
       ],
@@ -1071,10 +1073,10 @@
       "inputPrice": 0.15,
       "outputPrice": 0.47,
       "value": 235.806452,
-      "effectiveCost": 18.611491,
+      "effectiveCost": 9.682216,
       "costBreakdown": {
-        "tokens": 0.212038,
-        "time": 18.399453
+        "tokens": 0.114501,
+        "time": 9.567715
       },
       "variants": [
         {
@@ -1084,7 +1086,7 @@
           "codingScore": 73.1,
           "price": 0.31,
           "value": 235.806452,
-          "effectiveCost": 18.611491,
+          "effectiveCost": 9.682216,
           "status": "ranked"
         }
       ],
@@ -1121,10 +1123,10 @@
       "inputPrice": 1.4,
       "outputPrice": 4.4,
       "value": 25.793103,
-      "effectiveCost": 18.783422,
+      "effectiveCost": 9.80615,
       "costBreakdown": {
-        "tokens": 1.938503,
-        "time": 16.84492
+        "tokens": 1.046791,
+        "time": 8.759358
       },
       "variants": [
         {
@@ -1134,7 +1136,7 @@
           "codingScore": 74.8,
           "price": 2.9,
           "value": 25.793103,
-          "effectiveCost": 18.783422,
+          "effectiveCost": 9.80615,
           "status": "ranked"
         },
         {
@@ -1144,7 +1146,7 @@
           "codingScore": 68.6,
           "price": 2.9,
           "value": 23.655172,
-          "effectiveCost": 25,
+          "effectiveCost": 13.042274,
           "status": "below-quality-floor"
         }
       ],
@@ -1154,211 +1156,6 @@
     },
     {
       "rank": 10,
-      "id": "model:openai:gpt-6-sol",
-      "name": "GPT-6 Sol",
-      "vendor": "OpenAI",
-      "vendorSlug": "openai",
-      "releaseDate": "2026-09-22",
-      "codingScore": 76.6,
-      "benchmarks": {
-        "codingIndex": {
-          "label": "AA Coding Index",
-          "field": "artificial_analysis_coding_index",
-          "raw": 76.6,
-          "normalized": 76.6,
-          "weight": 1,
-          "effectiveWeight": 1,
-          "present": true
-        }
-      },
-      "benchmarksUsed": [
-        "codingIndex"
-      ],
-      "missingBenchmarks": [],
-      "price": 6,
-      "priceBasis": "blended",
-      "priceNote": null,
-      "inputPrice": 2,
-      "outputPrice": 10,
-      "value": 12.766667,
-      "effectiveCost": 19.190601,
-      "costBreakdown": {
-        "tokens": 3.916449,
-        "time": 15.274151
-      },
-      "estimate": {
-        "kind": "provisional",
-        "note": "Provisional: released 2026-09-22, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (47.5) using the 20 models with the closest Intelligence Index that have both scores: about 76.6 (typical error ±1). Replaced automatically once the real score is published.",
-        "sources": [
-          "https://artificialanalysis.ai/models"
-        ]
-      },
-      "variants": [
-        {
-          "id": "c50ea08c-88c0-4eb7-85b8-27f2bbf6d527",
-          "name": "GPT-6 Sol (max)",
-          "level": "max",
-          "codingScore": 76.6,
-          "price": 6,
-          "value": 12.766667,
-          "effectiveCost": 19.190601,
-          "status": "ranked"
-        },
-        {
-          "id": "da2642fe-9f73-4788-b5af-24edcd55b37e",
-          "name": "GPT-6 Sol (xhigh)",
-          "level": "xhigh",
-          "codingScore": 75.6,
-          "price": 6,
-          "value": 12.6,
-          "effectiveCost": 20.10582,
-          "status": "ranked"
-        },
-        {
-          "id": "52eebe3e-6ede-4e46-92db-c5dea49fc410",
-          "name": "GPT-6 Sol (high)",
-          "level": "high",
-          "codingScore": 75,
-          "price": 6,
-          "value": 12.5,
-          "effectiveCost": 20.666667,
-          "status": "ranked"
-        },
-        {
-          "id": "780a4a85-17ff-4175-a8dd-ebca4823e61b",
-          "name": "GPT-6 Sol (medium)",
-          "level": "medium",
-          "codingScore": 73.1,
-          "price": 6,
-          "value": 12.183333,
-          "effectiveCost": 22.50342,
-          "status": "ranked"
-        },
-        {
-          "id": "01459872-433a-4ab2-8e99-7083162172eb",
-          "name": "GPT-6 Sol (low)",
-          "level": "low",
-          "codingScore": 67.9,
-          "price": 6,
-          "value": 11.316667,
-          "effectiveCost": 28.055965,
-          "status": "below-quality-floor"
-        },
-        {
-          "id": "d3e20e76-9e1a-45b6-b809-ad6aa37430cf",
-          "name": "GPT-6 Sol (Non-reasoning)",
-          "level": "non-reasoning",
-          "codingScore": 59.2,
-          "price": 6,
-          "value": 9.866667,
-          "effectiveCost": 39.527027,
-          "status": "below-quality-floor"
-        }
-      ],
-      "headlineLevel": "max",
-      "averageScore": 71.233333,
-      "bestValueLevel": null
-    },
-    {
-      "rank": 11,
-      "id": "model:anthropic:claude-opus-5.5",
-      "name": "Claude Opus 5.5",
-      "vendor": "Anthropic",
-      "vendorSlug": "anthropic",
-      "releaseDate": "2026-09-22",
-      "codingScore": 80.9,
-      "benchmarks": {
-        "codingIndex": {
-          "label": "AA Coding Index",
-          "field": "artificial_analysis_coding_index",
-          "raw": 80.9,
-          "normalized": 80.9,
-          "weight": 1,
-          "effectiveWeight": 1,
-          "present": true
-        }
-      },
-      "benchmarksUsed": [
-        "codingIndex"
-      ],
-      "missingBenchmarks": [],
-      "price": 12,
-      "priceBasis": "blended",
-      "priceNote": null,
-      "inputPrice": 4,
-      "outputPrice": 20,
-      "value": 6.741667,
-      "effectiveCost": 19.221261,
-      "costBreakdown": {
-        "tokens": 7.416564,
-        "time": 11.804697
-      },
-      "estimate": {
-        "kind": "provisional",
-        "note": "Provisional: released 2026-09-22, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (57.6) using the 20 models with the closest Intelligence Index that have both scores: about 80.9 (typical error ±2.2). Replaced automatically once the real score is published.",
-        "sources": [
-          "https://artificialanalysis.ai/models"
-        ]
-      },
-      "variants": [
-        {
-          "id": "2f3c4dc9-a450-4303-8697-0237257cf08f",
-          "name": "Claude Opus 5.5 (Adaptive Reasoning, Max Effort, Default Fallback)",
-          "level": "max",
-          "codingScore": 80.9,
-          "price": 12,
-          "value": 6.741667,
-          "effectiveCost": 19.221261,
-          "status": "ranked"
-        },
-        {
-          "id": "df5bf99d-d228-4715-b41b-19ca86118777",
-          "name": "Claude Opus 5.5 (Adaptive Reasoning, Xhigh Effort, Default Fallback)",
-          "level": "xhigh",
-          "codingScore": 80.2,
-          "price": 12,
-          "value": 6.683333,
-          "effectiveCost": 19.825436,
-          "status": "ranked"
-        },
-        {
-          "id": "f314eade-2232-44bf-a3ab-9b326bc67de6",
-          "name": "Claude Opus 5.5 (Adaptive Reasoning, High Effort, Default Fallback)",
-          "level": "high",
-          "codingScore": 79.1,
-          "price": 12,
-          "value": 6.591667,
-          "effectiveCost": 20.79646,
-          "status": "ranked"
-        },
-        {
-          "id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
-          "name": "Claude Opus 5.5 (Adaptive Reasoning, Medium Effort, Default Fallback)",
-          "level": "medium",
-          "codingScore": 78,
-          "price": 12,
-          "value": 6.5,
-          "effectiveCost": 21.794872,
-          "status": "ranked"
-        },
-        {
-          "id": "4416ca93-fde6-4b7b-abbc-3a6be109cc3d",
-          "name": "Claude Opus 5.5 (Adaptive Reasoning, Low Effort, Default Fallback)",
-          "level": "low",
-          "codingScore": 74.7,
-          "price": 12,
-          "value": 6.225,
-          "effectiveCost": 24.966533,
-          "status": "ranked"
-        }
-      ],
-      "headlineLevel": "max",
-      "averageScore": 78.58,
-      "bestValueLevel": null,
-      "cursor": "Claude Opus 5.5"
-    },
-    {
-      "rank": 12,
       "id": "model:deepseek:deepseek-v4.1-flash",
       "name": "DeepSeek V4.1 Flash",
       "vendor": "DeepSeek",
@@ -1386,10 +1183,10 @@
       "inputPrice": 0.3,
       "outputPrice": 1.2,
       "value": 96.933333,
-      "effectiveCost": 19.291609,
+      "effectiveCost": 10.041953,
       "costBreakdown": {
-        "tokens": 0.515818,
-        "time": 18.775791
+        "tokens": 0.278542,
+        "time": 9.763411
       },
       "estimate": {
         "kind": "provisional",
@@ -1406,7 +1203,7 @@
           "codingScore": 72.7,
           "price": 0.75,
           "value": 96.933333,
-          "effectiveCost": 19.291609,
+          "effectiveCost": 10.041953,
           "status": "ranked"
         },
         {
@@ -1416,13 +1213,218 @@
           "codingScore": 53.7,
           "price": 0.75,
           "value": 71.6,
-          "effectiveCost": 43.808194,
+          "effectiveCost": 22.794227,
           "status": "below-quality-floor"
         }
       ],
       "headlineLevel": "reasoning · max",
       "averageScore": 63.2,
       "bestValueLevel": null
+    },
+    {
+      "rank": 11,
+      "id": "model:openai:gpt-6-sol",
+      "name": "GPT-6 Sol",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-09-22",
+      "codingScore": 76.6,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 76.6,
+          "normalized": 76.6,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 6,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 2,
+      "outputPrice": 10,
+      "value": 12.766667,
+      "effectiveCost": 10.057441,
+      "costBreakdown": {
+        "tokens": 2.114883,
+        "time": 7.942559
+      },
+      "estimate": {
+        "kind": "provisional",
+        "note": "Provisional: released 2026-09-22, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (47.5) using the 20 models with the closest Intelligence Index that have both scores: about 76.6 (typical error ±1). Replaced automatically once the real score is published.",
+        "sources": [
+          "https://artificialanalysis.ai/models"
+        ]
+      },
+      "variants": [
+        {
+          "id": "c50ea08c-88c0-4eb7-85b8-27f2bbf6d527",
+          "name": "GPT-6 Sol (max)",
+          "level": "max",
+          "codingScore": 76.6,
+          "price": 6,
+          "value": 12.766667,
+          "effectiveCost": 10.057441,
+          "status": "ranked"
+        },
+        {
+          "id": "da2642fe-9f73-4788-b5af-24edcd55b37e",
+          "name": "GPT-6 Sol (xhigh)",
+          "level": "xhigh",
+          "codingScore": 75.6,
+          "price": 6,
+          "value": 12.6,
+          "effectiveCost": 10.534392,
+          "status": "ranked"
+        },
+        {
+          "id": "52eebe3e-6ede-4e46-92db-c5dea49fc410",
+          "name": "GPT-6 Sol (high)",
+          "level": "high",
+          "codingScore": 75,
+          "price": 6,
+          "value": 12.5,
+          "effectiveCost": 10.826667,
+          "status": "ranked"
+        },
+        {
+          "id": "780a4a85-17ff-4175-a8dd-ebca4823e61b",
+          "name": "GPT-6 Sol (medium)",
+          "level": "medium",
+          "codingScore": 73.1,
+          "price": 6,
+          "value": 12.183333,
+          "effectiveCost": 11.783858,
+          "status": "ranked"
+        },
+        {
+          "id": "01459872-433a-4ab2-8e99-7083162172eb",
+          "name": "GPT-6 Sol (low)",
+          "level": "low",
+          "codingScore": 67.9,
+          "price": 6,
+          "value": 11.316667,
+          "effectiveCost": 14.677467,
+          "status": "below-quality-floor"
+        },
+        {
+          "id": "d3e20e76-9e1a-45b6-b809-ad6aa37430cf",
+          "name": "GPT-6 Sol (Non-reasoning)",
+          "level": "non-reasoning",
+          "codingScore": 59.2,
+          "price": 6,
+          "value": 9.866667,
+          "effectiveCost": 20.655405,
+          "status": "below-quality-floor"
+        }
+      ],
+      "headlineLevel": "max",
+      "averageScore": 71.233333,
+      "bestValueLevel": null
+    },
+    {
+      "rank": 12,
+      "id": "model:anthropic:claude-opus-5.5",
+      "name": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "vendorSlug": "anthropic",
+      "releaseDate": "2026-09-22",
+      "codingScore": 80.9,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 80.9,
+          "normalized": 80.9,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 12,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 4,
+      "outputPrice": 20,
+      "value": 6.741667,
+      "effectiveCost": 10.143387,
+      "costBreakdown": {
+        "tokens": 4.004944,
+        "time": 6.138443
+      },
+      "estimate": {
+        "kind": "provisional",
+        "note": "Provisional: released 2026-09-22, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (57.6) using the 20 models with the closest Intelligence Index that have both scores: about 80.9 (typical error ±2.2). Replaced automatically once the real score is published.",
+        "sources": [
+          "https://artificialanalysis.ai/models"
+        ]
+      },
+      "variants": [
+        {
+          "id": "2f3c4dc9-a450-4303-8697-0237257cf08f",
+          "name": "Claude Opus 5.5 (Adaptive Reasoning, Max Effort, Default Fallback)",
+          "level": "max",
+          "codingScore": 80.9,
+          "price": 12,
+          "value": 6.741667,
+          "effectiveCost": 10.143387,
+          "status": "ranked"
+        },
+        {
+          "id": "df5bf99d-d228-4715-b41b-19ca86118777",
+          "name": "Claude Opus 5.5 (Adaptive Reasoning, Xhigh Effort, Default Fallback)",
+          "level": "xhigh",
+          "codingScore": 80.2,
+          "price": 12,
+          "value": 6.683333,
+          "effectiveCost": 10.458853,
+          "status": "ranked"
+        },
+        {
+          "id": "f314eade-2232-44bf-a3ab-9b326bc67de6",
+          "name": "Claude Opus 5.5 (Adaptive Reasoning, High Effort, Default Fallback)",
+          "level": "high",
+          "codingScore": 79.1,
+          "price": 12,
+          "value": 6.591667,
+          "effectiveCost": 10.965866,
+          "status": "ranked"
+        },
+        {
+          "id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
+          "name": "Claude Opus 5.5 (Adaptive Reasoning, Medium Effort, Default Fallback)",
+          "level": "medium",
+          "codingScore": 78,
+          "price": 12,
+          "value": 6.5,
+          "effectiveCost": 11.487179,
+          "status": "ranked"
+        },
+        {
+          "id": "4416ca93-fde6-4b7b-abbc-3a6be109cc3d",
+          "name": "Claude Opus 5.5 (Adaptive Reasoning, Low Effort, Default Fallback)",
+          "level": "low",
+          "codingScore": 74.7,
+          "price": 12,
+          "value": 6.225,
+          "effectiveCost": 13.14324,
+          "status": "ranked"
+        }
+      ],
+      "headlineLevel": "max",
+      "averageScore": 78.58,
+      "bestValueLevel": null,
+      "cursor": "Claude Opus 5.5"
     },
     {
       "rank": 13,
@@ -1453,10 +1455,10 @@
       "inputPrice": 2,
       "outputPrice": 12,
       "value": 10.957143,
-      "effectiveCost": 19.752282,
+      "effectiveCost": 10.362451,
       "costBreakdown": {
-        "tokens": 4.563233,
-        "time": 15.189048
+        "tokens": 2.464146,
+        "time": 7.898305
       },
       "variants": [
         {
@@ -1466,7 +1468,7 @@
           "codingScore": 76.7,
           "price": 7,
           "value": 10.957143,
-          "effectiveCost": 19.752282,
+          "effectiveCost": 10.362451,
           "status": "ranked"
         },
         {
@@ -1476,7 +1478,7 @@
           "codingScore": 70.6,
           "price": 7,
           "value": 10.085714,
-          "effectiveCost": 25.779037,
+          "effectiveCost": 13.504249,
           "status": "ranked"
         },
         {
@@ -1486,7 +1488,7 @@
           "codingScore": 67.1,
           "price": 7,
           "value": 9.585714,
-          "effectiveCost": 29.731744,
+          "effectiveCost": 15.564829,
           "status": "below-quality-floor"
         },
         {
@@ -1496,7 +1498,7 @@
           "codingScore": 64.7,
           "price": 7,
           "value": 9.242857,
-          "effectiveCost": 32.689335,
+          "effectiveCost": 17.106646,
           "status": "below-quality-floor"
         },
         {
@@ -1506,7 +1508,7 @@
           "codingScore": 58.1,
           "price": 7,
           "value": 8.3,
-          "effectiveCost": 42.082616,
+          "effectiveCost": 22.003442,
           "status": "below-quality-floor"
         },
         {
@@ -1516,7 +1518,7 @@
           "codingScore": 52.3,
           "price": 7,
           "value": 7.471429,
-          "effectiveCost": 52.294455,
+          "effectiveCost": 27.32696,
           "status": "below-quality-floor"
         }
       ],
@@ -1554,10 +1556,10 @@
       "inputPrice": 0.15,
       "outputPrice": 0.5,
       "value": 220,
-      "effectiveCost": 20.157343,
+      "effectiveCost": 10.486364,
       "costBreakdown": {
-        "tokens": 0.227273,
-        "time": 19.93007
+        "tokens": 0.122727,
+        "time": 10.363636
       },
       "variants": [
         {
@@ -1567,7 +1569,7 @@
           "codingScore": 71.5,
           "price": 0.325,
           "value": 220,
-          "effectiveCost": 20.157343,
+          "effectiveCost": 10.486364,
           "status": "ranked"
         }
       ],
@@ -1604,10 +1606,10 @@
       "inputPrice": 0.2,
       "outputPrice": 1.2,
       "value": 102,
-      "effectiveCost": 20.518207,
+      "effectiveCost": 10.679272,
       "costBreakdown": {
-        "tokens": 0.490196,
-        "time": 20.028011
+        "tokens": 0.264706,
+        "time": 10.414566
       },
       "variants": [
         {
@@ -1617,7 +1619,7 @@
           "codingScore": 71.4,
           "price": 0.7,
           "value": 102,
-          "effectiveCost": 20.518207,
+          "effectiveCost": 10.679272,
           "status": "ranked"
         },
         {
@@ -1627,7 +1629,7 @@
           "codingScore": 68.6,
           "price": 0.7,
           "value": 98,
-          "effectiveCost": 23.396501,
+          "effectiveCost": 12.176385,
           "status": "below-quality-floor"
         },
         {
@@ -1637,7 +1639,7 @@
           "codingScore": 63.3,
           "price": 0.7,
           "value": 90.428571,
-          "effectiveCost": 29.541864,
+          "effectiveCost": 15.372828,
           "status": "below-quality-floor"
         },
         {
@@ -1647,7 +1649,7 @@
           "codingScore": 50.7,
           "price": 0.7,
           "value": 72.428571,
-          "effectiveCost": 49.309665,
+          "effectiveCost": 25.654832,
           "status": "below-quality-floor"
         },
         {
@@ -1657,7 +1659,7 @@
           "codingScore": 44.2,
           "price": 0.7,
           "value": 63.142857,
-          "effectiveCost": 63.914027,
+          "effectiveCost": 33.251131,
           "status": "below-quality-floor"
         },
         {
@@ -1667,7 +1669,7 @@
           "codingScore": 39.3,
           "price": 0.7,
           "value": 56.142857,
-          "effectiveCost": 78.117048,
+          "effectiveCost": 40.638677,
           "status": "below-quality-floor"
         }
       ],
@@ -1705,10 +1707,10 @@
       "inputPrice": 1.25,
       "outputPrice": 4.25,
       "value": 26.254545,
-      "effectiveCost": 21.15651,
+      "effectiveCost": 11.039474,
       "costBreakdown": {
-        "tokens": 1.904432,
-        "time": 19.252078
+        "tokens": 1.028393,
+        "time": 10.01108
       },
       "variants": [
         {
@@ -1718,7 +1720,7 @@
           "codingScore": 72.2,
           "price": 2.75,
           "value": 26.254545,
-          "effectiveCost": 21.15651,
+          "effectiveCost": 11.039474,
           "status": "ranked"
         }
       ],
@@ -1755,10 +1757,10 @@
       "inputPrice": 0.1,
       "outputPrice": 0.5,
       "value": 234.666667,
-      "effectiveCost": 21.235795,
+      "effectiveCost": 11.046875,
       "costBreakdown": {
-        "tokens": 0.213068,
-        "time": 21.022727
+        "tokens": 0.115057,
+        "time": 10.931818
       },
       "estimate": {
         "kind": "provisional",
@@ -1775,7 +1777,7 @@
           "codingScore": 70.4,
           "price": 0.3,
           "value": 234.666667,
-          "effectiveCost": 21.235795,
+          "effectiveCost": 11.046875,
           "status": "ranked"
         },
         {
@@ -1785,7 +1787,7 @@
           "codingScore": 67.9,
           "price": 0.3,
           "value": 226.333333,
-          "effectiveCost": 23.858616,
+          "effectiveCost": 12.410898,
           "status": "below-quality-floor"
         },
         {
@@ -1795,7 +1797,7 @@
           "codingScore": 65,
           "price": 0.3,
           "value": 216.666667,
-          "effectiveCost": 27.153846,
+          "effectiveCost": 14.124615,
           "status": "below-quality-floor"
         },
         {
@@ -1805,7 +1807,7 @@
           "codingScore": 60.3,
           "price": 0.3,
           "value": 201,
-          "effectiveCost": 33.167496,
+          "effectiveCost": 17.252073,
           "status": "below-quality-floor"
         },
         {
@@ -1815,7 +1817,7 @@
           "codingScore": 46.4,
           "price": 0.3,
           "value": 154.666667,
-          "effectiveCost": 58.081897,
+          "effectiveCost": 30.209052,
           "status": "below-quality-floor"
         },
         {
@@ -1825,7 +1827,7 @@
           "codingScore": 41.4,
           "price": 0.3,
           "value": 138,
-          "effectiveCost": 71.135266,
+          "effectiveCost": 36.997585,
           "status": "below-quality-floor"
         }
       ],
@@ -1835,107 +1837,6 @@
     },
     {
       "rank": 18,
-      "id": "model:openai:gpt-5.6-sol",
-      "name": "GPT-5.6 Sol",
-      "vendor": "OpenAI",
-      "vendorSlug": "openai",
-      "releaseDate": "2026-07-09",
-      "codingScore": 78.3,
-      "benchmarks": {
-        "codingIndex": {
-          "label": "AA Coding Index",
-          "field": "artificial_analysis_coding_index",
-          "raw": 78.3,
-          "normalized": 78.3,
-          "weight": 1,
-          "effectiveWeight": 1,
-          "present": true
-        }
-      },
-      "benchmarksUsed": [
-        "codingIndex"
-      ],
-      "missingBenchmarks": [],
-      "price": 12,
-      "priceBasis": "blended",
-      "priceNote": null,
-      "inputPrice": 4,
-      "outputPrice": 20,
-      "value": 6.525,
-      "effectiveCost": 21.519796,
-      "costBreakdown": {
-        "tokens": 7.662835,
-        "time": 13.85696
-      },
-      "variants": [
-        {
-          "id": "d998db47-9b67-4727-a2bb-2e1261020ac0",
-          "name": "GPT-5.6 Sol (xhigh)",
-          "level": "xhigh",
-          "codingScore": 78.3,
-          "price": 12,
-          "value": 6.525,
-          "effectiveCost": 21.519796,
-          "status": "ranked"
-        },
-        {
-          "id": "d93edfe8-bf35-49ad-b56e-b18116142a1c",
-          "name": "GPT-5.6 Sol (max)",
-          "level": "max",
-          "codingScore": 77.4,
-          "price": 12,
-          "value": 6.45,
-          "effectiveCost": 22.351421,
-          "status": "ranked"
-        },
-        {
-          "id": "8afc250d-b538-45a2-812a-4605f4ffd87e",
-          "name": "GPT-5.6 Sol (high)",
-          "level": "high",
-          "codingScore": 77.2,
-          "price": 12,
-          "value": 6.433333,
-          "effectiveCost": 22.53886,
-          "status": "ranked"
-        },
-        {
-          "id": "6f174934-5b7d-4333-86cb-f5ebf4a862e3",
-          "name": "GPT-5.6 Sol (medium)",
-          "level": "medium",
-          "codingScore": 76.3,
-          "price": 12,
-          "value": 6.358333,
-          "effectiveCost": 23.394495,
-          "status": "ranked"
-        },
-        {
-          "id": "0904b596-8932-43bd-9b21-324f128e1723",
-          "name": "GPT-5.6 Sol (low)",
-          "level": "low",
-          "codingScore": 69.7,
-          "price": 12,
-          "value": 5.808333,
-          "effectiveCost": 30.344333,
-          "status": "ranked"
-        },
-        {
-          "id": "7c4d1e30-6ecb-46cf-880c-41446d7b51f1",
-          "name": "GPT-5.6 Sol (Non-reasoning)",
-          "level": "non-reasoning",
-          "codingScore": 65.1,
-          "price": 12,
-          "value": 5.425,
-          "effectiveCost": 36.021505,
-          "status": "below-quality-floor"
-        }
-      ],
-      "headlineLevel": "xhigh",
-      "averageScore": 74,
-      "bestValueLevel": null,
-      "cursor": "GPT-5.6 Sol"
-    },
-    {
-      "rank": 19,
       "id": "model:kimi:kimi-k3",
       "name": "Kimi K3",
       "vendor": "Kimi",
@@ -1963,10 +1864,10 @@
       "inputPrice": 3,
       "outputPrice": 15,
       "value": 8.466667,
-      "effectiveCost": 21.52231,
+      "effectiveCost": 11.309711,
       "costBreakdown": {
-        "tokens": 5.905512,
-        "time": 15.616798
+        "tokens": 3.188976,
+        "time": 8.120735
       },
       "variants": [
         {
@@ -1976,7 +1877,7 @@
           "codingScore": 76.2,
           "price": 9,
           "value": 8.466667,
-          "effectiveCost": 21.52231,
+          "effectiveCost": 11.309711,
           "status": "ranked"
         },
         {
@@ -1986,7 +1887,7 @@
           "codingScore": 72,
           "price": 9,
           "value": 8,
-          "effectiveCost": 25.694444,
+          "effectiveCost": 13.486111,
           "status": "ranked"
         }
       ],
@@ -1994,6 +1895,107 @@
       "averageScore": 74.1,
       "bestValueLevel": null,
       "cursor": "Kimi K3"
+    },
+    {
+      "rank": 19,
+      "id": "model:openai:gpt-5.6-sol",
+      "name": "GPT-5.6 Sol",
+      "vendor": "OpenAI",
+      "vendorSlug": "openai",
+      "releaseDate": "2026-07-09",
+      "codingScore": 78.3,
+      "benchmarks": {
+        "codingIndex": {
+          "label": "AA Coding Index",
+          "field": "artificial_analysis_coding_index",
+          "raw": 78.3,
+          "normalized": 78.3,
+          "weight": 1,
+          "effectiveWeight": 1,
+          "present": true
+        }
+      },
+      "benchmarksUsed": [
+        "codingIndex"
+      ],
+      "missingBenchmarks": [],
+      "price": 12,
+      "priceBasis": "blended",
+      "priceNote": null,
+      "inputPrice": 4,
+      "outputPrice": 20,
+      "value": 6.525,
+      "effectiveCost": 11.34355,
+      "costBreakdown": {
+        "tokens": 4.137931,
+        "time": 7.205619
+      },
+      "variants": [
+        {
+          "id": "d998db47-9b67-4727-a2bb-2e1261020ac0",
+          "name": "GPT-5.6 Sol (xhigh)",
+          "level": "xhigh",
+          "codingScore": 78.3,
+          "price": 12,
+          "value": 6.525,
+          "effectiveCost": 11.34355,
+          "status": "ranked"
+        },
+        {
+          "id": "d93edfe8-bf35-49ad-b56e-b18116142a1c",
+          "name": "GPT-5.6 Sol (max)",
+          "level": "max",
+          "codingScore": 77.4,
+          "price": 12,
+          "value": 6.45,
+          "effectiveCost": 11.777778,
+          "status": "ranked"
+        },
+        {
+          "id": "8afc250d-b538-45a2-812a-4605f4ffd87e",
+          "name": "GPT-5.6 Sol (high)",
+          "level": "high",
+          "codingScore": 77.2,
+          "price": 12,
+          "value": 6.433333,
+          "effectiveCost": 11.875648,
+          "status": "ranked"
+        },
+        {
+          "id": "6f174934-5b7d-4333-86cb-f5ebf4a862e3",
+          "name": "GPT-5.6 Sol (medium)",
+          "level": "medium",
+          "codingScore": 76.3,
+          "price": 12,
+          "value": 6.358333,
+          "effectiveCost": 12.322412,
+          "status": "ranked"
+        },
+        {
+          "id": "0904b596-8932-43bd-9b21-324f128e1723",
+          "name": "GPT-5.6 Sol (low)",
+          "level": "low",
+          "codingScore": 69.7,
+          "price": 12,
+          "value": 5.808333,
+          "effectiveCost": 15.95122,
+          "status": "ranked"
+        },
+        {
+          "id": "7c4d1e30-6ecb-46cf-880c-41446d7b51f1",
+          "name": "GPT-5.6 Sol (Non-reasoning)",
+          "level": "non-reasoning",
+          "codingScore": 65.1,
+          "price": 12,
+          "value": 5.425,
+          "effectiveCost": 18.915515,
+          "status": "below-quality-floor"
+        }
+      ],
+      "headlineLevel": "xhigh",
+      "averageScore": 74,
+      "bestValueLevel": null,
+      "cursor": "GPT-5.6 Sol"
     },
     {
       "rank": 20,
@@ -2024,10 +2026,10 @@
       "inputPrice": 2,
       "outputPrice": 6,
       "value": 18.1,
-      "effectiveCost": 21.823204,
+      "effectiveCost": 11.403315,
       "costBreakdown": {
-        "tokens": 2.762431,
-        "time": 19.060773
+        "tokens": 1.491713,
+        "time": 9.911602
       },
       "variants": [
         {
@@ -2037,7 +2039,7 @@
           "codingScore": 72.4,
           "price": 4,
           "value": 18.1,
-          "effectiveCost": 21.823204,
+          "effectiveCost": 11.403315,
           "status": "ranked"
         }
       ],
@@ -2075,10 +2077,10 @@
       "inputPrice": 1.25,
       "outputPrice": 4.25,
       "value": 25.927273,
-      "effectiveCost": 22.054698,
+      "effectiveCost": 11.507013,
       "costBreakdown": {
-        "tokens": 1.928471,
-        "time": 20.126227
+        "tokens": 1.041374,
+        "time": 10.465638
       },
       "variants": [
         {
@@ -2088,7 +2090,7 @@
           "codingScore": 71.3,
           "price": 2.75,
           "value": 25.927273,
-          "effectiveCost": 22.054698,
+          "effectiveCost": 11.507013,
           "status": "ranked"
         }
       ],
@@ -2125,10 +2127,10 @@
       "inputPrice": 0.5,
       "outputPrice": 2.5,
       "value": 46.866667,
-      "effectiveCost": 22.190612,
+      "effectiveCost": 11.560455,
       "costBreakdown": {
-        "tokens": 1.066856,
-        "time": 21.123755
+        "tokens": 0.576102,
+        "time": 10.984353
       },
       "estimate": {
         "kind": "manual",
@@ -2146,7 +2148,7 @@
           "codingScore": 70.3,
           "price": 1.5,
           "value": 46.866667,
-          "effectiveCost": 22.190612,
+          "effectiveCost": 11.560455,
           "status": "ranked"
         }
       ],
@@ -2184,10 +2186,10 @@
       "inputPrice": 2,
       "outputPrice": 6,
       "value": 17.975,
-      "effectiveCost": 22.32267,
+      "effectiveCost": 11.663421,
       "costBreakdown": {
-        "tokens": 2.781641,
-        "time": 19.541029
+        "tokens": 1.502086,
+        "time": 10.161335
       },
       "variants": [
         {
@@ -2197,7 +2199,7 @@
           "codingScore": 71.9,
           "price": 4,
           "value": 17.975,
-          "effectiveCost": 22.32267,
+          "effectiveCost": 11.663421,
           "status": "ranked"
         }
       ],
@@ -2234,10 +2236,10 @@
       "inputPrice": 2,
       "outputPrice": 6,
       "value": 17.95,
-      "effectiveCost": 22.423398,
+      "effectiveCost": 11.715877,
       "costBreakdown": {
-        "tokens": 2.785515,
-        "time": 19.637883
+        "tokens": 1.504178,
+        "time": 10.211699
       },
       "variants": [
         {
@@ -2247,7 +2249,7 @@
           "codingScore": 71.8,
           "price": 4,
           "value": 17.95,
-          "effectiveCost": 22.423398,
+          "effectiveCost": 11.715877,
           "status": "ranked"
         }
       ],
@@ -2284,10 +2286,10 @@
       "inputPrice": 5,
       "outputPrice": 25,
       "value": 5.2,
-      "effectiveCost": 23.717949,
+      "effectiveCost": 12.525641,
       "costBreakdown": {
-        "tokens": 9.615385,
-        "time": 14.102564
+        "tokens": 5.192308,
+        "time": 7.333333
       },
       "variants": [
         {
@@ -2297,7 +2299,7 @@
           "codingScore": 78,
           "price": 15,
           "value": 5.2,
-          "effectiveCost": 23.717949,
+          "effectiveCost": 12.525641,
           "status": "ranked"
         },
         {
@@ -2307,7 +2309,7 @@
           "codingScore": 77,
           "price": 15,
           "value": 5.133333,
-          "effectiveCost": 24.675325,
+          "effectiveCost": 13.025974,
           "status": "ranked"
         },
         {
@@ -2317,7 +2319,7 @@
           "codingScore": 76.5,
           "price": 15,
           "value": 5.1,
-          "effectiveCost": 25.163399,
+          "effectiveCost": 13.281046,
           "status": "ranked"
         },
         {
@@ -2327,7 +2329,7 @@
           "codingScore": 74.3,
           "price": 15,
           "value": 4.953333,
-          "effectiveCost": 27.388964,
+          "effectiveCost": 14.444145,
           "status": "ranked"
         },
         {
@@ -2337,7 +2339,7 @@
           "codingScore": 66.9,
           "price": 15,
           "value": 4.46,
-          "effectiveCost": 35.949178,
+          "effectiveCost": 18.917788,
           "status": "below-quality-floor"
         }
       ],
@@ -2375,10 +2377,10 @@
       "inputPrice": 2,
       "outputPrice": 10,
       "value": 11.916667,
-      "effectiveCost": 24.125874,
+      "effectiveCost": 12.629371,
       "costBreakdown": {
-        "tokens": 4.195804,
-        "time": 19.93007
+        "tokens": 2.265734,
+        "time": 10.363636
       },
       "variants": [
         {
@@ -2388,7 +2390,7 @@
           "codingScore": 71.5,
           "price": 6,
           "value": 11.916667,
-          "effectiveCost": 24.125874,
+          "effectiveCost": 12.629371,
           "status": "ranked"
         },
         {
@@ -2398,7 +2400,7 @@
           "codingScore": 66.4,
           "price": 6,
           "value": 11.066667,
-          "effectiveCost": 29.819277,
+          "effectiveCost": 15.596386,
           "status": "below-quality-floor"
         },
         {
@@ -2476,10 +2478,10 @@
       "inputPrice": 1.5,
       "outputPrice": 9,
       "value": 13.352381,
-      "effectiveCost": 25.071327,
+      "effectiveCost": 13.111983,
       "costBreakdown": {
-        "tokens": 3.74465,
-        "time": 21.326676
+        "tokens": 2.022111,
+        "time": 11.089872
       },
       "variants": [
         {
@@ -2489,7 +2491,7 @@
           "codingScore": 70.1,
           "price": 5.25,
           "value": 13.352381,
-          "effectiveCost": 25.071327,
+          "effectiveCost": 13.111983,
           "status": "ranked"
         },
         {
@@ -2547,10 +2549,10 @@
       "inputPrice": 2.5,
       "outputPrice": 15,
       "value": 8.125714,
-      "effectiveCost": 26.476793,
+      "effectiveCost": 13.890999,
       "costBreakdown": {
-        "tokens": 6.153305,
-        "time": 20.323488
+        "tokens": 3.322785,
+        "time": 10.568214
       },
       "variants": [
         {
@@ -2560,7 +2562,7 @@
           "codingScore": 71.1,
           "price": 8.75,
           "value": 8.125714,
-          "effectiveCost": 26.476793,
+          "effectiveCost": 13.890999,
           "status": "ranked"
         },
         {
@@ -2618,10 +2620,10 @@
       "inputPrice": 5,
       "outputPrice": 25,
       "value": 4.953333,
-      "effectiveCost": 27.388964,
+      "effectiveCost": 14.444145,
       "costBreakdown": {
-        "tokens": 10.094213,
-        "time": 17.294751
+        "tokens": 5.450875,
+        "time": 8.993271
       },
       "variants": [
         {
@@ -2631,7 +2633,7 @@
           "codingScore": 74.3,
           "price": 15,
           "value": 4.953333,
-          "effectiveCost": 27.388964,
+          "effectiveCost": 14.444145,
           "status": "ranked"
         }
       ],
@@ -2669,10 +2671,10 @@
       "inputPrice": 5,
       "outputPrice": 25,
       "value": 4.906667,
-      "effectiveCost": 28.125,
+      "effectiveCost": 14.828804,
       "costBreakdown": {
-        "tokens": 10.190217,
-        "time": 17.934783
+        "tokens": 5.502717,
+        "time": 9.326087
       },
       "variants": [
         {
@@ -2682,7 +2684,7 @@
           "codingScore": 73.6,
           "price": 15,
           "value": 4.906667,
-          "effectiveCost": 28.125,
+          "effectiveCost": 14.828804,
           "status": "ranked"
         },
         {
@@ -2730,10 +2732,10 @@
       "inputPrice": 5,
       "outputPrice": 30,
       "value": 4.28,
-      "effectiveCost": 28.437917,
+      "effectiveCost": 15.021362,
       "costBreakdown": {
-        "tokens": 11.682243,
-        "time": 16.755674
+        "tokens": 6.308411,
+        "time": 8.712951
       },
       "variants": [
         {
@@ -2743,7 +2745,7 @@
           "codingScore": 74.9,
           "price": 17.5,
           "value": 4.28,
-          "effectiveCost": 28.437917,
+          "effectiveCost": 15.021362,
           "status": "ranked"
         },
         {
@@ -2753,7 +2755,7 @@
           "codingScore": 71.6,
           "price": 17.5,
           "value": 4.091429,
-          "effectiveCost": 32.053073,
+          "effectiveCost": 16.912011,
           "status": "ranked"
         },
         {
@@ -2763,7 +2765,7 @@
           "codingScore": 71.5,
           "price": 17.5,
           "value": 4.085714,
-          "effectiveCost": 32.167832,
+          "effectiveCost": 16.972028,
           "status": "ranked"
         },
         {
@@ -2773,7 +2775,7 @@
           "codingScore": 60.9,
           "price": 17.5,
           "value": 3.48,
-          "effectiveCost": 46.469622,
+          "effectiveCost": 24.45156,
           "status": "below-quality-floor"
         },
         {
@@ -2783,7 +2785,7 @@
           "codingScore": 56.5,
           "price": 17.5,
           "value": 3.228571,
-          "effectiveCost": 53.982301,
+          "effectiveCost": 28.380531,
           "status": "below-quality-floor"
         }
       ],
@@ -2821,10 +2823,10 @@
       "inputPrice": 10,
       "outputPrice": 50,
       "value": 2.72,
-      "effectiveCost": 29.656863,
+      "effectiveCost": 15.789216,
       "costBreakdown": {
-        "tokens": 18.382353,
-        "time": 11.27451
+        "tokens": 9.926471,
+        "time": 5.862745
       },
       "variants": [
         {
@@ -2834,7 +2836,7 @@
           "codingScore": 81.6,
           "price": 30,
           "value": 2.72,
-          "effectiveCost": 29.656863,
+          "effectiveCost": 15.789216,
           "status": "ranked"
         },
         {
@@ -2844,7 +2846,7 @@
           "codingScore": 80.7,
           "price": 30,
           "value": 2.69,
-          "effectiveCost": 30.545229,
+          "effectiveCost": 16.255266,
           "status": "ranked"
         },
         {
@@ -2854,7 +2856,7 @@
           "codingScore": 79.1,
           "price": 30,
           "value": 2.636667,
-          "effectiveCost": 32.174463,
+          "effectiveCost": 17.109987,
           "status": "ranked"
         },
         {
@@ -2864,7 +2866,7 @@
           "codingScore": 77.1,
           "price": 30,
           "value": 2.57,
-          "effectiveCost": 34.306096,
+          "effectiveCost": 18.228275,
           "status": "ranked"
         },
         {
@@ -2874,7 +2876,7 @@
           "codingScore": 75.2,
           "price": 30,
           "value": 2.506667,
-          "effectiveCost": 36.43617,
+          "effectiveCost": 19.345745,
           "status": "ranked"
         }
       ],
@@ -2912,10 +2914,10 @@
       "inputPrice": 10,
       "outputPrice": 50,
       "value": 2.57,
-      "effectiveCost": 34.306096,
+      "effectiveCost": 18.228275,
       "costBreakdown": {
-        "tokens": 19.455253,
-        "time": 14.850843
+        "tokens": 10.505837,
+        "time": 7.722438
       },
       "variants": [
         {
@@ -2925,7 +2927,7 @@
           "codingScore": 77.1,
           "price": 30,
           "value": 2.57,
-          "effectiveCost": 34.306096,
+          "effectiveCost": 18.228275,
           "status": "ranked"
         },
         {
@@ -2935,7 +2937,7 @@
           "codingScore": 76.9,
           "price": 30,
           "value": 2.563333,
-          "effectiveCost": 34.525358,
+          "effectiveCost": 18.343303,
           "status": "ranked"
         },
         {
@@ -2945,7 +2947,7 @@
           "codingScore": 76.7,
           "price": 30,
           "value": 2.556667,
-          "effectiveCost": 34.745763,
+          "effectiveCost": 18.458931,
           "status": "ranked"
         },
         {
@@ -2955,7 +2957,7 @@
           "codingScore": 75.9,
           "price": 30,
           "value": 2.53,
-          "effectiveCost": 35.638999,
+          "effectiveCost": 18.927536,
           "status": "ranked"
         },
         {
@@ -2965,7 +2967,7 @@
           "codingScore": 75.7,
           "price": 30,
           "value": 2.523333,
-          "effectiveCost": 35.865258,
+          "effectiveCost": 19.046235,
           "status": "ranked"
         }
       ],
@@ -3002,10 +3004,10 @@
       "inputPrice": 10,
       "outputPrice": 50,
       "value": 2.55,
-      "effectiveCost": 34.96732,
+      "effectiveCost": 18.575163,
       "costBreakdown": {
-        "tokens": 19.607843,
-        "time": 15.359477
+        "tokens": 10.588235,
+        "time": 7.986928
       },
       "variants": [
         {
@@ -3015,7 +3017,7 @@
           "codingScore": 76.5,
           "price": 30,
           "value": 2.55,
-          "effectiveCost": 34.96732,
+          "effectiveCost": 18.575163,
           "status": "ranked"
         }
       ],
@@ -3036,7 +3038,7 @@
       "codingScore": 69.2,
       "price": 2.25,
       "value": 30.755556,
-      "effectiveCost": 23.880058,
+      "effectiveCost": 12.450145,
       "variants": [
         {
           "id": "78332c88-fe60-42c8-af9d-3617e44cf1f5",
@@ -3045,7 +3047,7 @@
           "codingScore": 69.2,
           "price": 2.25,
           "value": 30.755556,
-          "effectiveCost": 23.880058,
+          "effectiveCost": 12.450145,
           "status": "below-quality-floor"
         }
       ],
@@ -3064,7 +3066,7 @@
       "codingScore": 69.1,
       "price": 0.88,
       "value": 78.522727,
-      "effectiveCost": 22.995658,
+      "effectiveCost": 11.970478,
       "variants": [
         {
           "id": "fe4c0848-e284-4e52-a79d-cdc28392f1a9",
@@ -3073,7 +3075,7 @@
           "codingScore": 69.1,
           "price": 0.88,
           "value": 78.522727,
-          "effectiveCost": 22.995658,
+          "effectiveCost": 11.970478,
           "status": "below-quality-floor"
         }
       ],
@@ -3091,7 +3093,7 @@
       "codingScore": 68.8,
       "price": 2.64,
       "value": 26.060606,
-      "effectiveCost": 24.593023,
+      "effectiveCost": 12.826744,
       "variants": [
         {
           "id": "83173329-c09a-41f1-a028-a282a5f908d7",
@@ -3100,7 +3102,7 @@
           "codingScore": 68.8,
           "price": 2.64,
           "value": 26.060606,
-          "effectiveCost": 24.593023,
+          "effectiveCost": 12.826744,
           "status": "below-quality-floor"
         }
       ],
@@ -3118,7 +3120,7 @@
       "codingScore": 68.8,
       "price": 7,
       "value": 9.828571,
-      "effectiveCost": 27.761628,
+      "effectiveCost": 14.537791,
       "variants": [
         {
           "id": "bbd93ebe-80da-4594-bb19-61e69d0331df",
@@ -3127,7 +3129,7 @@
           "codingScore": 68.8,
           "price": 7,
           "value": 9.828571,
-          "effectiveCost": 27.761628,
+          "effectiveCost": 14.537791,
           "status": "below-quality-floor"
         }
       ],
@@ -3146,7 +3148,7 @@
       "codingScore": 68.8,
       "price": 2.9,
       "value": 23.724138,
-      "effectiveCost": 24.781977,
+      "effectiveCost": 12.928779,
       "variants": [
         {
           "id": "f7a4ea75-e548-4069-80d4-9be8bc7c009b",
@@ -3155,7 +3157,7 @@
           "codingScore": 68.8,
           "price": 2.9,
           "value": 23.724138,
-          "effectiveCost": 24.781977,
+          "effectiveCost": 12.928779,
           "status": "below-quality-floor"
         },
         {
@@ -3165,7 +3167,7 @@
           "codingScore": 46.5,
           "price": 2.9,
           "value": 16.034483,
-          "effectiveCost": 60.645161,
+          "effectiveCost": 31.597849,
           "status": "below-quality-floor"
         }
       ],
@@ -3184,7 +3186,7 @@
       "codingScore": 68.1,
       "price": 1.75,
       "value": 38.914286,
-      "effectiveCost": 24.706314,
+      "effectiveCost": 12.872981,
       "variants": [
         {
           "id": "b01dee41-c62b-48ed-8d16-984adc405e5c",
@@ -3193,7 +3195,7 @@
           "codingScore": 68.1,
           "price": 1.75,
           "value": 38.914286,
-          "effectiveCost": 24.706314,
+          "effectiveCost": 12.872981,
           "status": "below-quality-floor"
         },
         {
@@ -3203,7 +3205,7 @@
           "codingScore": 58.2,
           "price": 1.75,
           "value": 33.257143,
-          "effectiveCost": 37.414089,
+          "effectiveCost": 19.485395,
           "status": "below-quality-floor"
         },
         {
@@ -3213,7 +3215,7 @@
           "codingScore": 56.1,
           "price": 1.75,
           "value": 32.057143,
-          "effectiveCost": 40.686275,
+          "effectiveCost": 21.188057,
           "status": "below-quality-floor"
         },
         {
@@ -3223,7 +3225,7 @@
           "codingScore": 44.6,
           "price": 1.75,
           "value": 25.485714,
-          "effectiveCost": 64.069507,
+          "effectiveCost": 33.355381,
           "status": "below-quality-floor"
         }
       ],
@@ -3241,7 +3243,7 @@
       "codingScore": 66,
       "price": 5,
       "value": 13.2,
-      "effectiveCost": 29.545455,
+      "effectiveCost": 15.439394,
       "variants": [
         {
           "id": "69534bed-2ffd-4235-832b-e20a810333ab",
@@ -3250,7 +3252,7 @@
           "codingScore": 66,
           "price": 5,
           "value": 13.2,
-          "effectiveCost": 29.545455,
+          "effectiveCost": 15.439394,
           "status": "below-quality-floor"
         }
       ],
@@ -3268,7 +3270,7 @@
       "codingScore": 65,
       "price": 0.88,
       "value": 73.863636,
-      "effectiveCost": 27.6,
+      "effectiveCost": 14.365538,
       "variants": [
         {
           "id": "7707a46f-895f-4247-b7a8-ddab87c9a11d",
@@ -3277,7 +3279,7 @@
           "codingScore": 65,
           "price": 0.88,
           "value": 73.863636,
-          "effectiveCost": 27.6,
+          "effectiveCost": 14.365538,
           "status": "below-quality-floor"
         }
       ],
@@ -3295,7 +3297,7 @@
       "codingScore": 63,
       "price": 9,
       "value": 7,
-      "effectiveCost": 36.507937,
+      "effectiveCost": 19.126984,
       "variants": [
         {
           "id": "df8d14e0-3997-4e4d-b4ad-9c047acc9c69",
@@ -3304,7 +3306,7 @@
           "codingScore": 63,
           "price": 9,
           "value": 7,
-          "effectiveCost": 36.507937,
+          "effectiveCost": 19.126984,
           "status": "below-quality-floor"
         },
         {
@@ -3343,7 +3345,7 @@
       "codingScore": 61.8,
       "price": 2.475,
       "value": 24.969697,
-      "effectiveCost": 32.908576,
+      "effectiveCost": 17.152508,
       "variants": [
         {
           "id": "0de67206-4d36-4d10-b8f6-cf37fa747a03",
@@ -3352,7 +3354,7 @@
           "codingScore": 61.8,
           "price": 2.475,
           "value": 24.969697,
-          "effectiveCost": 32.908576,
+          "effectiveCost": 17.152508,
           "status": "below-quality-floor"
         },
         {
@@ -3380,7 +3382,7 @@
       "codingScore": 61.2,
       "price": 1.2,
       "value": 51,
-      "effectiveCost": 32.679739,
+      "effectiveCost": 17.013072,
       "variants": [
         {
           "id": "f9739750-6d42-450f-ba1e-2f76c869b4fe",
@@ -3389,7 +3391,7 @@
           "codingScore": 61.2,
           "price": 1.2,
           "value": 51,
-          "effectiveCost": 32.679739,
+          "effectiveCost": 17.013072,
           "status": "below-quality-floor"
         }
       ],
@@ -3407,7 +3409,7 @@
       "codingScore": 60.8,
       "price": 1.65,
       "value": 36.848485,
-      "effectiveCost": 33.59375,
+      "effectiveCost": 17.495888,
       "variants": [
         {
           "id": "08242385-ee91-4de6-be7f-271a6d9780ce",
@@ -3416,7 +3418,7 @@
           "codingScore": 60.8,
           "price": 1.65,
           "value": 36.848485,
-          "effectiveCost": 33.59375,
+          "effectiveCost": 17.495888,
           "status": "below-quality-floor"
         }
       ],
@@ -3434,7 +3436,7 @@
       "codingScore": 60.8,
       "price": 2.475,
       "value": 24.565657,
-      "effectiveCost": 34.272204,
+      "effectiveCost": 17.862253,
       "variants": [
         {
           "id": "8d0cb231-7303-452c-9923-a9620b948475",
@@ -3443,7 +3445,7 @@
           "codingScore": 60.8,
           "price": 2.475,
           "value": 24.565657,
-          "effectiveCost": 34.272204,
+          "effectiveCost": 17.862253,
           "status": "below-quality-floor"
         }
       ],
@@ -3462,7 +3464,7 @@
       "codingScore": 60.2,
       "price": 0.6525,
       "value": 92.260536,
-      "effectiveCost": 33.598422,
+      "effectiveCost": 17.482018,
       "variants": [
         {
           "id": "00f1248e-78e3-4230-8dc8-5e13ba8645e2",
@@ -3471,7 +3473,7 @@
           "codingScore": 60.2,
           "price": 0.6525,
           "value": 92.260536,
-          "effectiveCost": 33.598422,
+          "effectiveCost": 17.482018,
           "status": "below-quality-floor"
         },
         {
@@ -3499,7 +3501,7 @@
       "codingScore": 59.5,
       "price": 0.75,
       "value": 79.333333,
-      "effectiveCost": 34.663866,
+      "effectiveCost": 18.037815,
       "variants": [
         {
           "id": "fc4223e8-4586-4ca1-97ca-bb55ff586947",
@@ -3508,7 +3510,7 @@
           "codingScore": 59.5,
           "price": 0.75,
           "value": 79.333333,
-          "effectiveCost": 34.663866,
+          "effectiveCost": 18.037815,
           "status": "below-quality-floor"
         }
       ],
@@ -3526,7 +3528,7 @@
       "codingScore": 59.4,
       "price": 0.6525,
       "value": 91.034483,
-      "effectiveCost": 34.724327,
+      "effectiveCost": 18.067635,
       "variants": [
         {
           "id": "bf220674-68bd-43cc-a1b8-ce5ed4d2f18d",
@@ -3535,7 +3537,7 @@
           "codingScore": 59.4,
           "price": 0.6525,
           "value": 91.034483,
-          "effectiveCost": 34.724327,
+          "effectiveCost": 18.067635,
           "status": "below-quality-floor"
         },
         {
@@ -3545,7 +3547,7 @@
           "codingScore": 58.7,
           "price": 0.6525,
           "value": 89.961686,
-          "effectiveCost": 35.734668,
+          "effectiveCost": 18.593143,
           "status": "below-quality-floor"
         },
         {
@@ -3573,7 +3575,7 @@
       "codingScore": 58.8,
       "price": 0.36,
       "value": 163.333333,
-      "effectiveCost": 35.340136,
+      "effectiveCost": 18.382993,
       "variants": [
         {
           "id": "b23e6c69-96e5-44c9-8f58-4b42e0c399d5",
@@ -3582,7 +3584,7 @@
           "codingScore": 58.8,
           "price": 0.36,
           "value": 163.333333,
-          "effectiveCost": 35.340136,
+          "effectiveCost": 18.382993,
           "status": "below-quality-floor"
         }
       ],
@@ -3600,7 +3602,7 @@
       "codingScore": 58.6,
       "price": 0.75,
       "value": 78.133333,
-      "effectiveCost": 35.964164,
+      "effectiveCost": 18.714164,
       "variants": [
         {
           "id": "277f939a-985b-4b37-859d-b3eabc7c0b26",
@@ -3609,7 +3611,7 @@
           "codingScore": 58.6,
           "price": 0.75,
           "value": 78.133333,
-          "effectiveCost": 35.964164,
+          "effectiveCost": 18.714164,
           "status": "below-quality-floor"
         }
       ],
@@ -3627,7 +3629,7 @@
       "codingScore": 57,
       "price": 0.1475,
       "value": 386.440678,
-      "effectiveCost": 37.848684,
+      "effectiveCost": 19.683904,
       "variants": [
         {
           "id": "433d5c5d-3092-4026-9727-1587ca07915d",
@@ -3636,7 +3638,7 @@
           "codingScore": 57,
           "price": 0.1475,
           "value": 386.440678,
-          "effectiveCost": 37.848684,
+          "effectiveCost": 19.683904,
           "status": "below-quality-floor"
         }
       ],
@@ -3654,7 +3656,7 @@
       "codingScore": 56.8,
       "price": 0.21,
       "value": 270.47619,
-      "effectiveCost": 38.213028,
+      "effectiveCost": 19.874472,
       "variants": [
         {
           "id": "22d09131-343b-4adf-8760-533e20a2155f",
@@ -3663,7 +3665,7 @@
           "codingScore": 56.8,
           "price": 0.21,
           "value": 270.47619,
-          "effectiveCost": 38.213028,
+          "effectiveCost": 19.874472,
           "status": "below-quality-floor"
         }
       ],
@@ -3681,7 +3683,7 @@
       "codingScore": 56.2,
       "price": 0.205,
       "value": 274.146341,
-      "effectiveCost": 39.150356,
+      "effectiveCost": 20.361833,
       "variants": [
         {
           "id": "d8ddb241-b3e4-4c25-a6a3-72eb1b30c541",
@@ -3690,7 +3692,7 @@
           "codingScore": 56.2,
           "price": 0.205,
           "value": 274.146341,
-          "effectiveCost": 39.150356,
+          "effectiveCost": 20.361833,
           "status": "below-quality-floor"
         },
         {
@@ -3700,7 +3702,7 @@
           "codingScore": 52,
           "price": 0.205,
           "value": 253.658537,
-          "effectiveCost": 46.350962,
+          "effectiveCost": 24.106442,
           "status": "below-quality-floor"
         },
         {
@@ -3728,7 +3730,7 @@
       "codingScore": 56.1,
       "price": 2.625,
       "value": 21.371429,
-      "effectiveCost": 41.466132,
+      "effectiveCost": 21.60918,
       "variants": [
         {
           "id": "ba242e40-83b7-4cd3-a0e0-b56237984914",
@@ -3737,7 +3739,7 @@
           "codingScore": 56.1,
           "price": 2.625,
           "value": 21.371429,
-          "effectiveCost": 41.466132,
+          "effectiveCost": 21.60918,
           "status": "below-quality-floor"
         },
         {
@@ -3776,7 +3778,7 @@
       "codingScore": 56.1,
       "price": 0.725,
       "value": 77.37931,
-      "effectiveCost": 39.772727,
+      "effectiveCost": 20.694742,
       "variants": [
         {
           "id": "d4fc3f33-f2b0-4da1-88ee-f1f82bd4de31",
@@ -3785,7 +3787,7 @@
           "codingScore": 56.1,
           "price": 0.725,
           "value": 77.37931,
-          "effectiveCost": 39.772727,
+          "effectiveCost": 20.694742,
           "status": "below-quality-floor"
         },
         {
@@ -3824,7 +3826,7 @@
       "codingScore": 55.9,
       "price": 1,
       "value": 55.9,
-      "effectiveCost": 40.339893,
+      "effectiveCost": 20.994633,
       "variants": [
         {
           "id": "a87fce42-eea3-4e45-a96d-fe057814f371",
@@ -3833,7 +3835,7 @@
           "codingScore": 55.9,
           "price": 1,
           "value": 55.9,
-          "effectiveCost": 40.339893,
+          "effectiveCost": 20.994633,
           "status": "below-quality-floor"
         }
       ],
@@ -3851,7 +3853,7 @@
       "codingScore": 55.8,
       "price": 2.6775,
       "value": 20.840336,
-      "effectiveCost": 42.004928,
+      "effectiveCost": 21.890547,
       "variants": [
         {
           "id": "5aa1c578-af76-4b91-8699-cdd43582b3af",
@@ -3860,7 +3862,7 @@
           "codingScore": 55.8,
           "price": 2.6775,
           "value": 20.840336,
-          "effectiveCost": 42.004928,
+          "effectiveCost": 21.890547,
           "status": "below-quality-floor"
         },
         {
@@ -3888,7 +3890,7 @@
       "codingScore": 55.6,
       "price": 0.1475,
       "value": 376.949153,
-      "effectiveCost": 40.060701,
+      "effectiveCost": 20.834218,
       "variants": [
         {
           "id": "6d6fa1c9-b833-40b2-8a58-fa810e24a84e",
@@ -3897,7 +3899,7 @@
           "codingScore": 55.6,
           "price": 0.1475,
           "value": 376.949153,
-          "effectiveCost": 40.060701,
+          "effectiveCost": 20.834218,
           "status": "below-quality-floor"
         }
       ],
@@ -3915,7 +3917,7 @@
       "codingScore": 54.5,
       "price": 1.75,
       "value": 31.142857,
-      "effectiveCost": 43.348624,
+      "effectiveCost": 22.573394,
       "variants": [
         {
           "id": "f371ad68-6947-4767-a78f-1f6c81f96b93",
@@ -3924,7 +3926,7 @@
           "codingScore": 54.5,
           "price": 1.75,
           "value": 31.142857,
-          "effectiveCost": 43.348624,
+          "effectiveCost": 22.573394,
           "status": "below-quality-floor"
         }
       ],
@@ -3942,7 +3944,7 @@
       "codingScore": 53.7,
       "price": 2.1,
       "value": 25.571429,
-      "effectiveCost": 45.065177,
+      "effectiveCost": 23.472998,
       "variants": [
         {
           "id": "8c29d66d-bf98-4ea3-8572-5409353ecc66",
@@ -3951,7 +3953,7 @@
           "codingScore": 53.7,
           "price": 2.1,
           "value": 25.571429,
-          "effectiveCost": 45.065177,
+          "effectiveCost": 23.472998,
           "status": "below-quality-floor"
         },
         {
@@ -3961,7 +3963,7 @@
           "codingScore": 46.6,
           "price": 2.1,
           "value": 22.190476,
-          "effectiveCost": 59.549356,
+          "effectiveCost": 31.01073,
           "status": "below-quality-floor"
         }
       ],
@@ -3979,7 +3981,7 @@
       "codingScore": 52.9,
       "price": 0.75,
       "value": 70.533333,
-      "effectiveCost": 45.226843,
+      "effectiveCost": 23.532136,
       "variants": [
         {
           "id": "7261504e-503c-4a66-a9d3-a3272cdf9ad6",
@@ -3988,7 +3990,7 @@
           "codingScore": 52.9,
           "price": 0.75,
           "value": 70.533333,
-          "effectiveCost": 45.226843,
+          "effectiveCost": 23.532136,
           "status": "below-quality-floor"
         }
       ],
@@ -4006,7 +4008,7 @@
       "codingScore": 52.7,
       "price": 0.75,
       "value": 70.266667,
-      "effectiveCost": 45.588235,
+      "effectiveCost": 23.720114,
       "variants": [
         {
           "id": "1b64aa81-c223-4b8f-909b-82185a234765",
@@ -4015,7 +4017,7 @@
           "codingScore": 52.7,
           "price": 0.75,
           "value": 70.266667,
-          "effectiveCost": 45.588235,
+          "effectiveCost": 23.720114,
           "status": "below-quality-floor"
         }
       ],
@@ -4033,7 +4035,7 @@
       "codingScore": 52.6,
       "price": 0.75,
       "value": 70.133333,
-      "effectiveCost": 45.769962,
+      "effectiveCost": 23.814639,
       "variants": [
         {
           "id": "4bbceacb-cf47-464b-b60f-e1d1fe016d67",
@@ -4042,7 +4044,7 @@
           "codingScore": 52.6,
           "price": 0.75,
           "value": 70.133333,
-          "effectiveCost": 45.769962,
+          "effectiveCost": 23.814639,
           "status": "below-quality-floor"
         }
       ],
@@ -4060,7 +4062,7 @@
       "codingScore": 52.1,
       "price": 9,
       "value": 5.788889,
-      "effectiveCost": 54.606526,
+      "effectiveCost": 28.568138,
       "variants": [
         {
           "id": "90e078f2-051b-4c63-8919-76618971cb3f",
@@ -4069,7 +4071,7 @@
           "codingScore": 52.1,
           "price": 9,
           "value": 5.788889,
-          "effectiveCost": 54.606526,
+          "effectiveCost": 28.568138,
           "status": "below-quality-floor"
         },
         {
@@ -4098,7 +4100,7 @@
       "codingScore": 52.1,
       "price": 2.525,
       "value": 20.633663,
-      "effectiveCost": 48.392514,
+      "effectiveCost": 25.212572,
       "variants": [
         {
           "id": "0de09623-2b1a-4c8d-86ef-7f5245d4e24b",
@@ -4107,7 +4109,7 @@
           "codingScore": 52.1,
           "price": 2.525,
           "value": 20.633663,
-          "effectiveCost": 48.392514,
+          "effectiveCost": 25.212572,
           "status": "below-quality-floor"
         }
       ],
@@ -4125,7 +4127,7 @@
       "codingScore": 51.5,
       "price": 1.5,
       "value": 34.333333,
-      "effectiveCost": 48.543689,
+      "effectiveCost": 25.271845,
       "variants": [
         {
           "id": "0b7efa66-2115-49e0-a1b7-a2ba225fe9f6",
@@ -4134,7 +4136,7 @@
           "codingScore": 51.5,
           "price": 1.5,
           "value": 34.333333,
-          "effectiveCost": 48.543689,
+          "effectiveCost": 25.271845,
           "status": "below-quality-floor"
         }
       ],
@@ -4152,7 +4154,7 @@
       "codingScore": 50.6,
       "price": 0.1475,
       "value": 343.050847,
-      "effectiveCost": 48.95998,
+      "effectiveCost": 25.462105,
       "variants": [
         {
           "id": "e33dc369-ae81-40e0-8c4e-28b002d02197",
@@ -4161,7 +4163,7 @@
           "codingScore": 50.6,
           "price": 0.1475,
           "value": 343.050847,
-          "effectiveCost": 48.95998,
+          "effectiveCost": 25.462105,
           "status": "below-quality-floor"
         }
       ],
@@ -4179,7 +4181,7 @@
       "codingScore": 49.4,
       "price": 5.625,
       "value": 8.782222,
-      "effectiveCost": 56.907895,
+      "effectiveCost": 29.705972,
       "variants": [
         {
           "id": "4dc12a38-b18f-4c43-8e1b-678f8434b5b1",
@@ -4188,7 +4190,7 @@
           "codingScore": 49.4,
           "price": 5.625,
           "value": 8.782222,
-          "effectiveCost": 56.907895,
+          "effectiveCost": 29.705972,
           "status": "below-quality-floor"
         },
         {
@@ -4216,7 +4218,7 @@
       "codingScore": 49.3,
       "price": 1.4,
       "value": 35.214286,
-      "effectiveCost": 52.839757,
+      "effectiveCost": 27.505071,
       "variants": [
         {
           "id": "093b9df2-ebee-4309-943f-5a7e88360adf",
@@ -4225,7 +4227,7 @@
           "codingScore": 49.3,
           "price": 1.4,
           "value": 35.214286,
-          "effectiveCost": 52.839757,
+          "effectiveCost": 27.505071,
           "status": "below-quality-floor"
         }
       ],
@@ -4243,7 +4245,7 @@
       "codingScore": 49.3,
       "price": 1.55,
       "value": 31.806452,
-      "effectiveCost": 52.991886,
+      "effectiveCost": 27.587221,
       "variants": [
         {
           "id": "5b52def2-ac9b-4465-ad80-91ea8079e253",
@@ -4252,7 +4254,7 @@
           "codingScore": 49.3,
           "price": 1.55,
           "value": 31.806452,
-          "effectiveCost": 52.991886,
+          "effectiveCost": 27.587221,
           "status": "below-quality-floor"
         }
       ],
@@ -4270,7 +4272,7 @@
       "codingScore": 49,
       "price": 0.8375,
       "value": 58.507463,
-      "effectiveCost": 52.895408,
+      "effectiveCost": 27.522704,
       "variants": [
         {
           "id": "583f98fb-c4b8-4df3-8d40-60ac0ed69882",
@@ -4279,7 +4281,7 @@
           "codingScore": 49,
           "price": 0.8375,
           "value": 58.507463,
-          "effectiveCost": 52.895408,
+          "effectiveCost": 27.522704,
           "status": "below-quality-floor"
         }
       ],
@@ -4297,7 +4299,7 @@
       "codingScore": 48.2,
       "price": 2.1,
       "value": 22.952381,
-      "effectiveCost": 55.912863,
+      "effectiveCost": 29.118257,
       "variants": [
         {
           "id": "0e66bae9-41f1-42fc-9276-ce8cb6f72919",
@@ -4306,7 +4308,7 @@
           "codingScore": 48.2,
           "price": 2.1,
           "value": 22.952381,
-          "effectiveCost": 55.912863,
+          "effectiveCost": 29.118257,
           "status": "below-quality-floor"
         },
         {
@@ -4334,7 +4336,7 @@
       "codingScore": 46.9,
       "price": 4.5,
       "value": 10.422222,
-      "effectiveCost": 61.407249,
+      "effectiveCost": 32.027719,
       "variants": [
         {
           "id": "dd059b25-d82a-4ead-82a4-4adceaaec48b",
@@ -4343,7 +4345,7 @@
           "codingScore": 46.9,
           "price": 4.5,
           "value": 10.422222,
-          "effectiveCost": 61.407249,
+          "effectiveCost": 32.027719,
           "status": "below-quality-floor"
         }
       ],
@@ -4361,7 +4363,7 @@
       "codingScore": 46.8,
       "price": 1.675,
       "value": 27.940299,
-      "effectiveCost": 58.627137,
+      "effectiveCost": 30.521902,
       "variants": [
         {
           "id": "a550ffca-f89e-4381-ade6-a85dc6a1fb4c",
@@ -4370,7 +4372,7 @@
           "codingScore": 46.8,
           "price": 1.675,
           "value": 27.940299,
-          "effectiveCost": 58.627137,
+          "effectiveCost": 30.521902,
           "status": "below-quality-floor"
         },
         {
@@ -4398,7 +4400,7 @@
       "codingScore": 45.8,
       "price": 1.375,
       "value": 33.309091,
-      "effectiveCost": 60.671397,
+      "effectiveCost": 31.579148,
       "variants": [
         {
           "id": "6a5d56e1-bb68-4205-8d9b-26b97888bc84",
@@ -4407,7 +4409,7 @@
           "codingScore": 45.8,
           "price": 1.375,
           "value": 33.309091,
-          "effectiveCost": 60.671397,
+          "effectiveCost": 31.579148,
           "status": "below-quality-floor"
         },
         {
@@ -4435,7 +4437,7 @@
       "codingScore": 45.7,
       "price": 1.8,
       "value": 25.388889,
-      "effectiveCost": 61.378556,
+      "effectiveCost": 31.956236,
       "variants": [
         {
           "id": "2236df45-0699-40d1-b5cc-69ee345d2257",
@@ -4444,7 +4446,7 @@
           "codingScore": 45.7,
           "price": 1.8,
           "value": 25.388889,
-          "effectiveCost": 61.378556,
+          "effectiveCost": 31.956236,
           "status": "below-quality-floor"
         },
         {
@@ -4454,7 +4456,7 @@
           "codingScore": 43.3,
           "price": 1.8,
           "value": 24.055556,
-          "effectiveCost": 67.551963,
+          "effectiveCost": 35.168591,
           "status": "below-quality-floor"
         }
       ],
@@ -4472,7 +4474,7 @@
       "codingScore": 45.3,
       "price": 1.4,
       "value": 32.357143,
-      "effectiveCost": 61.92053,
+      "effectiveCost": 32.229581,
       "variants": [
         {
           "id": "6fc35842-0165-44cf-8570-c484a92b3d8c",
@@ -4481,7 +4483,7 @@
           "codingScore": 45.3,
           "price": 1.4,
           "value": 32.357143,
-          "effectiveCost": 61.92053,
+          "effectiveCost": 32.229581,
           "status": "below-quality-floor"
         },
         {
@@ -4509,7 +4511,7 @@
       "codingScore": 45.3,
       "price": 0.75,
       "value": 60.4,
-      "effectiveCost": 61.203091,
+      "effectiveCost": 31.842163,
       "variants": [
         {
           "id": "5c3bdc0d-abab-4526-8079-34de4089bb4a",
@@ -4518,7 +4520,7 @@
           "codingScore": 45.3,
           "price": 0.75,
           "value": 60.4,
-          "effectiveCost": 61.203091,
+          "effectiveCost": 31.842163,
           "status": "below-quality-floor"
         }
       ],
@@ -4536,7 +4538,7 @@
       "codingScore": 44.2,
       "price": 0.35,
       "value": 126.285714,
-      "effectiveCost": 63.5181,
+      "effectiveCost": 33.03733,
       "variants": [
         {
           "id": "d621247c-d47e-458c-82cb-a166bc3b37e5",
@@ -4545,7 +4547,7 @@
           "codingScore": 44.2,
           "price": 0.35,
           "value": 126.285714,
-          "effectiveCost": 63.5181,
+          "effectiveCost": 33.03733,
           "status": "below-quality-floor"
         },
         {
@@ -4573,7 +4575,7 @@
       "codingScore": 43.9,
       "price": 3,
       "value": 14.633333,
-      "effectiveCost": 67.312073,
+      "effectiveCost": 35.070615,
       "variants": [
         {
           "id": "a6340098-d7ae-462d-b372-0a0a67fc44b4",
@@ -4582,7 +4584,7 @@
           "codingScore": 43.9,
           "price": 3,
           "value": 14.633333,
-          "effectiveCost": 67.312073,
+          "effectiveCost": 35.070615,
           "status": "below-quality-floor"
         },
         {
@@ -4611,7 +4613,7 @@
       "codingScore": 43.5,
       "price": 2.1925,
       "value": 19.840365,
-      "effectiveCost": 67.462644,
+      "effectiveCost": 35.130977,
       "variants": [
         {
           "id": "0a7dda4d-cc9c-4a90-abc1-abb5772c901b",
@@ -4620,7 +4622,7 @@
           "codingScore": 43.5,
           "price": 2.1925,
           "value": 19.840365,
-          "effectiveCost": 67.462644,
+          "effectiveCost": 35.130977,
           "status": "below-quality-floor"
         },
         {
@@ -4648,7 +4650,7 @@
       "codingScore": 42.8,
       "price": 1.4,
       "value": 30.571429,
-      "effectiveCost": 68.457944,
+      "effectiveCost": 35.630841,
       "variants": [
         {
           "id": "eb4ba465-3fcd-4065-9fe2-e8225e7b2c6c",
@@ -4657,7 +4659,7 @@
           "codingScore": 42.8,
           "price": 1.4,
           "value": 30.571429,
-          "effectiveCost": 68.457944,
+          "effectiveCost": 35.630841,
           "status": "below-quality-floor"
         }
       ],
@@ -4675,7 +4677,7 @@
       "codingScore": 42.2,
       "price": 1.875,
       "value": 22.506667,
-      "effectiveCost": 70.704976,
+      "effectiveCost": 36.811019,
       "variants": [
         {
           "id": "948892b5-db03-4118-a4a8-ccd51ed871ea",
@@ -4684,7 +4686,7 @@
           "codingScore": 42.2,
           "price": 1.875,
           "value": 22.506667,
-          "effectiveCost": 70.704976,
+          "effectiveCost": 36.811019,
           "status": "below-quality-floor"
         },
         {
@@ -4694,7 +4696,7 @@
           "codingScore": 35.2,
           "price": 1.875,
           "value": 18.773333,
-          "effectiveCost": 94.708807,
+          "effectiveCost": 49.301847,
           "status": "below-quality-floor"
         },
         {
@@ -4732,7 +4734,7 @@
       "codingScore": 41.9,
       "price": 1.3125,
       "value": 31.92381,
-      "effectiveCost": 70.897971,
+      "effectiveCost": 36.89827,
       "variants": [
         {
           "id": "8665ca00-c687-44c7-875c-22618cb31c4f",
@@ -4741,7 +4743,7 @@
           "codingScore": 41.9,
           "price": 1.3125,
           "value": 31.92381,
-          "effectiveCost": 70.897971,
+          "effectiveCost": 36.89827,
           "status": "below-quality-floor"
         },
         {
@@ -4751,7 +4753,7 @@
           "codingScore": 28.1,
           "price": 1.3125,
           "value": 21.409524,
-          "effectiveCost": 130.271352,
+          "effectiveCost": 67.787811,
           "status": "below-quality-floor"
         }
       ],
@@ -4769,7 +4771,7 @@
       "codingScore": 39.7,
       "price": 37.5,
       "value": 1.058667,
-      "effectiveCost": 123.173804,
+      "effectiveCost": 64.994962,
       "variants": [
         {
           "id": "5ad2f60f-ee05-49fd-85a0-cef69aa7cb7b",
@@ -4778,7 +4780,7 @@
           "codingScore": 39.7,
           "price": 37.5,
           "value": 1.058667,
-          "effectiveCost": 123.173804,
+          "effectiveCost": 64.994962,
           "status": "below-quality-floor"
         }
       ],
@@ -4796,7 +4798,7 @@
       "codingScore": 39.6,
       "price": 0.675,
       "value": 58.666667,
-      "effectiveCost": 77.114899,
+      "effectiveCost": 40.116793,
       "variants": [
         {
           "id": "6c7b322e-2f35-48ff-9171-fb621a726fc0",
@@ -4805,7 +4807,7 @@
           "codingScore": 39.6,
           "price": 0.675,
           "value": 58.666667,
-          "effectiveCost": 77.114899,
+          "effectiveCost": 40.116793,
           "status": "below-quality-floor"
         }
       ],
@@ -4823,7 +4825,7 @@
       "codingScore": 39.4,
       "price": 17.5,
       "value": 2.251429,
-      "effectiveCost": 99.111675,
+      "effectiveCost": 51.982234,
       "variants": [
         {
           "id": "c4169d75-9d24-4794-a9c3-69e1fe364de5",
@@ -4832,7 +4834,7 @@
           "codingScore": 39.4,
           "price": 17.5,
           "value": 2.251429,
-          "effectiveCost": 99.111675,
+          "effectiveCost": 51.982234,
           "status": "below-quality-floor"
         }
       ],
@@ -4850,7 +4852,7 @@
       "codingScore": 39.3,
       "price": 0.235,
       "value": 167.234043,
-      "effectiveCost": 77.525445,
+      "effectiveCost": 40.319211,
       "variants": [
         {
           "id": "6e1b44ff-c227-496b-aef4-19b70cd18c76",
@@ -4859,7 +4861,7 @@
           "codingScore": 39.3,
           "price": 0.235,
           "value": 167.234043,
-          "effectiveCost": 77.525445,
+          "effectiveCost": 40.319211,
           "status": "below-quality-floor"
         },
         {
@@ -4887,7 +4889,7 @@
       "codingScore": 37.8,
       "price": 5.625,
       "value": 6.72,
-      "effectiveCost": 89.715608,
+      "effectiveCost": 46.800926,
       "variants": [
         {
           "id": "48e50f00-1fd1-4acc-b337-61078aa341e6",
@@ -4896,7 +4898,7 @@
           "codingScore": 37.8,
           "price": 5.625,
           "value": 6.72,
-          "effectiveCost": 89.715608,
+          "effectiveCost": 46.800926,
           "status": "below-quality-floor"
         },
         {
@@ -4945,7 +4947,7 @@
       "codingScore": 37.7,
       "price": 0.6,
       "value": 62.833333,
-      "effectiveCost": 83.421751,
+      "effectiveCost": 43.395225,
       "variants": [
         {
           "id": "63872e9c-3377-4a6b-b477-7bba244c38e9",
@@ -4954,7 +4956,7 @@
           "codingScore": 37.7,
           "price": 0.6,
           "value": 62.833333,
-          "effectiveCost": 83.421751,
+          "effectiveCost": 43.395225,
           "status": "below-quality-floor"
         }
       ],
@@ -4972,7 +4974,7 @@
       "codingScore": 37,
       "price": 1.125,
       "value": 32.888889,
-      "effectiveCost": 86.655405,
+      "effectiveCost": 45.091216,
       "variants": [
         {
           "id": "eebfef01-709e-4ffe-b72f-0db75ef2434b",
@@ -4981,7 +4983,7 @@
           "codingScore": 37,
           "price": 1.125,
           "value": 32.888889,
-          "effectiveCost": 86.655405,
+          "effectiveCost": 45.091216,
           "status": "below-quality-floor"
         },
         {
@@ -5009,7 +5011,7 @@
       "codingScore": 36.2,
       "price": 0.775,
       "value": 46.709677,
-      "effectiveCost": 89.191989,
+      "effectiveCost": 46.401243,
       "variants": [
         {
           "id": "fc92f822-04b7-420d-9c07-a21af5e9aac7",
@@ -5018,7 +5020,7 @@
           "codingScore": 36.2,
           "price": 0.775,
           "value": 46.709677,
-          "effectiveCost": 89.191989,
+          "effectiveCost": 46.401243,
           "status": "below-quality-floor"
         }
       ],
@@ -5036,7 +5038,7 @@
       "codingScore": 34.7,
       "price": 0.875,
       "value": 39.657143,
-      "effectiveCost": 95.353026,
+      "effectiveCost": 49.60879,
       "variants": [
         {
           "id": "598190f8-dc9c-4fea-a7ea-4b81c402ab18",
@@ -5045,7 +5047,7 @@
           "codingScore": 34.7,
           "price": 0.875,
           "value": 39.657143,
-          "effectiveCost": 95.353026,
+          "effectiveCost": 49.60879,
           "status": "below-quality-floor"
         }
       ],
@@ -5063,7 +5065,7 @@
       "codingScore": 34,
       "price": 5.625,
       "value": 6.044444,
-      "effectiveCost": 105.330882,
+      "effectiveCost": 54.9375,
       "variants": [
         {
           "id": "0d94dc87-12c8-4d4a-8d99-804ce3f17bc2",
@@ -5072,7 +5074,7 @@
           "codingScore": 34,
           "price": 5.625,
           "value": 6.044444,
-          "effectiveCost": 105.330882,
+          "effectiveCost": 54.9375,
           "status": "below-quality-floor"
         },
         {
@@ -5082,7 +5084,7 @@
           "codingScore": 25.9,
           "price": 5.625,
           "value": 4.604444,
-          "effectiveCost": 153.909266,
+          "effectiveCost": 80.25,
           "status": "below-quality-floor"
         },
         {
@@ -5092,7 +5094,7 @@
           "codingScore": 20.9,
           "price": 5.625,
           "value": 3.715556,
-          "effectiveCost": 202.691388,
+          "effectiveCost": 105.66866,
           "status": "below-quality-floor"
         }
       ],
@@ -5110,7 +5112,7 @@
       "codingScore": 34,
       "price": 41.25,
       "value": 0.824242,
-      "effectiveCost": 157.720588,
+      "effectiveCost": 83.227941,
       "variants": [
         {
           "id": "078f4dc8-5350-40a2-a5ea-e8359f795b70",
@@ -5119,7 +5121,7 @@
           "codingScore": 34,
           "price": 41.25,
           "value": 0.824242,
-          "effectiveCost": 157.720588,
+          "effectiveCost": 83.227941,
           "status": "below-quality-floor"
         }
       ],
@@ -5137,7 +5139,7 @@
       "codingScore": 33.3,
       "price": 5.625,
       "value": 5.92,
-      "effectiveCost": 108.596096,
+      "effectiveCost": 56.638889,
       "variants": [
         {
           "id": "27202e5f-c82d-4710-92e9-4317877d4883",
@@ -5146,7 +5148,7 @@
           "codingScore": 33.3,
           "price": 5.625,
           "value": 5.92,
-          "effectiveCost": 108.596096,
+          "effectiveCost": 56.638889,
           "status": "below-quality-floor"
         }
       ],
@@ -5164,7 +5166,7 @@
       "codingScore": 33.2,
       "price": 0.27,
       "value": 122.962963,
-      "effectiveCost": 101.009036,
+      "effectiveCost": 52.532831,
       "variants": [
         {
           "id": "cd26a386-4873-46ff-b853-d239050025a2",
@@ -5183,7 +5185,7 @@
           "codingScore": 33.2,
           "price": 0.27,
           "value": 122.962963,
-          "effectiveCost": 101.009036,
+          "effectiveCost": 52.532831,
           "status": "below-quality-floor"
         }
       ],
@@ -5201,7 +5203,7 @@
       "codingScore": 31.1,
       "price": 0.5,
       "value": 62.2,
-      "effectiveCost": 111.575563,
+      "effectiveCost": 58.03537,
       "variants": [
         {
           "id": "016d330a-2141-4afa-b2fc-62b314423dc1",
@@ -5210,7 +5212,7 @@
           "codingScore": 31.1,
           "price": 0.5,
           "value": 62.2,
-          "effectiveCost": 111.575563,
+          "effectiveCost": 58.03537,
           "status": "below-quality-floor"
         }
       ],
@@ -5228,7 +5230,7 @@
       "codingScore": 31,
       "price": 0.2,
       "value": 155,
-      "effectiveCost": 111.612903,
+      "effectiveCost": 58.045161,
       "variants": [
         {
           "id": "feb02d3b-ff8d-4ed4-b165-13f8d4a7192c",
@@ -5237,7 +5239,7 @@
           "codingScore": 31,
           "price": 0.2,
           "value": 155,
-          "effectiveCost": 111.612903,
+          "effectiveCost": 58.045161,
           "status": "below-quality-floor"
         },
         {
@@ -5265,7 +5267,7 @@
       "codingScore": 30.4,
       "price": 0.3725,
       "value": 81.610738,
-      "effectiveCost": 115.086349,
+      "effectiveCost": 59.857155,
       "variants": [
         {
           "id": "f0083258-8646-45b8-8082-7aaf6c2ea82a",
@@ -5274,7 +5276,7 @@
           "codingScore": 30.4,
           "price": 0.3725,
           "value": 81.610738,
-          "effectiveCost": 115.086349,
+          "effectiveCost": 59.857155,
           "status": "below-quality-floor"
         },
         {
@@ -5284,7 +5286,7 @@
           "codingScore": 21.2,
           "price": 0.3475,
           "value": 61.007194,
-          "effectiveCost": 186.668632,
+          "effectiveCost": 97.08408,
           "status": "below-quality-floor"
         }
       ],
@@ -5302,7 +5304,7 @@
       "codingScore": 30.2,
       "price": 9,
       "value": 3.355556,
-      "effectiveCost": 130.463576,
+      "effectiveCost": 68.139073,
       "variants": [
         {
           "id": "0a603978-03b9-4f47-a273-2f7fd969be85",
@@ -5311,7 +5313,7 @@
           "codingScore": 30.2,
           "price": 9,
           "value": 3.355556,
-          "effectiveCost": 130.463576,
+          "effectiveCost": 68.139073,
           "status": "below-quality-floor"
         }
       ],
@@ -5329,7 +5331,7 @@
       "codingScore": 29.9,
       "price": 0.405,
       "value": 73.82716,
-      "effectiveCost": 117.901338,
+      "effectiveCost": 61.322241,
       "variants": [
         {
           "id": "1071dea1-43e7-4fe9-b936-3034bb622b2e",
@@ -5338,7 +5340,7 @@
           "codingScore": 29.9,
           "price": 0.405,
           "value": 73.82716,
-          "effectiveCost": 117.901338,
+          "effectiveCost": 61.322241,
           "status": "below-quality-floor"
         }
       ],
@@ -5356,7 +5358,7 @@
       "codingScore": 28.7,
       "price": 0.1675,
       "value": 171.343284,
-      "effectiveCost": 124.50784,
+      "effectiveCost": 64.749913,
       "variants": [
         {
           "id": "2d28a13a-096e-475a-beb8-26bbd1c7d51c",
@@ -5365,7 +5367,7 @@
           "codingScore": 28.7,
           "price": 0.1675,
           "value": 171.343284,
-          "effectiveCost": 124.50784,
+          "effectiveCost": 64.749913,
           "status": "below-quality-floor"
         },
         {
@@ -5375,7 +5377,7 @@
           "codingScore": 23.5,
           "price": 0.21,
           "value": 111.904762,
-          "effectiveCost": 163.212766,
+          "effectiveCost": 84.879574,
           "status": "below-quality-floor"
         }
       ],
@@ -5393,7 +5395,7 @@
       "codingScore": 26.8,
       "price": 0.145,
       "value": 184.827586,
-      "effectiveCost": 136.837687,
+      "effectiveCost": 71.161007,
       "variants": [
         {
           "id": "29976311-665a-4b2f-ac72-557c33e0758e",
@@ -5402,7 +5404,7 @@
           "codingScore": 26.8,
           "price": 0.145,
           "value": 184.827586,
-          "effectiveCost": 136.837687,
+          "effectiveCost": 71.161007,
           "status": "below-quality-floor"
         }
       ],
@@ -5420,7 +5422,7 @@
       "codingScore": 26.6,
       "price": 0.375,
       "value": 70.933333,
-      "effectiveCost": 138.674812,
+      "effectiveCost": 72.125,
       "variants": [
         {
           "id": "3fd96175-4ef1-434c-8795-f873aec2abc1",
@@ -5429,7 +5431,7 @@
           "codingScore": 26.6,
           "price": 0.375,
           "value": 70.933333,
-          "effectiveCost": 138.674812,
+          "effectiveCost": 72.125,
           "status": "below-quality-floor"
         },
         {
@@ -5457,7 +5459,7 @@
       "codingScore": 26.3,
       "price": 0.14,
       "value": 187.857143,
-      "effectiveCost": 140.380228,
+      "effectiveCost": 73.003042,
       "variants": [
         {
           "id": "24ac5b00-5f03-4c47-8e37-522d1195383e",
@@ -5466,7 +5468,7 @@
           "codingScore": 26.3,
           "price": 0.14,
           "value": 187.857143,
-          "effectiveCost": 140.380228,
+          "effectiveCost": 73.003042,
           "status": "below-quality-floor"
         }
       ],
@@ -5484,7 +5486,7 @@
       "codingScore": 26,
       "price": 9,
       "value": 2.888889,
-      "effectiveCost": 159.615385,
+      "effectiveCost": 83.346154,
       "variants": [
         {
           "id": "aca9c1ad-fc86-49f3-a312-b1e517ea100c",
@@ -5493,7 +5495,7 @@
           "codingScore": 26,
           "price": 9,
           "value": 2.888889,
-          "effectiveCost": 159.615385,
+          "effectiveCost": 83.346154,
           "status": "below-quality-floor"
         }
       ],
@@ -5511,7 +5513,7 @@
       "codingScore": 25.8,
       "price": 0.525,
       "value": 49.142857,
-      "effectiveCost": 144.815891,
+      "effectiveCost": 75.324612,
       "variants": [
         {
           "id": "b6d2e43d-3082-43f5-9318-0f4dbcb54163",
@@ -5520,7 +5522,7 @@
           "codingScore": 25.8,
           "price": 0.525,
           "value": 49.142857,
-          "effectiveCost": 144.815891,
+          "effectiveCost": 75.324612,
           "status": "below-quality-floor"
         }
       ],
@@ -5538,7 +5540,7 @@
       "codingScore": 24.7,
       "price": 0.5,
       "value": 49.4,
-      "effectiveCost": 153.441296,
+      "effectiveCost": 79.809717,
       "estimate": {
         "kind": "provisional",
         "note": "Provisional: released 2026-09-08, and Artificial Analysis hasn't published its Coding Index yet. Estimated from its Intelligence Index (12.3) using the 20 models with the closest Intelligence Index that have both scores: about 24.7 (typical error ±5.3). Replaced automatically once the real score is published.",
@@ -5554,7 +5556,7 @@
           "codingScore": 24.7,
           "price": 0.5,
           "value": 49.4,
-          "effectiveCost": 153.441296,
+          "effectiveCost": 79.809717,
           "status": "below-quality-floor"
         }
       ],
@@ -5572,7 +5574,7 @@
       "codingScore": 24.6,
       "price": 3,
       "value": 8.2,
-      "effectiveCost": 159.349593,
+      "effectiveCost": 82.98374,
       "variants": [
         {
           "id": "0e34f05c-387e-4968-be15-ccec4a55d8c1",
@@ -5581,7 +5583,7 @@
           "codingScore": 24.6,
           "price": 3,
           "value": 8.2,
-          "effectiveCost": 159.349593,
+          "effectiveCost": 82.98374,
           "status": "below-quality-floor"
         }
       ],
@@ -5599,7 +5601,7 @@
       "codingScore": 24.2,
       "price": 10,
       "value": 2.42,
-      "effectiveCost": 177.272727,
+      "effectiveCost": 92.595041,
       "variants": [
         {
           "id": "e98e911e-9fb2-4a9a-826e-3d681d0cdca8",
@@ -5608,7 +5610,7 @@
           "codingScore": 24.2,
           "price": 10,
           "value": 2.42,
-          "effectiveCost": 177.272727,
+          "effectiveCost": 92.595041,
           "status": "below-quality-floor"
         }
       ],
@@ -5626,7 +5628,7 @@
       "codingScore": 23,
       "price": 0.605,
       "value": 38.016529,
-      "effectiveCost": 168.706522,
+      "effectiveCost": 87.753696,
       "variants": [
         {
           "id": "43fc5506-c5ed-4dee-9b85-962bf7ae3986",
@@ -5635,7 +5637,7 @@
           "codingScore": 23,
           "price": 0.605,
           "value": 38.016529,
-          "effectiveCost": 168.706522,
+          "effectiveCost": 87.753696,
           "status": "below-quality-floor"
         }
       ],
@@ -5653,7 +5655,7 @@
       "codingScore": 23,
       "price": 1.4,
       "value": 16.428571,
-      "effectiveCost": 170.434783,
+      "effectiveCost": 88.686957,
       "variants": [
         {
           "id": "61bd9367-e520-4ec8-989e-5fbf50e61610",
@@ -5662,7 +5664,7 @@
           "codingScore": 23,
           "price": 1.4,
           "value": 16.428571,
-          "effectiveCost": 170.434783,
+          "effectiveCost": 88.686957,
           "status": "below-quality-floor"
         },
         {
@@ -5710,7 +5712,7 @@
       "codingScore": 22.6,
       "price": 0.09,
       "value": 251.111111,
-      "effectiveCost": 171.438053,
+      "effectiveCost": 89.15177,
       "variants": [
         {
           "id": "651ef7ae-9a8f-477e-9c8e-460aa156ba02",
@@ -5719,7 +5721,7 @@
           "codingScore": 22.6,
           "price": 0.09,
           "value": 251.111111,
-          "effectiveCost": 171.438053,
+          "effectiveCost": 89.15177,
           "status": "below-quality-floor"
         },
         {
@@ -5729,7 +5731,7 @@
           "codingScore": 20.3,
           "price": 0.09,
           "value": 225.555556,
-          "effectiveCost": 196.527094,
+          "effectiveCost": 102.198522,
           "status": "below-quality-floor"
         }
       ],
@@ -5747,7 +5749,7 @@
       "codingScore": 22.4,
       "price": 0.155,
       "value": 144.516129,
-      "effectiveCost": 173.560268,
+      "effectiveCost": 90.258259,
       "variants": [
         {
           "id": "adfae555-f489-4f3e-9064-c6b7fcdd0783",
@@ -5756,7 +5758,7 @@
           "codingScore": 22.4,
           "price": 0.155,
           "value": 144.516129,
-          "effectiveCost": 173.560268,
+          "effectiveCost": 90.258259,
           "status": "below-quality-floor"
         }
       ],
@@ -5774,7 +5776,7 @@
       "codingScore": 22.1,
       "price": 1.265,
       "value": 17.470356,
-      "effectiveCost": 179.106335,
+      "effectiveCost": 93.192534,
       "variants": [
         {
           "id": "f6ccbe1d-bd7e-484b-9795-18cc9f91552d",
@@ -5783,7 +5785,7 @@
           "codingScore": 22.1,
           "price": 1.265,
           "value": 17.470356,
-          "effectiveCost": 179.106335,
+          "effectiveCost": 93.192534,
           "status": "below-quality-floor"
         }
       ],
@@ -5801,7 +5803,7 @@
       "codingScore": 21.5,
       "price": 20,
       "value": 1.075,
-      "effectiveCost": 229.069767,
+      "effectiveCost": 120.046512,
       "variants": [
         {
           "id": "76aa6af5-fdc6-4739-a300-983f14e74a67",
@@ -5810,7 +5812,7 @@
           "codingScore": 21.5,
           "price": 20,
           "value": 1.075,
-          "effectiveCost": 229.069767,
+          "effectiveCost": 120.046512,
           "status": "below-quality-floor"
         }
       ],
@@ -5828,7 +5830,7 @@
       "codingScore": 21.2,
       "price": 1.01,
       "value": 20.990099,
-      "effectiveCost": 188.231132,
+      "effectiveCost": 97.92783,
       "variants": [
         {
           "id": "75e1c197-f239-4361-a9d6-66dccfead236",
@@ -5837,7 +5839,7 @@
           "codingScore": 21.2,
           "price": 1.01,
           "value": 20.990099,
-          "effectiveCost": 188.231132,
+          "effectiveCost": 97.92783,
           "status": "below-quality-floor"
         }
       ],
@@ -5855,7 +5857,7 @@
       "codingScore": 20.7,
       "price": 0.125,
       "value": 165.6,
-      "effectiveCost": 191.847826,
+      "effectiveCost": 99.766908,
       "variants": [
         {
           "id": "36f73aaf-d38a-4b56-a2b3-d04d17186910",
@@ -5864,7 +5866,7 @@
           "codingScore": 20.7,
           "price": 0.125,
           "value": 165.6,
-          "effectiveCost": 191.847826,
+          "effectiveCost": 99.766908,
           "status": "below-quality-floor"
         },
         {
@@ -5892,7 +5894,7 @@
       "codingScore": 20.2,
       "price": 1,
       "value": 20.2,
-      "effectiveCost": 200,
+      "effectiveCost": 104.049505,
       "variants": [
         {
           "id": "9f7c7566-a704-49a2-a383-cb3181da33a4",
@@ -5901,7 +5903,7 @@
           "codingScore": 20.2,
           "price": 1,
           "value": 20.2,
-          "effectiveCost": 200,
+          "effectiveCost": 104.049505,
           "status": "below-quality-floor"
         }
       ],
@@ -5919,7 +5921,7 @@
       "codingScore": 20.1,
       "price": 1,
       "value": 20.1,
-      "effectiveCost": 201.243781,
+      "effectiveCost": 104.696517,
       "variants": [
         {
           "id": "4928e950-7f37-4475-b0dc-c5bad781a321",
@@ -5928,7 +5930,7 @@
           "codingScore": 20.1,
           "price": 1,
           "value": 20.1,
-          "effectiveCost": 201.243781,
+          "effectiveCost": 104.696517,
           "status": "below-quality-floor"
         }
       ],
@@ -5946,7 +5948,7 @@
       "codingScore": 19.5,
       "price": 45,
       "value": 0.433333,
-      "effectiveCost": 321.794872,
+      "effectiveCost": 169.641026,
       "variants": [
         {
           "id": "7829427f-f0e3-4f6d-a228-5fbf70dacc02",
@@ -5955,7 +5957,7 @@
           "codingScore": 19.5,
           "price": 45,
           "value": 0.433333,
-          "effectiveCost": 321.794872,
+          "effectiveCost": 169.641026,
           "status": "below-quality-floor"
         }
       ],
@@ -5973,7 +5975,7 @@
       "codingScore": 17.5,
       "price": 0.075,
       "value": 233.333333,
-      "effectiveCost": 235.928571,
+      "effectiveCost": 122.687143,
       "variants": [
         {
           "id": "0c64b008-20c3-408d-bd68-15136df8cd2c",
@@ -5982,7 +5984,7 @@
           "codingScore": 17.5,
           "price": 0.075,
           "value": 233.333333,
-          "effectiveCost": 235.928571,
+          "effectiveCost": 122.687143,
           "status": "below-quality-floor"
         }
       ],
@@ -6000,7 +6002,7 @@
       "codingScore": 17.4,
       "price": 0.675,
       "value": 25.777778,
-      "effectiveCost": 239.295977,
+      "effectiveCost": 124.472701,
       "variants": [
         {
           "id": "c8a79180-7d16-4474-8701-9a77c0baa56a",
@@ -6009,7 +6011,7 @@
           "codingScore": 17.4,
           "price": 0.675,
           "value": 25.777778,
-          "effectiveCost": 239.295977,
+          "effectiveCost": 124.472701,
           "status": "below-quality-floor"
         }
       ],
@@ -6027,7 +6029,7 @@
       "codingScore": 16.3,
       "price": 0.585,
       "value": 27.863248,
-      "effectiveCost": 258.542945,
+      "effectiveCost": 134.478221,
       "variants": [
         {
           "id": "922c69c7-9037-43c6-8bcf-a1c555e7f3eb",
@@ -6036,7 +6038,7 @@
           "codingScore": 16.3,
           "price": 0.585,
           "value": 27.863248,
-          "effectiveCost": 258.542945,
+          "effectiveCost": 134.478221,
           "status": "below-quality-floor"
         }
       ],
@@ -6054,7 +6056,7 @@
       "codingScore": 16.3,
       "price": 2.75,
       "value": 5.927273,
-      "effectiveCost": 265.184049,
+      "effectiveCost": 138.064417,
       "variants": [
         {
           "id": "076f2674-bc4b-4925-be59-50832eb8c090",
@@ -6063,7 +6065,7 @@
           "codingScore": 16.3,
           "price": 2.75,
           "value": 5.927273,
-          "effectiveCost": 265.184049,
+          "effectiveCost": 138.064417,
           "status": "below-quality-floor"
         },
         {
@@ -6091,7 +6093,7 @@
       "codingScore": 16.2,
       "price": 0.375,
       "value": 43.2,
-      "effectiveCost": 259.799383,
+      "effectiveCost": 135.118827,
       "variants": [
         {
           "id": "b89c4faf-219e-4171-a1aa-e3bd2fd0a924",
@@ -6100,7 +6102,7 @@
           "codingScore": 16.2,
           "price": 0.375,
           "value": 43.2,
-          "effectiveCost": 259.799383,
+          "effectiveCost": 135.118827,
           "status": "below-quality-floor"
         }
       ],
@@ -6118,7 +6120,7 @@
       "codingScore": 15.6,
       "price": 1.125,
       "value": 13.866667,
-      "effectiveCost": 274.11859,
+      "effectiveCost": 142.613782,
       "variants": [
         {
           "id": "29855680-7469-43eb-8b88-cd3fb1d99da3",
@@ -6127,7 +6129,7 @@
           "codingScore": 15.6,
           "price": 1.125,
           "value": 13.866667,
-          "effectiveCost": 274.11859,
+          "effectiveCost": 142.613782,
           "status": "below-quality-floor"
         },
         {
@@ -6166,7 +6168,7 @@
       "codingScore": 15.3,
       "price": 0.4,
       "value": 38.25,
-      "effectiveCost": 278.104575,
+      "effectiveCost": 144.640523,
       "variants": [
         {
           "id": "b00ecd62-a53f-4aed-b833-3e9d6b0170ba",
@@ -6175,7 +6177,7 @@
           "codingScore": 15.3,
           "price": 0.4,
           "value": 38.25,
-          "effectiveCost": 278.104575,
+          "effectiveCost": 144.640523,
           "status": "below-quality-floor"
         },
         {
@@ -6203,7 +6205,7 @@
       "codingScore": 14.7,
       "price": 1,
       "value": 14.7,
-      "effectiveCost": 293.537415,
+      "effectiveCost": 152.707483,
       "variants": [
         {
           "id": "70152cb0-fb36-4732-a925-89ef40994be1",
@@ -6212,7 +6214,7 @@
           "codingScore": 14.7,
           "price": 1,
           "value": 14.7,
-          "effectiveCost": 293.537415,
+          "effectiveCost": 152.707483,
           "status": "below-quality-floor"
         }
       ],
@@ -6230,7 +6232,7 @@
       "codingScore": 14.4,
       "price": 0.45,
       "value": 32,
-      "effectiveCost": 298.784722,
+      "effectiveCost": 155.399306,
       "variants": [
         {
           "id": "8014c311-fa23-4a4b-8485-8a864db8a113",
@@ -6239,7 +6241,7 @@
           "codingScore": 14.4,
           "price": 0.45,
           "value": 32,
-          "effectiveCost": 298.784722,
+          "effectiveCost": 155.399306,
           "status": "below-quality-floor"
         }
       ],
@@ -6257,7 +6259,7 @@
       "codingScore": 14.4,
       "price": 0.2,
       "value": 72,
-      "effectiveCost": 297.916667,
+      "effectiveCost": 154.930556,
       "variants": [
         {
           "id": "713fae11-c75c-4f10-ae2c-8e4074cd58af",
@@ -6266,7 +6268,7 @@
           "codingScore": 14.4,
           "price": 0.2,
           "value": 72,
-          "effectiveCost": 297.916667,
+          "effectiveCost": 154.930556,
           "status": "below-quality-floor"
         }
       ],
@@ -6284,7 +6286,7 @@
       "codingScore": 14.4,
       "price": 0.125,
       "value": 115.2,
-      "effectiveCost": 297.65625,
+      "effectiveCost": 154.789931,
       "variants": [
         {
           "id": "76dcf6ef-39ea-4be0-b693-b88da25b4caf",
@@ -6293,7 +6295,7 @@
           "codingScore": 14.4,
           "price": 0.125,
           "value": 115.2,
-          "effectiveCost": 297.65625,
+          "effectiveCost": 154.789931,
           "status": "below-quality-floor"
         },
         {
@@ -6321,7 +6323,7 @@
       "codingScore": 13.8,
       "price": 0.645,
       "value": 21.395349,
-      "effectiveCost": 314.655797,
+      "effectiveCost": 163.667754,
       "variants": [
         {
           "id": "8c748e53-61ae-48b8-af8d-eb8298b1e9db",
@@ -6330,7 +6332,7 @@
           "codingScore": 13.8,
           "price": 0.645,
           "value": 21.395349,
-          "effectiveCost": 314.655797,
+          "effectiveCost": 163.667754,
           "status": "below-quality-floor"
         }
       ],
@@ -6348,7 +6350,7 @@
       "codingScore": 13.8,
       "price": 2.275,
       "value": 6.065934,
-      "effectiveCost": 320.561594,
+      "effectiveCost": 166.856884,
       "variants": [
         {
           "id": "4559e9f0-8aad-4681-89fb-68cb915e0f16",
@@ -6357,7 +6359,7 @@
           "codingScore": 13.8,
           "price": 2.275,
           "value": 6.065934,
-          "effectiveCost": 320.561594,
+          "effectiveCost": 166.856884,
           "status": "below-quality-floor"
         },
         {
@@ -6385,7 +6387,7 @@
       "codingScore": 13.1,
       "price": 45,
       "value": 0.291111,
-      "effectiveCost": 503.435115,
+      "effectiveCost": 265.221374,
       "variants": [
         {
           "id": "6a7c0e25-1dcb-4b15-8495-a8536a9da051",
@@ -6394,7 +6396,7 @@
           "codingScore": 13.1,
           "price": 45,
           "value": 0.291111,
-          "effectiveCost": 503.435115,
+          "effectiveCost": 265.221374,
           "status": "below-quality-floor"
         }
       ],
@@ -6412,7 +6414,7 @@
       "codingScore": 12.5,
       "price": 0.1375,
       "value": 90.909091,
-      "effectiveCost": 350.55,
+      "effectiveCost": 182.297,
       "variants": [
         {
           "id": "43da3718-3d6e-40dd-901a-05664179ff7f",
@@ -6421,7 +6423,7 @@
           "codingScore": 12.5,
           "price": 0.1375,
           "value": 90.909091,
-          "effectiveCost": 350.55,
+          "effectiveCost": 182.297,
           "status": "below-quality-floor"
         }
       ],
@@ -6439,7 +6441,7 @@
       "codingScore": 12.1,
       "price": 1.3,
       "value": 9.307692,
-      "effectiveCost": 368.595041,
+      "effectiveCost": 191.77686,
       "variants": [
         {
           "id": "5e0164b3-d902-4bcb-a1b2-83b4f4cd6143",
@@ -6448,7 +6450,7 @@
           "codingScore": 12.1,
           "price": 1.3,
           "value": 9.307692,
-          "effectiveCost": 368.595041,
+          "effectiveCost": 191.77686,
           "status": "below-quality-floor"
         }
       ],
@@ -6466,7 +6468,7 @@
       "codingScore": 11.9,
       "price": 0.715,
       "value": 16.643357,
-      "effectiveCost": 373.172269,
+      "effectiveCost": 194.109664,
       "variants": [
         {
           "id": "976cc8ad-7904-4056-83c5-960181f47d5f",
@@ -6475,7 +6477,7 @@
           "codingScore": 11.9,
           "price": 0.715,
           "value": 16.643357,
-          "effectiveCost": 373.172269,
+          "effectiveCost": 194.109664,
           "status": "below-quality-floor"
         }
       ],
@@ -6493,7 +6495,7 @@
       "codingScore": 11.4,
       "price": 0.375,
       "value": 30.4,
-      "effectiveCost": 390.241228,
+      "effectiveCost": 202.958333,
       "variants": [
         {
           "id": "b5c1c91a-7474-4409-9a9c-9c2ac45d9eb6",
@@ -6502,7 +6504,7 @@
           "codingScore": 11.4,
           "price": 0.375,
           "value": 30.4,
-          "effectiveCost": 390.241228,
+          "effectiveCost": 202.958333,
           "status": "below-quality-floor"
         }
       ],
@@ -6520,7 +6522,7 @@
       "codingScore": 11.1,
       "price": 0.25,
       "value": 44.4,
-      "effectiveCost": 401.576577,
+      "effectiveCost": 208.842342,
       "variants": [
         {
           "id": "72c358fd-7d45-4d68-89aa-699743710924",
@@ -6529,7 +6531,7 @@
           "codingScore": 11.1,
           "price": 0.25,
           "value": 44.4,
-          "effectiveCost": 401.576577,
+          "effectiveCost": 208.842342,
           "status": "below-quality-floor"
         }
       ],
@@ -6547,7 +6549,7 @@
       "codingScore": 10.7,
       "price": 1,
       "value": 10.7,
-      "effectiveCost": 421.962617,
+      "effectiveCost": 219.514019,
       "variants": [
         {
           "id": "037dec2f-51e8-4127-a1f1-85155dae7a1d",
@@ -6556,7 +6558,7 @@
           "codingScore": 10.7,
           "price": 1,
           "value": 10.7,
-          "effectiveCost": 421.962617,
+          "effectiveCost": 219.514019,
           "status": "below-quality-floor"
         }
       ],
@@ -6574,7 +6576,7 @@
       "codingScore": 9.7,
       "price": 0.15,
       "value": 64.666667,
-      "effectiveCost": 466.237113,
+      "effectiveCost": 242.458763,
       "variants": [
         {
           "id": "9741f3c2-cbb1-4a3f-99ee-7bd7384d9038",
@@ -6583,7 +6585,7 @@
           "codingScore": 9.7,
           "price": 0.15,
           "value": 64.666667,
-          "effectiveCost": 466.237113,
+          "effectiveCost": 242.458763,
           "status": "below-quality-floor"
         }
       ],
@@ -6601,7 +6603,7 @@
       "codingScore": 9.5,
       "price": 0.075,
       "value": 126.666667,
-      "effectiveCost": 476.710526,
+      "effectiveCost": 247.897368,
       "variants": [
         {
           "id": "82ed9bd2-c97b-4c35-9312-94bb72001e36",
@@ -6610,7 +6612,7 @@
           "codingScore": 9.5,
           "price": 0.075,
           "value": 126.666667,
-          "effectiveCost": 476.710526,
+          "effectiveCost": 247.897368,
           "status": "below-quality-floor"
         }
       ],
@@ -6628,7 +6630,7 @@
       "codingScore": 9.4,
       "price": 0.06,
       "value": 156.666667,
-      "effectiveCost": 482.234043,
+      "effectiveCost": 250.768085,
       "variants": [
         {
           "id": "d80eb0f1-f62e-4d31-99d2-7a925eb126b0",
@@ -6637,7 +6639,7 @@
           "codingScore": 9.4,
           "price": 0.06,
           "value": 156.666667,
-          "effectiveCost": 482.234043,
+          "effectiveCost": 250.768085,
           "status": "below-quality-floor"
         },
         {
@@ -6665,7 +6667,7 @@
       "codingScore": 9,
       "price": 1.14,
       "value": 7.894737,
-      "effectiveCost": 511.888889,
+      "effectiveCost": 266.308889,
       "variants": [
         {
           "id": "9dba61f5-78ee-4190-8d1d-8e7063ffd386",
@@ -6674,7 +6676,7 @@
           "codingScore": 9,
           "price": 1.14,
           "value": 7.894737,
-          "effectiveCost": 511.888889,
+          "effectiveCost": 266.308889,
           "status": "below-quality-floor"
         },
         {
@@ -6702,7 +6704,7 @@
       "codingScore": 8.2,
       "price": 0.435,
       "value": 18.850575,
-      "effectiveCost": 562.408537,
+      "effectiveCost": 292.505488,
       "variants": [
         {
           "id": "adf9a85e-abc3-4f28-937b-db6655cc5238",
@@ -6711,7 +6713,7 @@
           "codingScore": 8.2,
           "price": 0.435,
           "value": 18.850575,
-          "effectiveCost": 562.408537,
+          "effectiveCost": 292.505488,
           "status": "below-quality-floor"
         }
       ],
@@ -6729,7 +6731,7 @@
       "codingScore": 5.4,
       "price": 0.035,
       "value": 154.285714,
-      "effectiveCost": 876.25,
+      "effectiveCost": 455.656481,
       "variants": [
         {
           "id": "739684ba-0f63-4e2a-b4ee-30741c9e9320",
@@ -6738,7 +6740,7 @@
           "codingScore": 5.4,
           "price": 0.035,
           "value": 154.285714,
-          "effectiveCost": 876.25,
+          "effectiveCost": 455.656481,
           "status": "below-quality-floor"
         }
       ],
@@ -6756,7 +6758,7 @@
       "codingScore": 4.8,
       "price": 0.1,
       "value": 48,
-      "effectiveCost": 992.708333,
+      "effectiveCost": 516.229167,
       "variants": [
         {
           "id": "66f4ce73-9a9b-4b49-9c6e-bedb9bfdc720",
@@ -6765,7 +6767,7 @@
           "codingScore": 4.8,
           "price": 0.1,
           "value": 48,
-          "effectiveCost": 992.708333,
+          "effectiveCost": 516.229167,
           "status": "below-quality-floor"
         }
       ],

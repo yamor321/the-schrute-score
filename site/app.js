@@ -17,7 +17,7 @@ const state = {
   vendors: [], // [{ name, count, color }] — vendors with ranked models
   hidden: new Set(), // vendor names the visitor unchecked
   cursorOnly: false,
-  task: { tokensPerTaskMillions: 0.5, fixCostUsd: 50 }, // overwritten from data.config.taskModel / storage
+  task: null, // data.config.taskModel — fixed inputs of the cost-per-task formula
   sort: { key: 'rank', dir: 'asc' },
   search: '',
   limits: { bar: PAGE, table: PAGE }, // "Show more" paging
@@ -35,16 +35,13 @@ function loadPrefs() {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY) ?? '{}');
     state.hidden = new Set(Array.isArray(saved.hidden) ? saved.hidden.filter((v) => typeof v === 'string') : []);
     state.cursorOnly = saved.cursorOnly === true;
-    if (saved.task && Number.isFinite(saved.task.fixCostUsd) && Number.isFinite(saved.task.tokensPerTaskMillions)) {
-      state.task = { fixCostUsd: saved.task.fixCostUsd, tokensPerTaskMillions: saved.task.tokensPerTaskMillions };
-    }
   } catch {
     /* storage unavailable or corrupt — start with defaults */
   }
 }
 function savePrefs() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ hidden: [...state.hidden], cursorOnly: state.cursorOnly, task: state.task }));
+    localStorage.setItem(STORE_KEY, JSON.stringify({ hidden: [...state.hidden], cursorOnly: state.cursorOnly }));
   } catch {
     /* settings still work for this visit */
   }
@@ -240,6 +237,11 @@ function renderMethod() {
     `Price is the ${priceBasisLabel[config.priceBasis]} in US dollars per million tokens, as listed by Artificial Analysis. ` +
     'It ignores Cursor\'s caching discounts, and real token use per task varies by model, so treat the dollar figures as a fair comparison rather than a bill.';
 
+  const t = state.task;
+  $('#method-constants').textContent =
+    `The fix cost is fixed and based on research: $${t.developerHourlyUsd} per developer hour × ${t.minutesPerFailedAttempt} minutes ` +
+    `per failed attempt = ${fmtMoney(t.fixCostUsd).replace('.00', '')} each time a model gets a task wrong. A task uses about ` +
+    `${fmtTokens(t.tokensPerTaskMillions)} tokens. Where each number comes from:`;
   renderMethodExample();
 
   const cur = state.data.cursor;
@@ -325,15 +327,6 @@ function renderToolbarSummaries() {
   const shown = state.vendors.filter((v) => vendorShown(v.name)).length;
   $('#vendor-summary').textContent = shown === state.vendors.length ? 'all' : `${shown}/${state.vendors.length}`;
   $('#pop-vendors').classList.toggle('is-filtered', shown !== state.vendors.length);
-  $('#task-summary').textContent = `${fmtMoney(state.task.fixCostUsd).replace('.00', '')}/fix · ${fmtTokens(state.task.tokensPerTaskMillions)}`;
-  const d = state.data.config.taskModel;
-  $('#pop-task').classList.toggle('is-filtered', state.task.fixCostUsd !== d.fixCostUsd || state.task.tokensPerTaskMillions !== d.tokensPerTaskMillions);
-  $('#fix-cost').value = state.task.fixCostUsd;
-  $('#fix-out').textContent = fmtMoney(state.task.fixCostUsd).replace('.00', '');
-  const sel = $('#task-tokens');
-  const val = String(state.task.tokensPerTaskMillions);
-  if (![...sel.options].some((o) => o.value === val)) sel.append(el('option', { value: val }, fmtTokens(state.task.tokensPerTaskMillions)));
-  sel.value = val;
 }
 
 // ---------- table ----------
@@ -755,12 +748,6 @@ function refresh() {
   renderMethodExample();
 }
 
-function onTaskChange() {
-  rerank();
-  savePrefs();
-  refresh();
-}
-
 function wireControls() {
   for (const btn of document.querySelectorAll('[data-select]')) {
     btn.addEventListener('click', () => {
@@ -774,18 +761,6 @@ function wireControls() {
     state.cursorOnly = e.target.checked;
     savePrefs();
     refresh();
-  });
-  $('#fix-cost').addEventListener('input', (e) => {
-    state.task.fixCostUsd = Number(e.target.value);
-    onTaskChange();
-  });
-  $('#task-tokens').addEventListener('change', (e) => {
-    state.task.tokensPerTaskMillions = Number(e.target.value);
-    onTaskChange();
-  });
-  $('#task-reset').addEventListener('click', () => {
-    state.task = { ...state.data.config.taskModel };
-    onTaskChange();
   });
   for (const btn of document.querySelectorAll('[data-more], [data-all]')) {
     btn.addEventListener('click', () => {
@@ -863,7 +838,8 @@ async function main() {
     return;
   }
 
-  state.data.config.taskModel ??= { tokensPerTaskMillions: 0.5, fixCostUsd: 50 };
+  // Fixed, research-based inputs (config/scoring.yaml `taskModel`); fallback matches the committed config.
+  state.data.config.taskModel ??= { tokensPerTaskMillions: 0.27, developerHourlyUsd: 78, minutesPerFailedAttempt: 20, fixCostUsd: 26 };
   state.task = { ...state.data.config.taskModel };
   const counts = new Map();
   for (const m of state.data.models) counts.set(m.vendor, (counts.get(m.vendor) ?? 0) + 1);

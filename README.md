@@ -33,20 +33,29 @@ The precise version is the doc comment on `computeValueTable` in [`src/scoring.t
 6. **Cost per finished task.** The cheapest model per token isn't the cheapest to work with. A weaker model gets more tasks wrong, and every miss costs you a re-prompt, a review, a fix, and another run's tokens. So each model gets:
 
    ```
-   p    = codingScore / 100                  (chance it gets a task right first time)
-   cost = (price × tokensPerTaskMillions + fixCostUsd × (1 − p)) / p
+   p        = codingScore / 100                              (chance it gets a task right first time)
+   fixCost  = developerHourlyUsd × minutesPerFailedAttempt / 60   = $78 × 20 / 60 = $26
+   cost     = (price × tokensPerTaskMillions + fixCost × (1 − p)) / p
    ```
 
-   Dividing by `p` counts the retries, so a stronger model also burns fewer tokens overall. The `fixCostUsd` term prices in your time. Defaults: `taskModel` in `config/scoring.yaml` (a 500K-token task, $50 per failed attempt). Visitors can change both live on the dashboard.
+   Dividing by `p` counts the retries, so a stronger model also burns fewer tokens overall. The fix-cost term prices in your time. The inputs are **fixed and research-based** (`taskModel` in `config/scoring.yaml`); there is no slider:
 
-   Example at the defaults:
+   | Input | Value | Evidence |
+   |---|---|---|
+   | Tokens per task | 0.27M | Artificial Analysis's Coding Agent Index measured real agent tasks at **$4.10** (Claude Opus 4.7, $15/1M blended) and **$4.82** (GPT-5.5, $17.50/1M), i.e. 0.273M and 0.275M tokens per task at list price. ([AA](https://artificialanalysis.ai/articles/cursor-composer-2-5-coding-agent-index)) |
+   | Developer hour | $78 | Senior developer in Israel: ~₪40K/month gross × 1.30 employer cost ÷ 182 h ÷ ₪3.65/$. ([CWS Israel](https://www.cwsisrael.com/israel_software_engineer_salary_2026/)) For reference, the US median is $65/h in wages, and wages are 70% of employer cost, so ≈ $93/h. ([BLS OOH](https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm), [BLS ECEC](https://www.bls.gov/news.release/ecec.nr0.htm)) |
+   | Minutes per failed attempt | 20 | In 20,574 real agent sessions, 41% of user turns pushed back on the agent, and 91.5% of problems were resolved only by an explicit correction: spot it, re-prompt, re-review, about 12 min. ([arXiv 2605.29442](https://arxiv.org/html/2605.29442v1)) The rest need hands-on fixing: METR found agent PRs needed 26 min of human work even when they passed the tests, 42 min on average. ([METR](https://metr.org/blog/2025-08-12-research-update-towards-reconciling-slowdown-with-time-horizons/)) 20 min is a conservative blend. |
+
+   Context: 66% of developers name "almost right, but not quite" as their top AI frustration, and 45% say debugging AI code takes longer. ([Stack Overflow 2025](https://survey.stackoverflow.co/2025/ai)) Experienced developers in a randomized trial were 19% slower with AI, mostly from reviewing and fixing its output. ([METR RCT](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/))
+
+   Example (September 2026 data):
 
    | | Tokens (incl. retries) | Your time fixing | Per finished task |
    |---|---|---|---|
-   | Claude Opus 5.5 (80.9, $12/1M) | $7.42 | $11.80 | **$19.22** |
-   | Gemini 3.8 Flash (76.3, $2.25/1M) | $1.47 | $15.53 | **$17.00** |
+   | Claude Opus 5.5 (80.9, $12/1M) | $4.01 | $6.14 | **$10.14** (#12) |
+   | Gemini 3.8 Flash (76.3, $2.25/1M) | $0.80 | $8.08 | **$8.87** (#2) |
 
-   Opus costs about $6 more in tokens and saves about $4 of your time. At $100 per fix or 250K-token tasks, it becomes #1. At $0 per fix, the ranking reduces to plain price-per-point, where cheap flash models win.
+   Opus saves about $2 of your time per task but costs about $3 more in tokens.
 7. **Sort** by cost per finished task, cheapest first (ties go to the higher coding score, then alphabetical order), and number the ranks from 1. `value = codingScore ÷ price` is still stored for reference.
 
 Steps 2 and 3 describe the general mechanism for blending several benchmarks. With the default config (Coding Index only), a model either has that score or isn't ranked.
@@ -80,20 +89,20 @@ benchmarkWeights:
   codingIndex: 1
 qualityFloor: 0.85           # must reach 85% of the best model's coding score
 taskModel:
-  tokensPerTaskMillions: 0.5 # tokens a typical coding task burns
-  fixCostUsd: 50             # your time per failed attempt
-priceBasis: blended          # blended | input | output
+  tokensPerTaskMillions: 0.27  # tokens a real agent task burns (AA-calibrated)
+  developerHourlyUsd: 78       # loaded cost of one developer hour
+  minutesPerFailedAttempt: 20  # time lost per failed attempt
+priceBasis: blended            # blended | input | output
 minBenchmarksRequired: 1
 ```
 
-These are site-wide defaults. Visitors can also hide vendors, show only Cursor models, and change "Your time" (cost per fix and task size) from the toolbar at the top of the dashboard. Those choices are saved in their own browser and change nothing for anyone else.
+These are site-wide settings. Visitors can hide vendors and show only Cursor models from the toolbar at the top of the dashboard. Those choices are saved in their own browser and change nothing for anyone else.
 
-### Weigh quality vs. price (`taskModel`)
+### The task model (`taskModel`)
 
-- `fixCostUsd` is how much a model's mistake costs you: re-prompting, reviewing, fixing. The higher it is, the more a smarter model is worth. `0` means pure price per point.
-- `tokensPerTaskMillions` is how many tokens a typical task uses. Bigger tasks make token price matter more.
-
-On September 2026 data: at `$50` / `0.5` (default), MiMo-V2.6-Pro, Gemini 3.8 Flash and Muse Spark 1.3 lead, with Claude Opus 5.5 at about #11. At `$50` / `0.25` or `$100` / `0.25`, Opus 5.5 is #1.
+The three numbers are fixed, sourced constants (see step 6 above). Change them only if the evidence changes:
+- A higher `developerHourlyUsd` or `minutesPerFailedAttempt` gives quality more weight. With a US hourly cost ($93), Claude Opus 5.5 moves from #12 to about #8.
+- A higher `tokensPerTaskMillions` gives price more weight.
 
 ### Set how strict the quality bar is
 
@@ -268,7 +277,8 @@ Still to do by the repo owner:
 ## Known limitations
 
 - **The benchmarks belong to Artificial Analysis.** Which benchmarks exist, how they're run, and how the Coding Index is composed are Artificial Analysis's choices and can change over time. A shift in their methodology shifts these rankings.
-- **Cost per task is a model, not a bill.** The coding score is used as the first-try success rate, which is a proxy: benchmark tasks aren't your tasks. The ranking depends on `taskModel`: the tokens per task and what your time is worth per failure. That's why both are adjustable on the page. Change them and watch the order move, rather than treating one ranking as objective truth.
+- **Cost per task is a model, not a bill.** The coding score is used as the first-try success rate, which is a proxy: benchmark tasks aren't your tasks, and METR found real-world acceptance lower than test pass rates. The constants in `taskModel` come from published studies and salary data, but your own hour and your own tasks may differ.
+- **User reviews are deliberately left out.** The largest structured source, LMArena's Code/WebDev arena (739K blind votes), covers one-shot web front-end generation rather than agentic work. It favors longer, prettier answers, and it has had documented issues with private pre-release testing. ([The Leaderboard Illusion](https://lmarena.ai/blog/our-response/)) Usage share (OpenRouter) mostly tracks price and promotions. The Stack Overflow survey rates model families once a year, not specific versions. Forum and Reddit opinion has no sampling or method.
 - **The floor is a hard cutoff.** A model at 73.3 is out and one at 73.5 is in, even though the difference is within benchmark noise. The excluded list shows each model's score, so near-misses are visible.
 - **Coverage.** Only models with an Artificial Analysis Coding Index result are ranked by default, which leaves out many older or less-tested models (see "Excluded" on the dashboard). If you blend several benchmarks instead, models with results on only some of them are scored on fewer data points.
 - **Every model gets the same token count per task.** In reality, models that "think" longer use more tokens for the same job, and Cursor's caching discounts make input tokens much cheaper than list price. Neither is modelled; there's no per-model token data in the API. The blended price is a plain (input + output) / 2, which differs from Artificial Analysis's own 3:1 blend. It falls back to theirs only when one side is missing.

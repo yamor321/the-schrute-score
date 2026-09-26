@@ -43,17 +43,24 @@ qualityFloor: 0.85
 # Estimates never set the quality bar. 0 = off.
 provisionalMaxAgeDays: 60
 
-# Ranking metric: COST PER FINISHED TASK (lower = better).
+# Ranking metric: COST PER FINISHED TASK (lower = better). Fixed, one formula.
 #   success chance p = coding score / 100
-#   cost = (price per 1M tokens × tokensPerTaskMillions + fixCostUsd × (1 − p)) / p
-# A smarter model fails less, so you re-prompt/fix less (fixCostUsd) and
-# re-run less (tokens ÷ p). Visitors can change both on the dashboard;
-# these are the defaults.
-#   tokensPerTaskMillions: 0.5 = a ~500K-token agentic coding task
-#   fixCostUsd: what each failed attempt costs you in time (review, re-prompt, fix)
+#   fix cost F = developerHourlyUsd × minutesPerFailedAttempt / 60      (= $26)
+#   cost = (price per 1M tokens × tokensPerTaskMillions + F × (1 − p)) / p
+# A smarter model fails less, so you re-prompt/fix less (F) and re-run less
+# (tokens ÷ p). Each constant is research-based — sources in the README:
+#   tokensPerTaskMillions 0.27: Artificial Analysis Coding Agent Index measured
+#     $4.10/task for Opus 4.7 ($15 blended) and $4.82/task for GPT-5.5
+#     ($17.50) → ~0.27M tokens per real agent task at list price.
+#   developerHourlyUsd 78: senior developer in Israel, ~₪40K/month gross ×
+#     1.30 employer cost ÷ 182 h ÷ ₪3.65/$.
+#   minutesPerFailedAttempt 20: most failures are fixed by a correction
+#     prompt (91.5% in a 20,574-session study), ~12 min to spot, re-prompt and
+#     re-review; the rest need hands-on fixing (METR: 26–42 min per agent PR).
 taskModel:
-  tokensPerTaskMillions: 0.5
-  fixCostUsd: 50
+  tokensPerTaskMillions: 0.27
+  developerHourlyUsd: 78
+  minutesPerFailedAttempt: 20
 
 # Which price figure (per 1M tokens) to use.
 #   blended = (input price + output price) / 2

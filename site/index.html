@@ -58,27 +58,6 @@
         </div>
       </details>
 
-      <details class="pop" id="pop-task">
-        <summary>Your time <span class="pill-val" id="task-summary">—</span></summary>
-        <div class="pop-panel">
-          <p class="small muted pop-lead">How much a model's mistake costs you: each failed attempt means re-prompting, reviewing and fixing. The higher this is, the more a smarter model is worth.</p>
-          <label class="field">
-            <span>Your time per failed attempt: <output id="fix-out">$50</output></span>
-            <input type="range" id="fix-cost" min="0" max="200" step="5" value="50">
-          </label>
-          <label class="field">
-            <span>Tokens a typical task uses</span>
-            <select id="task-tokens">
-              <option value="0.1">100K (small edits)</option>
-              <option value="0.25">250K</option>
-              <option value="0.5">500K (typical agent task)</option>
-              <option value="1">1M (large refactors)</option>
-            </select>
-          </label>
-          <button type="button" class="link-btn small" id="task-reset">Reset to defaults</button>
-        </div>
-      </details>
-
       <input type="search" id="search" placeholder="Search…" aria-label="Search models">
     </div>
   </div>
@@ -207,11 +186,17 @@
         </li>
         <li>
           <h3>What a finished task costs you</h3>
-          <p class="formula">cost per task = (price × tokens + your time × failure chance) ÷ success chance</p>
+          <p class="formula">cost per task = (price × tokens + fix cost × failure chance) ÷ success chance</p>
           <p>The cheapest model per token isn't the cheapest to work with. A weaker model gets more tasks wrong, and every miss costs you a re-prompt, a review and a fix, plus another run's tokens. We treat the coding score as the chance a model gets a task right first time (81 ⇒ 81%). Dividing by that chance counts the retries.</p>
+          <p id="method-constants"></p>
+          <ul class="weights research">
+            <li><strong>Tokens per task: 270K.</strong> Artificial Analysis measured real agent tasks at $4.10 for Claude Opus 4.7 and $4.82 for GPT-5.5. At their list prices that's about 270K tokens a task. <a href="https://artificialanalysis.ai/articles/cursor-composer-2-5-coding-agent-index" rel="noopener">Source</a></li>
+            <li><strong>Your hour: $78.</strong> A senior developer in Israel: about ₪40K a month gross, plus ~30% employer costs, over 182 working hours. <a href="https://www.cwsisrael.com/israel_software_engineer_salary_2026/" rel="noopener">Source</a></li>
+            <li><strong>Minutes per failed attempt: 20.</strong> In 20,574 real sessions, 91.5% of problems were fixed only after the developer explicitly corrected the agent: spot it, re-prompt, re-review, about 12 minutes. The rest need hands-on work: METR measured 26 minutes to make even test-passing agent code acceptable, 42 minutes on average. <a href="https://arxiv.org/html/2605.29442v1" rel="noopener">Sessions study</a> · <a href="https://metr.org/blog/2025-08-12-research-update-towards-reconciling-slowdown-with-time-horizons/" rel="noopener">METR</a></li>
+            <li>Why this matters: 66% of developers name "almost right, but not quite" AI code as their top frustration, and 45% say debugging it takes longer. <a href="https://survey.stackoverflow.co/2025/ai" rel="noopener">Stack Overflow 2025</a></li>
+          </ul>
           <p id="method-example"></p>
           <p id="method-price"></p>
-          <p>Change "Your time" at the top of the page and the whole ranking updates. At $0 per fix it's pure price per point; the more your time is worth, the more a smarter model pays for itself.</p>
         </li>
         <li>
           <h3>Cursor models</h3>
