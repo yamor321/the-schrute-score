@@ -12,7 +12,9 @@ import { applyCursor, loadCursorConfig } from './cursor.js';
 import { loadManualModels, mergeManualModels } from './manualModels.js';
 import { groupVariants } from './variants.js';
 import { fillProvisionalCodingIndex } from './provisional.js';
-import { computeTaskScores, loadTaskTypes } from './taskTypes.js';
+import { API_SOURCES, computeTaskScores, loadTaskTypes } from './taskTypes.js';
+import { loadTaskBenchmarks, staleBenchmarks, type TaskBenchmark } from './taskBenchmarks.js';
+import { fetchWebDevArena, matchArena } from './sources/lmarena.js';
 import { markNewModels } from './newModels.js';
 import { hasMeaningfulChange, readSnapshot, runStamp, writeRun, type Snapshot } from './persist.js';
 import { computeValueTable } from './scoring.js';
@@ -52,10 +54,39 @@ async function main() {
   const previous = readSnapshot(latestPath);
   const { table: marked, cursor } = applyCursor(markNewModels(table, previous), cursorCfg);
 
-  // Per-model scores for each kind of development work (visitors pick types on the dashboard).
-  const taskTypes = loadTaskTypes();
-  const taskScores = computeTaskScores(marked.ranked, models, taskTypes);
-  const ranked = marked.ranked.map((r) => ({ ...r, taskScores: taskScores.get(r.id) }));
+  // Per-model scores for each kind of development work (visitors pick types on the dashboard),
+  // from benchmarks built for that work: AA API fields, the hand-kept leaderboard snapshot,
+  // and LMArena WebDev (fetched; on failure the previous run's ratings are reused).
+  const curated = loadTaskBenchmarks();
+  for (const s of staleBenchmarks(curated, new Date())) console.warn(`Task benchmark snapshot not checked for 60+ days: ${s} — refresh config/task-benchmarks.yaml`);
+  let webdev: { asOf: string | null; scores: Record<string, number> };
+  try {
+    const board = await fetchWebDevArena();
+    webdev = { asOf: board.asOf, scores: matchArena(board, [...marked.ranked, ...marked.excluded].map((m) => m.name)) };
+    console.log(`LMArena WebDev: ${board.rows.length} ratings (${board.asOf}), ${Object.keys(webdev.scores).length} matched to our models.`);
+  } catch (err) {
+    webdev = previous?.webdev ?? { asOf: null, scores: {} };
+    console.warn(`LMArena WebDev fetch failed (${(err as Error).message}); reusing ${Object.keys(webdev.scores).length} ratings from the previous run.`);
+  }
+  const external: TaskBenchmark[] = [
+    ...curated,
+    {
+      key: 'webdev',
+      label: 'LMArena Code Arena – WebDev',
+      publisher: 'LMArena',
+      url: 'https://arena.ai/leaderboard/code/webdev',
+      asOf: webdev.asOf,
+      measures: 'Blind pairwise votes by developers on web apps built by two anonymous models (Bradley-Terry rating).',
+      scores: webdev.scores,
+      vendorReported: [],
+    },
+  ];
+  const taskTypes = loadTaskTypes([...Object.keys(API_SOURCES), ...external.map((b) => b.key)]);
+  const tasks = computeTaskScores(marked.ranked, models, taskTypes, external);
+  const ranked = marked.ranked.map((r) => {
+    const t = tasks.perModel.get(r.id);
+    return t ? { ...r, taskScores: t.scores, taskStatus: t.status } : r;
+  });
 
   const now = new Date();
   const snapshot: Snapshot = {
@@ -71,6 +102,8 @@ async function main() {
     quality: table.quality,
     cursor,
     taskTypes,
+    taskSources: tasks.sources,
+    webdev,
     models: ranked,
     excluded: marked.excluded,
   };

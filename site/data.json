@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T10:22:37.192Z",
+  "generatedAt": "2026-09-26T11:51:24.049Z",
   "source": {
     "name": "Artificial Analysis",
     "url": "https://artificialanalysis.ai"
@@ -37,7 +37,7 @@
   },
   "cursor": {
     "source": "https://cursor.com/docs/models",
-    "checked": "Fri Sep 25 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+    "checked": "Fri Sep 25 2026 03:00:00 GMT+0300 (Israel Daylight Time)",
     "models": [
       {
         "name": "Composer 2.5",
@@ -589,95 +589,237 @@
       "key": "greenfield",
       "label": "Build new features & services",
       "description": "New API, service or module from a spec.",
-      "weights": {
-        "codingIndex": 0.6,
-        "sciCode": 0.2,
-        "terminalBench": 0.2
-      },
-      "proxy": "medium",
-      "rationale": "Writing correct new code from a description (Coding Index, SciCode's spec-to-code problems) and getting it running (Terminal-Bench). FeatureBench targets this directly but isn't in the data."
+      "sources": [
+        "codingIndex",
+        "deepswe"
+      ]
     },
     {
       "key": "legacy",
       "label": "Change existing / legacy code",
       "description": "Adapt, refactor or migrate a large existing codebase.",
-      "weights": {
-        "codingIndex": 0.4,
-        "lcr": 0.35,
-        "terminalBench": 0.25
-      },
-      "proxy": "medium",
-      "rationale": "The model must hold a lot of existing code in mind (long-context reasoning) before editing it, then build and test in place (Terminal-Bench). SWE-bench and SWE-Refactor target this but aren't in the data."
+      "sources": [
+        "deepswe"
+      ]
     },
     {
       "key": "explore",
       "label": "Explore & explain a codebase",
       "description": "Trace flows across files and repos, onboard, answer \"how does this work\", review.",
-      "weights": {
-        "lcr": 0.6,
-        "terminalBench": 0.2,
-        "codingIndex": 0.2
-      },
-      "proxy": "weak",
-      "rationale": "Mostly reading and reasoning over large amounts of code (long-context reasoning), plus running tools to trace execution. SWE-Atlas Codebase QnA measures exactly this (top models ~30–35%) but isn't in the data."
+      "sources": [
+        "sweAtlasQna"
+      ]
     },
     {
       "key": "debug",
       "label": "Debug, fix & test",
       "description": "Reproduce, locate and fix bugs; write and repair tests.",
-      "weights": {
-        "terminalBench": 0.45,
-        "codingIndex": 0.35,
-        "lcr": 0.2
-      },
-      "proxy": "medium",
-      "rationale": "Debugging is hands-on - run, observe, change, re-run - which is what Terminal-Bench measures, plus code quality and enough context to find the cause."
+      "sources": [
+        "deepswe",
+        "terminalBench"
+      ]
     },
     {
       "key": "prod",
       "label": "Production investigation",
-      "description": "Logs → traces → metrics across services and repos to find a root cause.",
-      "weights": {
-        "lcr": 0.4,
-        "terminalBench": 0.35,
-        "tauBanking": 0.25
-      },
-      "proxy": "weak",
-      "rationale": "Reading large volumes of telemetry (long-context reasoning), driving CLI tools (Terminal-Bench) and chaining many tool calls without losing the thread (τ²-Banking). OpenRCA (68 GB of logs, metrics and traces) measures this directly but isn't in the data."
+      "description": "Alerts, events and traces across services to find the root cause.",
+      "sources": [
+        "itbench"
+      ]
     },
     {
       "key": "infra",
       "label": "Infra, DevOps & scripting",
       "description": "CI/CD, containers, shell, builds and environment setup.",
-      "weights": {
-        "terminalBench": 0.7,
-        "codingIndex": 0.3
-      },
-      "proxy": "strong",
-      "rationale": "Terminal-Bench was built for system administration, environment and build work in a real terminal."
+      "sources": [
+        "terminalBench"
+      ]
     },
     {
       "key": "algorithms",
       "label": "Algorithms, data & scientific code",
       "description": "Numerical code, data processing, algorithms.",
-      "weights": {
-        "sciCode": 0.7,
-        "codingIndex": 0.3
-      },
-      "proxy": "strong",
-      "rationale": "SciCode is built from real scientific-computing problems that combine reasoning, knowledge and code."
+      "sources": [
+        "sciCode"
+      ]
     },
     {
       "key": "ui",
       "label": "UI & web pages",
-      "description": "Front-end pages and components.",
-      "weights": {
-        "codingIndex": 1
-      },
-      "proxy": "general",
-      "rationale": "No UI/front-end benchmark is available per model in the data (LMArena WebDev votes aren't in the API and reward looks), so this uses the general coding score."
+      "description": "Front-end pages, components and web apps.",
+      "sources": [
+        "webdev"
+      ]
     }
   ],
+  "taskSources": [
+    {
+      "key": "codingIndex",
+      "label": "AA Coding Index",
+      "publisher": "Artificial Analysis",
+      "url": "https://artificialanalysis.ai/methodology/intelligence-benchmarking",
+      "asOf": null,
+      "measures": "General coding composite.",
+      "measured": 34,
+      "fitR": 1
+    },
+    {
+      "key": "deepswe",
+      "label": "DeepSWE v1.1",
+      "publisher": "Datacurve · Mercor",
+      "url": "https://www.mercor.com/apex/oss-benchmarks/oss-deep-swe-leaderboard/",
+      "asOf": "2026-09-26",
+      "measures": "113 original tasks across 91 real repositories in 5 languages, each requiring a large, novel change (not taken from public commits); pass@1 on hidden tests.",
+      "note": "Independent runs from the Mercor leaderboard where available; the rest are the vendors' own reported scores (llm-stats.com/benchmarks/deepswe-1.1).",
+      "measured": 31,
+      "fitR": 0.67
+    },
+    {
+      "key": "sweAtlasQna",
+      "label": "SWE-Atlas Codebase QnA",
+      "publisher": "Scale AI",
+      "url": "https://labs.scale.com/leaderboard/sweatlas-qna",
+      "asOf": "2026-07-28",
+      "measures": "124 deep code-comprehension questions on 11 production repos (Go, Python, C, TypeScript) — tracing execution across files, explaining behaviour and design. Agents must run and explore the code.",
+      "note": "Scores include the agent harness used (Claude Code, Codex or Mini-SWE-Agent).",
+      "measured": 11,
+      "fitR": 0.61
+    },
+    {
+      "key": "terminalBench",
+      "label": "Terminal-Bench v2.1",
+      "publisher": "Artificial Analysis (tbench.ai tasks)",
+      "url": "https://www.tbench.ai",
+      "asOf": null,
+      "measures": "89 tasks in a real terminal: system administration, builds, environments, data processing, security.",
+      "measured": 27,
+      "fitR": 0.91
+    },
+    {
+      "key": "itbench",
+      "label": "ITBench-AA",
+      "publisher": "Artificial Analysis × IBM",
+      "url": "https://artificialanalysis.ai/evaluations/itbench-aa",
+      "asOf": "2026-09-26",
+      "measures": "Root cause of real Kubernetes incidents from alerts, events, traces and topology snapshots, with shell access. Scored as precision at full recall (missing any true cause scores 0).",
+      "note": "Earlier entries (Opus 4.7 and below) were measured in June 2026.",
+      "measured": 9,
+      "fitR": 0.75
+    },
+    {
+      "key": "sciCode",
+      "label": "SciCode",
+      "publisher": "Artificial Analysis (SciCode authors)",
+      "url": "https://scicode-bench.github.io",
+      "asOf": null,
+      "measures": "288 subproblems from 80 real laboratory problems across 16 scientific disciplines.",
+      "measured": 31,
+      "fitR": 0.67
+    },
+    {
+      "key": "webdev",
+      "label": "LMArena Code Arena – WebDev",
+      "publisher": "LMArena",
+      "url": "https://arena.ai/leaderboard/code/webdev",
+      "asOf": "2026-09-25",
+      "measures": "Blind pairwise votes by developers on web apps built by two anonymous models (Bradley-Terry rating).",
+      "measured": 32,
+      "fitR": 0.7
+    }
+  ],
+  "webdev": {
+    "asOf": "2026-09-25",
+    "scores": {
+      "MiMo-V2.6-Pro": 1618.1,
+      "Gemini 3.8 Flash": 1580,
+      "Muse Spark 1.3": 1655.5,
+      "Gemini 3.7 Flash": 1593.3,
+      "Grok 4.6": 1620.6,
+      "Grok 4.7": 1629.3,
+      "Qwen3.8 Max (0902)": 1661.6,
+      "Qwen3.8-Flash-Next": 1635.7,
+      "GLM-5.3": 1619.1,
+      "DeepSeek V4.1 Flash": 1620.7,
+      "GPT-6 Sol": 1681,
+      "Claude Opus 5.5": 1826.7,
+      "GPT-5.6 Terra": 1520.5,
+      "GLM 5.3 Flash": 1613.2,
+      "GPT-5.6 Luna": 1519.9,
+      "Muse Spark 1.2": 1530.6,
+      "GPT-6 Luna": 1592.6,
+      "Kimi K3": 1659.9,
+      "GPT-5.6 Sol": 1617.4,
+      "Grok 4.5": 1551.9,
+      "Muse Spark 1.1": 1541.4,
+      "Qwen3.8 Max": 1671.5,
+      "Claude Opus 5": 1692.5,
+      "Claude Sonnet 5": 1538.9,
+      "Gemini 3.5 Flash": 1498.6,
+      "GPT-5.4": 1465.6,
+      "Claude Opus 4.8": 1554.5,
+      "Claude Opus 4.7": 1556.7,
+      "GPT-5.5": 1512.2,
+      "Claude Fable 5.1": 1751.5,
+      "GPT-6 Astra": 1791.7,
+      "Claude Fable 5": 1627,
+      "Gemini 3.6 Flash": 1536.1,
+      "Gemini 3.1 Pro Preview": 1446.3,
+      "GLM-5.2": 1602.4,
+      "Qwen3.7 Max": 1514.8,
+      "Claude Sonnet 4.6": 1521.3,
+      "Kimi K2.6": 1508.5,
+      "Kimi K2.7 Code": 1472.7,
+      "MiMo-V2.5-Pro": 1477.5,
+      "Hy3": 1509.1,
+      "MiniMax-M3": 1483.4,
+      "MiMo-V2.5": 1437.6,
+      "GPT-5.4 mini": 1397,
+      "GLM-5.1": 1508,
+      "Qwen3.6 Plus": 1460.9,
+      "Inkling Small": 1408,
+      "MiniMax-M2.7": 1397,
+      "Claude 4.5 Sonnet": 1393.3,
+      "Inkling": 1410.8,
+      "GPT-5.1": 1394.3,
+      "Gemini 3.5 Flash-Lite": 1439.3,
+      "Muse Glimmer": 1355.3,
+      "Mistral Medium 3.5": 1263.4,
+      "Kimi K2.5": 1435.9,
+      "GLM-4.6": 1339.5,
+      "GLM-4.7": 1434.6,
+      "DeepSeek V3.2": 1361.9,
+      "Claude 4.5 Haiku": 1329.5,
+      "Grok 4.3": 1356.9,
+      "GPT-5": 1417.7,
+      "Gemini 2.5 Pro": 1226.9,
+      "Mercury 2": 1170.1,
+      "Trinity Large Thinking": 1237.8,
+      "Mistral Large 3": 1230,
+      "MiMo-V2-Flash": 1329.6,
+      "Devstral 2": 1196.3,
+      "Claude 4.1 Opus": 1389.9,
+      "Claude Opus 4.5": 1493.3,
+      "Claude Opus 4.6": 1546.2,
+      "DeepSeek V3.2 Exp": 1272,
+      "GLM 5V Turbo": 1399.8,
+      "GLM-5": 1434.1,
+      "GPT-5.1 Codex": 1337,
+      "GPT-5.1 Codex mini": 1243.7,
+      "GPT-5.2": 1414.9,
+      "GPT-5.2 Codex": 1339.1,
+      "GPT-5.3 Codex": 1408,
+      "Grok 4 Fast": 1159.9,
+      "Grok 4.1 Fast": 1241.6,
+      "Grok Code Fast 1": 1167.1,
+      "KAT-Coder-Pro V1": 1255.5,
+      "MiMo-V2-Pro": 1432.9,
+      "MiniMax-M2": 1296.7,
+      "MiniMax-M2.5": 1386.3,
+      "Qwen3 Coder 480B A35B Instruct": 1274.4,
+      "Qwen3.6 Max Preview": 1481.4,
+      "Step 5 Preview": 1565.2
+    }
+  },
   "models": [
     {
       "rank": 1,
@@ -736,14 +878,24 @@
       "averageScore": 76.3,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 76.706387,
-        "legacy": 77.444504,
-        "explore": 78.262006,
-        "debug": 76.954002,
-        "prod": 77.608004,
-        "infra": 76.3,
-        "algorithms": 77.722354,
-        "ui": 76.3
+        "greenfield": 76.766066,
+        "legacy": 77.232131,
+        "explore": 73.281175,
+        "debug": 76.074421,
+        "prod": 73.910088,
+        "infra": 74.91671,
+        "algorithms": 78.331935,
+        "ui": 74.829526
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -817,14 +969,24 @@
       "bestValueLevel": null,
       "cursor": "Gemini 3.8 Flash",
       "taskScores": {
-        "greenfield": 76.132072,
-        "legacy": 75.910829,
-        "explore": 75.454044,
-        "debug": 76.317885,
-        "prod": 75.904929,
-        "infra": 76.847588,
-        "algorithms": 75.164663,
-        "ui": 76.3
+        "greenfield": 76.677413,
+        "legacy": 77.054826,
+        "explore": 73.859765,
+        "debug": 77.068548,
+        "prod": 77.03682,
+        "infra": 77.082269,
+        "algorithms": 74.67809,
+        "ui": 73.440915
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -888,14 +1050,24 @@
       "bestValueLevel": null,
       "cursor": "Muse Spark 1.3",
       "taskScores": {
-        "greenfield": 76.421669,
-        "legacy": 76.120698,
-        "explore": 76.124947,
-        "debug": 75.913483,
-        "prod": 76.205983,
-        "infra": 75.657262,
-        "algorithms": 77.06858,
-        "ui": 76.5
+        "greenfield": 77.486635,
+        "legacy": 78.47327,
+        "explore": 73.403175,
+        "debug": 76.88468,
+        "prod": 74.060088,
+        "infra": 75.296089,
+        "algorithms": 77.312257,
+        "ui": 76.192624
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -969,14 +1141,24 @@
       "bestValueLevel": null,
       "cursor": "Gemini 3.7 Flash",
       "taskScores": {
-        "greenfield": 75.816343,
-        "legacy": 75.57399,
-        "explore": 75.313975,
-        "debug": 75.643943,
-        "prod": 74.081161,
-        "infra": 75.74565,
-        "algorithms": 75.46155,
-        "ui": 76.1
+        "greenfield": 75.495849,
+        "legacy": 74.891698,
+        "explore": 73.159175,
+        "debug": 75.242742,
+        "prod": 73.760088,
+        "infra": 75.593786,
+        "algorithms": 75.187929,
+        "ui": 73.925653
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1060,14 +1242,24 @@
       "bestValueLevel": null,
       "cursor": "Grok 4.6",
       "taskScores": {
-        "greenfield": 76.534156,
-        "legacy": 75.913828,
-        "explore": 75.08024,
-        "debug": 76.563184,
-        "prod": 76.398864,
-        "infra": 77.414364,
-        "algorithms": 75.255182,
-        "ui": 76.8
+        "greenfield": 75.952232,
+        "legacy": 75.104465,
+        "explore": 73.586175,
+        "debug": 76.391064,
+        "prod": 74.285088,
+        "infra": 77.677663,
+        "algorithms": 74.593117,
+        "ui": 74.920642
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1138,14 +1330,24 @@
       "bestValueLevel": null,
       "cursor": "Grok 4.7",
       "taskScores": {
-        "greenfield": 76.179554,
-        "legacy": 74.216584,
-        "explore": 72.728431,
-        "debug": 75.109477,
-        "prod": 73.918954,
-        "infra": 76.3,
-        "algorithms": 75.878437,
-        "ui": 76.3
+        "greenfield": 76.606491,
+        "legacy": 76.912981,
+        "explore": 73.281175,
+        "debug": 75.914846,
+        "prod": 73.910088,
+        "infra": 74.91671,
+        "algorithms": 75.697768,
+        "ui": 75.237726
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1198,14 +1400,24 @@
       "averageScore": 76.2,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 75.485932,
-        "legacy": 75.748253,
-        "explore": 75.019779,
-        "debug": 76.487148,
-        "prod": 76.162657,
-        "infra": 77.442752,
-        "algorithms": 72.45801,
-        "ui": 76.2
+        "greenfield": 74.003291,
+        "legacy": 71.806582,
+        "explore": 73.220175,
+        "debug": 74.890971,
+        "prod": 73.835088,
+        "infra": 77.975359,
+        "algorithms": 70.854299,
+        "ui": 76.775768
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1258,14 +1470,24 @@
       "averageScore": 73.1,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 72.954237,
-        "legacy": 73.756718,
-        "explore": 73.587749,
-        "debug": 74.332651,
-        "prod": 74.878023,
-        "infra": 75.054038,
-        "algorithms": 70.635792,
-        "ui": 73.1
+        "greenfield": 72.825633,
+        "legacy": 72.551265,
+        "explore": 71.329175,
+        "debug": 74.221374,
+        "prod": 71.510088,
+        "infra": 75.891482,
+        "algorithms": 69.579702,
+        "ui": 75.470984
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1328,14 +1550,24 @@
       "averageScore": 71.7,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 75.04455,
-        "legacy": 73.990173,
-        "explore": 73.570513,
-        "debug": 74.12387,
-        "prod": 74.836406,
-        "infra": 74.313712,
-        "algorithms": 76.142212,
-        "ui": 74.8
+        "greenfield": 75.129538,
+        "legacy": 75.459076,
+        "explore": 72.366175,
+        "debug": 74.782189,
+        "prod": 72.785088,
+        "infra": 74.105302,
+        "algorithms": 76.717445,
+        "ui": 74.865972
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1405,14 +1637,24 @@
       "averageScore": 63.2,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 72.296871,
-        "legacy": 74.297524,
-        "explore": 75.438612,
-        "debug": 73.612871,
-        "prod": 74.525742,
-        "infra": 72.7,
-        "algorithms": 71.289047,
-        "ui": 72.7
+        "greenfield": 74.930605,
+        "legacy": 77.161209,
+        "explore": 71.085175,
+        "debug": 74.40096,
+        "prod": 71.210088,
+        "infra": 71.64071,
+        "algorithms": 70.684353,
+        "ui": 74.924287
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1522,14 +1764,24 @@
       "averageScore": 71.233333,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 76.385564,
-        "legacy": 76.717241,
-        "explore": 76.800985,
-        "debug": 76.666995,
-        "prod": 76.73399,
-        "infra": 76.6,
-        "algorithms": 75.849475,
-        "ui": 76.6
+        "greenfield": 76.366418,
+        "legacy": 76.132837,
+        "explore": 73.464175,
+        "debug": 75.661274,
+        "prod": 74.135088,
+        "infra": 75.18971,
+        "algorithms": 75.527822,
+        "ui": 77.12201
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1630,14 +1882,24 @@
       "bestValueLevel": null,
       "cursor": "Claude Opus 5.5",
       "taskScores": {
-        "greenfield": 81.406065,
-        "legacy": 79.858089,
-        "explore": 79.113868,
-        "debug": 80.304623,
-        "prod": 79.709245,
-        "infra": 80.9,
-        "algorithms": 82.671226,
-        "ui": 80.9
+        "greenfield": 79.473868,
+        "legacy": 78.047737,
+        "explore": 76.087175,
+        "debug": 78.575223,
+        "prod": 77.360088,
+        "infra": 79.10271,
+        "algorithms": 83.430323,
+        "ui": 82.432263
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1741,14 +2003,24 @@
       "bestValueLevel": null,
       "cursor": "GPT-5.6 Terra",
       "taskScores": {
-        "greenfield": 76.159697,
-        "legacy": 76.721667,
-        "explore": 76.581722,
-        "debug": 76.921228,
-        "prod": 76.10865,
-        "infra": 77.175976,
-        "algorithms": 74.332964,
-        "ui": 76.7
+        "greenfield": 76.629185,
+        "legacy": 76.55837,
+        "explore": 73.525175,
+        "debug": 76.969168,
+        "prod": 76.32491,
+        "infra": 77.379966,
+        "algorithms": 73.31852,
+        "ui": 71.272349
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1801,14 +2073,24 @@
       "averageScore": 71.5,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 71.866487,
-        "legacy": 72.85988,
-        "explore": 73.16768,
-        "debug": 73.168709,
-        "prod": 74.707635,
-        "infra": 73.532099,
-        "algorithms": 70.750604,
-        "ui": 71.5
+        "greenfield": 72.858969,
+        "legacy": 74.217937,
+        "explore": 70.353175,
+        "debug": 74.310468,
+        "prod": 76.419831,
+        "infra": 74.402999,
+        "algorithms": 70.429434,
+        "ui": 74.650938
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1912,14 +2194,24 @@
       "bestValueLevel": null,
       "cursor": "GPT-5.6 Luna",
       "taskScores": {
-        "greenfield": 71.610525,
-        "legacy": 73.418173,
-        "explore": 74.78573,
-        "debug": 72.652673,
-        "prod": 73.322637,
-        "infra": 71.62661,
-        "algorithms": 71.910227,
-        "ui": 71.4
+        "greenfield": 73.447269,
+        "legacy": 75.494537,
+        "explore": 70.292175,
+        "debug": 73.609133,
+        "prod": 70.235088,
+        "infra": 71.723729,
+        "algorithms": 72.128896,
+        "ui": 71.250481
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -1972,14 +2264,24 @@
       "averageScore": 72.2,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 72.617242,
-        "legacy": 71.975365,
-        "explore": 72.059864,
-        "debug": 71.742483,
-        "prod": 71.707383,
-        "infra": 71.449835,
-        "algorithms": 74.410513,
-        "ui": 72.2
+        "greenfield": 72.482016,
+        "legacy": 72.764032,
+        "explore": 70.780175,
+        "debug": 71.946184,
+        "prod": 70.835088,
+        "infra": 71.128335,
+        "algorithms": 75.357875,
+        "ui": 71.640458
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2089,14 +2391,24 @@
       "averageScore": 58.566667,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 70.915726,
-        "legacy": 72.571958,
-        "explore": 74.123357,
-        "debug": 71.641119,
-        "prod": 72.882238,
-        "infra": 70.4,
-        "algorithms": 72.205039,
-        "ui": 70.4
+        "greenfield": 72.876346,
+        "legacy": 75.352693,
+        "explore": 69.682175,
+        "debug": 72.450201,
+        "prod": 69.485088,
+        "infra": 69.54771,
+        "algorithms": 72.978628,
+        "ui": 73.90014
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2160,14 +2472,24 @@
       "bestValueLevel": null,
       "cursor": "Kimi K3",
       "taskScores": {
-        "greenfield": 76.148141,
-        "legacy": 77.886081,
-        "explore": 79.365079,
-        "debug": 76.79441,
-        "prod": 78.195684,
-        "infra": 75.358875,
-        "algorithms": 76.859618,
-        "ui": 76.2
+        "greenfield": 76.20188,
+        "legacy": 76.203759,
+        "explore": 73.220175,
+        "debug": 75.601076,
+        "prod": 74.758708,
+        "infra": 74.998392,
+        "algorithms": 77.142311,
+        "ui": 76.352989
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2271,14 +2593,24 @@
       "bestValueLevel": null,
       "cursor": "GPT-5.6 Sol",
       "taskScores": {
-        "greenfield": 77.714742,
-        "legacy": 77.428798,
-        "explore": 76.744624,
-        "debug": 77.88533,
-        "prod": 76.018778,
-        "infra": 78.489527,
-        "algorithms": 76.062069,
-        "ui": 78.3
+        "greenfield": 77.517838,
+        "legacy": 76.735676,
+        "explore": 73.499784,
+        "debug": 77.653214,
+        "prod": 78.792865,
+        "infra": 78.570753,
+        "algorithms": 75.102956,
+        "ui": 74.804013
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2332,14 +2664,24 @@
       "bestValueLevel": null,
       "cursor": "Grok 4.5",
       "taskScores": {
-        "greenfield": 72.567528,
-        "legacy": 72.468345,
-        "explore": 72.535649,
-        "debug": 72.414213,
-        "prod": 73.106915,
-        "infra": 72.343385,
-        "algorithms": 73.042964,
-        "ui": 72.4
+        "greenfield": 71.642297,
+        "legacy": 70.884593,
+        "explore": 70.902175,
+        "debug": 71.601858,
+        "prod": 70.985088,
+        "infra": 72.319122,
+        "algorithms": 73.31852,
+        "ui": 72.416768
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2392,14 +2734,24 @@
       "averageScore": 71.3,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 71.957931,
-        "legacy": 70.707689,
-        "explore": 70.732117,
-        "debug": 70.360198,
-        "prod": 70.190497,
-        "infra": 69.929508,
-        "algorithms": 74.973249,
-        "ui": 71.3
+        "greenfield": 70.914991,
+        "legacy": 70.529982,
+        "explore": 72.184469,
+        "debug": 69.936069,
+        "prod": 70.160088,
+        "infra": 69.342155,
+        "algorithms": 76.547499,
+        "ui": 72.03408
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2461,14 +2813,24 @@
       "bestValueLevel": null,
       "cursor": "Composer 2.5",
       "taskScores": {
-        "greenfield": 70.3,
-        "legacy": 70.3,
-        "explore": 70.3,
-        "debug": 70.3,
-        "prod": 70.3,
-        "infra": 70.3,
-        "algorithms": 70.3,
-        "ui": 70.3
+        "greenfield": 69.906337,
+        "legacy": 69.512675,
+        "explore": 69.621175,
+        "debug": 69.484692,
+        "prod": 69.410088,
+        "infra": 69.45671,
+        "algorithms": 69.512675,
+        "ui": 69.4679
+      },
+      "taskStatus": {
+        "greenfield": "partial",
+        "legacy": "estimated",
+        "explore": "estimated",
+        "debug": "estimated",
+        "prod": "estimated",
+        "infra": "estimated",
+        "algorithms": "estimated",
+        "ui": "estimated"
       }
     },
     {
@@ -2521,14 +2883,24 @@
       "averageScore": 71.9,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 72.174116,
-        "legacy": 72.688617,
-        "explore": 73.088071,
-        "debug": 72.570804,
-        "prod": 74.433054,
-        "infra": 72.401773,
-        "algorithms": 72.357633,
-        "ui": 71.9
+        "greenfield": 71.242337,
+        "legacy": 70.584675,
+        "explore": 70.597175,
+        "debug": 71.600747,
+        "prod": 70.610088,
+        "infra": 72.616819,
+        "algorithms": 72.553762,
+        "ui": 70.5879
+      },
+      "taskStatus": {
+        "greenfield": "partial",
+        "legacy": "estimated",
+        "explore": "estimated",
+        "debug": "partial",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "estimated"
       }
     },
     {
@@ -2581,14 +2953,24 @@
       "averageScore": 71.8,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 71.842086,
-        "legacy": 71.808072,
-        "explore": 71.763226,
-        "debug": 71.872622,
-        "prod": 73.701614,
-        "infra": 71.954998,
-        "algorithms": 71.792303,
-        "ui": 71.8
+        "greenfield": 71.803291,
+        "legacy": 71.806582,
+        "explore": 70.536175,
+        "debug": 71.914004,
+        "prod": 70.535088,
+        "infra": 72.021425,
+        "algorithms": 71.789004,
+        "ui": 76.775768
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2682,14 +3064,24 @@
       "bestValueLevel": null,
       "cursor": "Claude Opus 5",
       "taskScores": {
-        "greenfield": 77.35624,
-        "legacy": 76.196828,
-        "explore": 74.846436,
-        "debug": 77.053483,
-        "prod": 75.190792,
-        "infra": 78.191139,
-        "algorithms": 75.555701,
-        "ui": 78
+        "greenfield": 77.527413,
+        "legacy": 77.054826,
+        "explore": 79.442929,
+        "debug": 77.663941,
+        "prod": 75.185088,
+        "infra": 78.273056,
+        "algorithms": 74.508144,
+        "ui": 77.541144
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2793,14 +3185,24 @@
       "bestValueLevel": null,
       "cursor": "Claude Sonnet 5",
       "taskScores": {
-        "greenfield": 71.729948,
-        "legacy": 72.807335,
-        "explore": 73.758052,
-        "debug": 72.22433,
-        "prod": 73.289116,
-        "infra": 71.448222,
-        "algorithms": 72.356596,
-        "ui": 71.5
+        "greenfield": 71.192297,
+        "legacy": 70.884593,
+        "explore": 70.353175,
+        "debug": 71.155313,
+        "prod": 70.310088,
+        "infra": 71.426032,
+        "algorithms": 72.723708,
+        "ui": 71.942964
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2874,14 +3276,24 @@
       "bestValueLevel": null,
       "cursor": "Gemini 3.5 Flash",
       "taskScores": {
-        "greenfield": 70.524273,
-        "legacy": 68.87786,
-        "explore": 68.042035,
-        "debug": 69.351739,
-        "prod": 68.73474,
-        "infra": 69.986284,
-        "algorithms": 71.698671,
-        "ui": 70.1
+        "greenfield": 67.478103,
+        "legacy": 64.856205,
+        "explore": 69.499175,
+        "debug": 67.396877,
+        "prod": 71.246618,
+        "infra": 69.937548,
+        "algorithms": 72.383816,
+        "ui": 70.474171
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "estimated",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -2955,14 +3367,24 @@
       "bestValueLevel": null,
       "cursor": "GPT-5.4",
       "taskScores": {
-        "greenfield": 70.80797,
-        "legacy": 72.20079,
-        "explore": 73.320816,
-        "debug": 71.280549,
-        "prod": 72.931412,
-        "infra": 70.077896,
-        "algorithms": 71.1,
-        "ui": 71.1
+        "greenfield": 70.637686,
+        "legacy": 70.175371,
+        "explore": 71.69988,
+        "debug": 69.907611,
+        "prod": 68.493898,
+        "infra": 69.639852,
+        "algorithms": 70.048675,
+        "ui": 69.271437
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "estimated",
+        "ui": "measured"
       }
     },
     {
@@ -3016,14 +3438,24 @@
       "bestValueLevel": null,
       "cursor": "Claude Opus 4.8",
       "taskScores": {
-        "greenfield": 74.081875,
-        "legacy": 73.247324,
-        "explore": 72.403825,
-        "debug": 73.821542,
-        "prod": 72.357759,
-        "infra": 74.580487,
-        "algorithms": 73.256077,
-        "ui": 74.3
+        "greenfield": 73.478824,
+        "legacy": 72.657649,
+        "explore": 77.397269,
+        "debug": 73.679172,
+        "prod": 72.410088,
+        "infra": 74.700696,
+        "algorithms": 72.808681,
+        "ui": 72.511529
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -3087,14 +3519,24 @@
       "bestValueLevel": null,
       "cursor": "Claude 4.7 Opus",
       "taskScores": {
-        "greenfield": 73.581982,
-        "legacy": 73.015476,
-        "explore": 72.618551,
-        "debug": 73.238315,
-        "prod": 72.384868,
-        "infra": 73.536936,
-        "algorithms": 73.6,
-        "ui": 73.6
+        "greenfield": 72.661837,
+        "legacy": 71.723675,
+        "explore": 71.533735,
+        "debug": 72.616792,
+        "prod": 74.284101,
+        "infra": 73.509909,
+        "algorithms": 71.723675,
+        "ui": 72.591712
+      },
+      "taskStatus": {
+        "greenfield": "partial",
+        "legacy": "estimated",
+        "explore": "measured",
+        "debug": "partial",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "estimated",
+        "ui": "measured"
       }
     },
     {
@@ -3188,14 +3630,24 @@
       "bestValueLevel": null,
       "cursor": "GPT-5.5",
       "taskScores": {
-        "greenfield": 74.620261,
-        "legacy": 75.718556,
-        "explore": 76.41684,
-        "debug": 75.215096,
-        "prod": 75.447833,
-        "infra": 74.552099,
-        "algorithms": 74.268814,
-        "ui": 74.9
+        "greenfield": 75.197269,
+        "legacy": 75.494537,
+        "explore": 73.302487,
+        "debug": 74.948768,
+        "prod": 73.856955,
+        "infra": 74.402999,
+        "algorithms": 73.998305,
+        "ui": 70.969843
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "measured",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -3289,14 +3741,24 @@
       "bestValueLevel": null,
       "cursor": "Claude Fable 5.1",
       "taskScores": {
-        "greenfield": 81.012116,
-        "legacy": 80.158464,
-        "explore": 79.48097,
-        "debug": 80.303031,
-        "prod": 78.795347,
-        "infra": 80.521465,
-        "algorithms": 80.620941,
-        "ui": 81.6
+        "greenfield": 78.618191,
+        "legacy": 75.636382,
+        "explore": 78.328373,
+        "debug": 77.847809,
+        "prod": 77.885088,
+        "infra": 80.059236,
+        "algorithms": 80.201344,
+        "ui": 79.691487
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -3389,14 +3851,24 @@
       "averageScore": 76.46,
       "bestValueLevel": null,
       "taskScores": {
-        "greenfield": 76.765372,
-        "legacy": 76.216242,
-        "explore": 75.18077,
-        "debug": 77.138162,
-        "prod": 75.419539,
-        "infra": 78.337915,
-        "algorithms": 74.690889,
-        "ui": 77.1
+        "greenfield": 77.183796,
+        "legacy": 77.267592,
+        "explore": 78.048004,
+        "debug": 78.068021,
+        "prod": 74.510088,
+        "infra": 78.868449,
+        "algorithms": 73.658413,
+        "ui": 81.156636
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     },
     {
@@ -3450,14 +3922,24 @@
       "bestValueLevel": null,
       "cursor": "Claude Fable 5",
       "taskScores": {
-        "greenfield": 76.523521,
-        "legacy": 75.741284,
-        "explore": 75.610613,
-        "debug": 75.513804,
-        "prod": 74.664258,
-        "infra": 75.240487,
-        "algorithms": 77.841836,
-        "ui": 76.5
+        "greenfield": 76.529185,
+        "legacy": 76.55837,
+        "explore": 71.076836,
+        "debug": 75.629533,
+        "prod": 74.060088,
+        "infra": 74.700696,
+        "algorithms": 78.416908,
+        "ui": 75.1539
+      },
+      "taskStatus": {
+        "greenfield": "measured",
+        "legacy": "measured",
+        "explore": "measured",
+        "debug": "measured",
+        "prod": "estimated",
+        "infra": "measured",
+        "algorithms": "measured",
+        "ui": "measured"
       }
     }
   ],

@@ -45,6 +45,8 @@ export interface RankedModel {
   costBreakdown: { tokens: number; time: number };
   /** Score per kind of work (config/task-types.yaml), used when a visitor picks task types. */
   taskScores?: Record<string, number>;
+  /** Whether each task score is measured on its benchmark(s), partial, or estimated from the coding score. */
+  taskStatus?: Record<string, 'measured' | 'partial' | 'estimated'>;
   /** Set by new-model detection (see newModels.ts). */
   isNew?: boolean;
   /** Present for hand-added models whose coding score is an estimate (config/manual-models.yaml). */

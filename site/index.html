@@ -69,7 +69,8 @@
             <span class="small"><button type="button" class="link-btn" id="tasks-clear">Clear</button></span>
           </div>
           <div id="task-filters" class="task-list" role="group" aria-label="Kinds of work"></div>
-          <p class="small muted pop-foot">Tag = how directly the data measures that work. See "How this is calculated".</p>
+          <label class="measured-only"><input type="checkbox" id="measured-only"> Show only models measured on the picked work</label>
+          <p class="small muted pop-foot">Each kind of work is scored on a benchmark built for it. Models not yet on that benchmark are estimated from their coding score and marked "estimated" in the table.</p>
         </div>
       </details>
 
@@ -86,7 +87,7 @@
         <h2 id="explore-title">The ranking</h2>
         <p class="muted small" id="count-line"></p>
       </div>
-      <p class="muted small chart-key">Cost per finished task, cheapest first. <span class="key key-tok"></span> tokens (retries included) · <span class="key key-time"></span> your time fixing failures. Green bold names are in Cursor.</p>
+      <p class="muted small chart-key">How much more each model costs per finished task than #1. Shorter = better. The number after each bar is its total cost per task (tokens + your time fixing its mistakes). Green bold names are in Cursor.</p>
       <div class="bar-wrap" id="bar-wrap"><canvas id="bar-chart" aria-label="Stacked bar chart of cost per finished task" role="img"></canvas></div>
       <div class="more" id="bar-more" hidden>
         <button type="button" class="btn" data-more="bar">Show 10 more</button>
@@ -197,10 +198,10 @@
         </li>
         <li>
           <h3>Your kind of work</h3>
-          <p>Reading a repo, building a new API service, changing legacy code and chasing a production bug through logs and traces are different jobs. Developers spend about <a href="https://dl.acm.org/doi/10.1145/3180155.3182538" rel="noopener">58% of their time understanding code</a>, not writing it. At Anthropic, the daily uses are <a href="https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic" rel="noopener">debugging (55%), code understanding (42%) and new features (37%)</a>. Pick your kinds of work under "Tasks" and the score is re-weighted toward the benchmarks closest to them:</p>
+          <p>Reading a repo, building a new API service, changing legacy code and chasing a production bug through logs and traces are different jobs. Developers spend about <a href="https://dl.acm.org/doi/10.1145/3180155.3182538" rel="noopener">58% of their time understanding code</a>, not writing it. At Anthropic, the daily uses are <a href="https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic" rel="noopener">debugging (55%), code understanding (42%) and new features (37%)</a>. Pick your kinds of work under "Tasks" and each model is scored on the benchmark built for that work:</p>
           <div class="table-scroll method-table"><table class="data-table compact" id="method-tasks"></table></div>
-          <p>Each benchmark is first put on the coding-score scale (same average and spread across the ranked models). A model that wasn't tested on one counts as average-for-itself there, so a gap in the data never helps or hurts it. With nothing picked, the general coding score is used.</p>
-          <p class="muted small">Honest limits: these are mixes of the benchmarks Artificial Analysis measures, not measurements of each task. The benchmarks that target some of them directly exist but aren't in the data: <a href="https://arxiv.org/abs/2605.08366" rel="noopener">SWE-Atlas Codebase QnA</a> (codebase understanding) and <a href="https://github.com/microsoft/OpenRCA" rel="noopener">OpenRCA</a> (root cause from logs, metrics and traces). There's no per-model UI benchmark.</p>
+          <p>A measured result is put on the coding-score scale (same average and spread across the ranked models). A model that isn't on a benchmark yet is estimated from its general coding score, pulled toward the average by how closely the two agree (the r column). It's marked "estimated" in the table, so you always know which is which. With nothing picked, the general coding score is used.</p>
+          <p class="muted small">Why dedicated benchmarks: an earlier version mixed general benchmarks per kind of work. Checked against SWE-Atlas, the mix agreed with real codebase-understanding results at only r = 0.34, worse than the plain coding score (0.61). So each kind of work now uses a benchmark made for it. SWE-Atlas scores include the agent harness (Claude Code, Codex, Mini-SWE-Agent). Part of the DeepSWE scores are the vendors' own reports; independent runs are used where they exist.</p>
         </li>
         <li>
           <h3>Only near-top models qualify</h3>

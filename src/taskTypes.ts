@@ -1,76 +1,129 @@
 import { readFileSync } from 'node:fs';
 import yaml from 'js-yaml';
-import { BENCHMARKS, readBenchmark } from './benchmarks.js';
+import { readBenchmark } from './benchmarks.js';
+import { modelKey } from './cursor.js';
 import type { RankedModel } from './scoring.js';
 import type { AaModel } from './source/artificialAnalysis.js';
+import type { TaskBenchmark } from './taskBenchmarks.js';
 
 /**
- * Kinds of development work (config/task-types.yaml) that visitors can pick
- * on the dashboard. Each type is a weighted mix of benchmarks; picking types
- * swaps the general coding score for their average in the cost-per-task
- * formula. Nothing else in the ranking changes.
+ * Kinds of development work (config/task-types.yaml) visitors can pick on
+ * the dashboard. Each type is scored by benchmarks built for that work
+ * ("sources"). Picking types swaps the general coding score for their
+ * average in the cost-per-task formula; nothing else changes.
  *
- * To mix benchmarks with different scales and difficulty, each one is mapped
- * onto the coding-score scale across the ranked models (same mean and
- * spread):  x′ = μ_CI + (x − μ_b) / σ_b × σ_CI
- * A model missing a benchmark gets its own coding score for it (neutral),
- * so a gap in the data neither helps nor hurts it.
+ * Per model and source:
+ *   measured  → the model's result, put on the coding-score scale
+ *               (same mean and spread across the ranked models that have it):
+ *               x′ = μ_CI + (x − μ_s) / σ_s × σ_CI
+ *   estimated → from the model's general coding score, shrunk toward the
+ *               average by how well the two agree (Pearson r across models
+ *               that have both), minus one standard error of that estimate:
+ *               μ_CI + r × (CI − μ_CI) − σ_CI × √(1 − r²)
+ *               (conservative: unmeasured models don't get the benefit of
+ *               the doubt over measured ones)
+ * A type's score is the mean over its sources; its status is measured (all
+ * sources measured), partial, or estimated (none).
  */
-
-export type ProxyStrength = 'strong' | 'medium' | 'weak' | 'general';
 
 export interface TaskType {
   key: string;
   label: string;
   description: string;
-  /** Benchmark key (see BENCHMARKS) → weight. `codingIndex` means the model's coding score. */
-  weights: Record<string, number>;
-  proxy: ProxyStrength;
-  rationale: string;
+  sources: string[];
 }
 
-const PROXIES: readonly ProxyStrength[] = ['strong', 'medium', 'weak', 'general'];
+/** Sources that come with every Artificial Analysis API run. */
+export const API_SOURCES: Record<string, { label: string; publisher: string; url: string; measures: string }> = {
+  codingIndex: {
+    label: 'AA Coding Index',
+    publisher: 'Artificial Analysis',
+    url: 'https://artificialanalysis.ai/methodology/intelligence-benchmarking',
+    measures: 'General coding composite.',
+  },
+  terminalBench: {
+    label: 'Terminal-Bench v2.1',
+    publisher: 'Artificial Analysis (tbench.ai tasks)',
+    url: 'https://www.tbench.ai',
+    measures: '89 tasks in a real terminal: system administration, builds, environments, data processing, security.',
+  },
+  sciCode: {
+    label: 'SciCode',
+    publisher: 'Artificial Analysis (SciCode authors)',
+    url: 'https://scicode-bench.github.io',
+    measures: '288 subproblems from 80 real laboratory problems across 16 scientific disciplines.',
+  },
+};
 
-export function parseTaskTypes(input: unknown): TaskType[] {
+export function parseTaskTypes(input: unknown, knownSources: Iterable<string>): TaskType[] {
+  const known = new Set(knownSources);
   const list = ((input ?? {}) as Record<string, unknown>).types;
   if (!Array.isArray(list) || list.length === 0) throw new Error('task-types.yaml: `types` must be a non-empty list');
   const seen = new Set<string>();
   return list.map((entry, i) => {
     const e = (entry ?? {}) as Record<string, unknown>;
     const where = `task-types.yaml types[${i}]`;
-    for (const f of ['key', 'label', 'description', 'rationale'] as const) {
+    for (const f of ['key', 'label', 'description'] as const) {
       if (typeof e[f] !== 'string' || !(e[f] as string).trim()) throw new Error(`${where}: "${f}" is required`);
     }
     const key = (e.key as string).trim();
     if (seen.has(key)) throw new Error(`${where}: duplicate key "${key}"`);
     seen.add(key);
-    if (!PROXIES.includes(e.proxy as ProxyStrength)) throw new Error(`${where}: proxy must be one of ${PROXIES.join(', ')}`);
-    const w = e.weights;
-    if (w === null || typeof w !== 'object' || Array.isArray(w) || Object.keys(w).length === 0) {
-      throw new Error(`${where}: weights must be a mapping like { codingIndex: 0.5, lcr: 0.5 }`);
+    if (!Array.isArray(e.sources) || e.sources.length === 0) throw new Error(`${where}: sources must be a non-empty list`);
+    const sources = e.sources.map(String);
+    for (const s of sources) {
+      if (!known.has(s)) throw new Error(`${where}: unknown source "${s}" (known: ${[...known].join(', ')})`);
     }
-    const weights: Record<string, number> = {};
-    for (const [b, v] of Object.entries(w)) {
-      if (!(b in BENCHMARKS)) throw new Error(`${where}: unknown benchmark "${b}" (known: ${Object.keys(BENCHMARKS).join(', ')})`);
-      if (typeof v !== 'number' || !Number.isFinite(v) || v <= 0) throw new Error(`${where}: weight for "${b}" must be > 0`);
-      weights[b] = v;
-    }
-    return {
-      key,
-      label: (e.label as string).trim(),
-      description: (e.description as string).trim(),
-      weights,
-      proxy: e.proxy as ProxyStrength,
-      rationale: (e.rationale as string).trim().replace(/\s+/g, ' '),
-    };
+    return { key, label: (e.label as string).trim(), description: (e.description as string).trim(), sources };
   });
 }
 
-export function loadTaskTypes(path = 'config/task-types.yaml'): TaskType[] {
-  return parseTaskTypes(yaml.load(readFileSync(path, 'utf8')));
+export function loadTaskTypes(knownSources: Iterable<string>, path = 'config/task-types.yaml'): TaskType[] {
+  return parseTaskTypes(yaml.load(readFileSync(path, 'utf8')), knownSources);
 }
 
-const round = (x: number) => Math.round(x * 1e6) / 1e6;
+export type TaskStatus = 'measured' | 'partial' | 'estimated';
+
+export interface SourceSummary {
+  key: string;
+  label: string;
+  publisher: string;
+  url: string;
+  asOf: string | null;
+  measures: string;
+  note?: string;
+  /** Ranked models with a real result on this source. */
+  measured: number;
+  /** Agreement with the general coding score across those models (null when too few). */
+  fitR: number | null;
+}
+
+export interface ModelTaskScores {
+  scores: Record<string, number>;
+  status: Record<string, TaskStatus>;
+  /** Source keys this model was actually measured on. */
+  measuredSources: string[];
+}
+
+const round = (x: number, d = 6) => Math.round(x * 10 ** d) / 10 ** d;
+const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+const sd = (xs: number[]) => {
+  const m = mean(xs);
+  return Math.sqrt(xs.reduce((a, b) => a + (b - m) ** 2, 0) / xs.length);
+};
+function pearson(xs: number[], ys: number[]): number {
+  const mx = mean(xs);
+  const my = mean(ys);
+  let sxy = 0;
+  let sxx = 0;
+  let syy = 0;
+  for (let i = 0; i < xs.length; i++) {
+    sxy += (xs[i]! - mx) * (ys[i]! - my);
+    sxx += (xs[i]! - mx) ** 2;
+    syy += (ys[i]! - my) ** 2;
+  }
+  return sxx && syy ? sxy / Math.sqrt(sxx * syy) : 0;
+}
 
 /** The AA entry behind a ranked model's headline effort level. */
 function headlineModel(r: RankedModel, byId: Map<string, AaModel>): AaModel | undefined {
@@ -78,53 +131,86 @@ function headlineModel(r: RankedModel, byId: Map<string, AaModel>): AaModel | un
   return byId.get(v?.id ?? r.id);
 }
 
-/**
- * Per ranked model, a 0–100-ish score for every task type. Returns a map
- * from ranked-row id to { typeKey: score }.
- */
-export function computeTaskScores(ranked: RankedModel[], models: AaModel[], types: TaskType[]): Map<string, Record<string, number>> {
+export function computeTaskScores(
+  ranked: RankedModel[],
+  models: AaModel[],
+  types: TaskType[],
+  external: TaskBenchmark[],
+): { perModel: Map<string, ModelTaskScores>; sources: SourceSummary[] } {
   const byId = new Map(models.map((m) => [m.id, m]));
-  const benchKeys = [...new Set(types.flatMap((t) => Object.keys(t.weights)))].filter((k) => k !== 'codingIndex');
+  const ext = new Map(external.map((b) => [b.key, b]));
+  const extScores = new Map(external.map((b) => [b.key, new Map(Object.entries(b.scores).map(([n, v]) => [modelKey(n), v]))]));
+  const used = [...new Set(types.flatMap((t) => t.sources))];
 
-  // Headline-level readings on the 0–100 scale.
-  const rows = ranked.map((r) => {
-    const aa = headlineModel(r, byId);
-    const vals: Record<string, number | null> = {};
-    for (const k of benchKeys) vals[k] = aa ? readBenchmark(aa, k).normalized : null;
-    return { r, vals };
-  });
-
-  // Mean and spread of each benchmark (and of the coding score) across the pool.
-  const stats = (xs: number[]) => {
-    const mu = xs.reduce((a, b) => a + b, 0) / xs.length;
-    const sd = Math.sqrt(xs.reduce((a, b) => a + (b - mu) ** 2, 0) / xs.length);
-    return { mu, sd, n: xs.length };
-  };
-  const ci = stats(ranked.map((r) => r.codingScore));
-  const bench = Object.fromEntries(
-    benchKeys.map((k) => [k, stats(rows.map((x) => x.vals[k]).filter((v): v is number => v !== null))]),
-  );
-
-  const mapped = (k: string, r: RankedModel, v: number | null): number => {
-    const s = bench[k];
-    // Missing value, or too little data to map reliably → neutral (the model's own coding score).
-    if (v === null || !s || s.n < 3 || s.sd === 0 || ci.sd === 0) return r.codingScore;
-    return ci.mu + ((v - s.mu) / s.sd) * ci.sd;
-  };
-
-  const out = new Map<string, Record<string, number>>();
-  for (const { r, vals } of rows) {
-    const scores: Record<string, number> = {};
-    for (const t of types) {
-      let sum = 0;
-      let wsum = 0;
-      for (const [k, w] of Object.entries(t.weights)) {
-        sum += w * (k === 'codingIndex' ? r.codingScore : mapped(k, r, vals[k] ?? null));
-        wsum += w;
-      }
-      scores[t.key] = round(sum / wsum);
+  const raw = (r: RankedModel, s: string): number | null => {
+    if (s === 'codingIndex') return r.codingScore;
+    if (s in API_SOURCES) {
+      const aa = headlineModel(r, byId);
+      return aa ? readBenchmark(aa, s).normalized : null;
     }
-    out.set(r.id, scores);
+    return extScores.get(s)?.get(modelKey(r.name)) ?? null;
+  };
+
+  const ciAll = ranked.map((r) => r.codingScore);
+  const muCI = mean(ciAll);
+  const sdCI = sd(ciAll);
+
+  // Per source: which ranked models were measured, their values on the coding-score scale, and the fit to CI.
+  const perSource = new Map<string, { mapped: Map<string, number>; fitR: number | null }>();
+  const sources: SourceSummary[] = [];
+  for (const s of used) {
+    const have = ranked.map((r) => ({ r, v: raw(r, s) })).filter((x): x is { r: RankedModel; v: number } => x.v !== null);
+    const mapped = new Map<string, number>();
+    let fitR: number | null = null;
+    if (s === 'codingIndex') {
+      for (const { r, v } of have) mapped.set(r.id, v);
+      fitR = 1;
+    } else if (have.length >= 3 && sd(have.map((x) => x.v)) > 0 && sdCI > 0) {
+      const mu = mean(have.map((x) => x.v));
+      const sigma = sd(have.map((x) => x.v));
+      for (const { r, v } of have) mapped.set(r.id, muCI + ((v - mu) / sigma) * sdCI);
+      fitR = round(pearson(have.map((x) => x.v), have.map((x) => x.r.codingScore)), 2);
+    }
+    perSource.set(s, { mapped, fitR });
+    const meta = ext.get(s) ?? { ...API_SOURCES[s]!, asOf: null, note: undefined };
+    sources.push({
+      key: s,
+      label: meta.label,
+      publisher: meta.publisher,
+      url: meta.url,
+      asOf: meta.asOf ?? null,
+      measures: meta.measures,
+      ...(meta.note ? { note: meta.note } : {}),
+      measured: mapped.size,
+      fitR,
+    });
   }
-  return out;
+
+  const perModel = new Map<string, ModelTaskScores>();
+  for (const r of ranked) {
+    const scores: Record<string, number> = {};
+    const status: Record<string, TaskStatus> = {};
+    const measuredSources = used.filter((s) => perSource.get(s)!.mapped.has(r.id));
+    for (const t of types) {
+      let measured = 0;
+      const vals = t.sources.map((s) => {
+        const src = perSource.get(s)!;
+        const m = src.mapped.get(r.id);
+        if (m !== undefined) {
+          measured++;
+          return m;
+        }
+        // Estimate from the general coding score: the regression prediction (shrunk toward the
+        // average by the source's agreement with it), minus one standard error of that prediction.
+        // A model that hasn't been measured doesn't get the benefit of the doubt over one that has.
+        const rho = Math.max(0, src.fitR ?? 1);
+        const residualSd = sdCI * Math.sqrt(1 - rho * rho);
+        return muCI + rho * (r.codingScore - muCI) - residualSd;
+      });
+      scores[t.key] = round(mean(vals));
+      status[t.key] = measured === t.sources.length ? 'measured' : measured > 0 ? 'partial' : 'estimated';
+    }
+    perModel.set(r.id, { scores, status, measuredSources });
+  }
+  return { perModel, sources };
 }

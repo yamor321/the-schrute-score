@@ -1,0 +1,147 @@
+# Task-specific benchmarks that are NOT in the Artificial Analysis API.
+# A hand-kept snapshot of their public leaderboards, used to score the
+# kinds of work in config/task-types.yaml. (LMArena WebDev is fetched
+# automatically each run and doesn't live here.)
+#
+# Update by copying the current leaderboard into `scores`; set `asOf` to the
+# leaderboard's own date and `checked` to today. The pipeline warns in the
+# run log when a snapshot hasn't been checked for > 60 days.
+# Model names are ours (as shown on the dashboard); matching ignores case,
+# word order, dashes and effort levels. When a leaderboard lists a model
+# several times (effort levels, agent harnesses), keep its best score.
+#
+# `vendorReported` lists entries that come from the model maker's own
+# launch materials rather than an independent run; independent numbers are
+# preferred whenever both exist.
+
+benchmarks:
+  sweAtlasQna:
+    label: SWE-Atlas Codebase QnA
+    publisher: Scale AI
+    url: https://labs.scale.com/leaderboard/sweatlas-qna
+    asOf: 2026-07-28      # leaderboard's own last update
+    checked: 2026-09-26   # when this snapshot was last compared with it
+    measures: 124 deep code-comprehension questions on 11 production repos (Go, Python, C, TypeScript) — tracing execution across files, explaining behaviour and design. Agents must run and explore the code.
+    note: Scores include the agent harness used (Claude Code, Codex or Mini-SWE-Agent).
+    scores:
+      Claude Opus 5: 63.17        # Claude Code, xHigh
+      Claude Fable 5.1: 59.95     # Claude Code, xHigh
+      GPT-6 Astra: 59.14          # Codex, xHigh
+      Claude Opus 4.8: 57.26      # Claude Code, xHigh
+      GLM-5.2: 48.12              # Mini-SWE-Agent
+      Gemini 3.8 Flash: 47.04     # Mini-SWE-Agent
+      GPT-5.6 Sol: 46.00          # Codex, xHigh
+      GPT-5.5: 45.43              # Codex, xHigh
+      Muse Spark 1.1: 42.20       # Mini-SWE-Agent, xHigh
+      GPT-5.4: 40.80              # Codex, xHigh
+      Claude Opus 4.7: 40.32      # Claude Code
+      Claude Fable 5: 39.00       # Claude Code, xHigh
+      Claude Opus 4.6: 33.30
+      GPT-5.3 Codex: 32.60
+      Claude Sonnet 4.6: 31.20
+      DeepSeek V4 Pro: 27.15
+      GLM 5: 20.50
+      Gemini 3.1 Pro: 13.50
+      Kimi K2.5: 13.10
+      Gemini 3 Flash: 8.20
+
+  itbench:
+    label: ITBench-AA
+    publisher: Artificial Analysis × IBM
+    url: https://artificialanalysis.ai/evaluations/itbench-aa
+    asOf: 2026-09-26
+    checked: 2026-09-26
+    measures: Root cause of real Kubernetes incidents from alerts, events, traces and topology snapshots, with shell access. Scored as precision at full recall (missing any true cause scores 0).
+    note: Earlier entries (Opus 4.7 and below) were measured in June 2026.
+    scores:
+      GPT-5.6 Sol: 56.2
+      Gemini 3.8 Flash: 52.5
+      GLM 5.3 Flash: 51.2
+      GPT-5.6 Terra: 51.0
+      Kimi K3: 47.7
+      Claude Opus 4.7: 46.7
+      GPT-5.5: 45.8
+      Qwen3.7 Max: 42.5
+      Gemini 3.5 Flash: 40.3
+      GLM-5.1: 40.3
+      Claude Sonnet 4.6: 39.8
+      DeepSeek V4 Pro: 38.3
+      MiMo-V2.5-Pro: 38.2
+      GPT-5.4 mini: 35.2
+      GPT-5.4: 34.5
+      Grok 4.3: 32.7
+      Kimi K2.6: 31.2
+      Gemini 3.1 Pro: 30.3
+      Claude 4.5 Haiku: 27.3
+
+  deepswe:
+    label: DeepSWE v1.1
+    publisher: Datacurve · Mercor
+    url: https://www.mercor.com/apex/oss-benchmarks/oss-deep-swe-leaderboard/
+    asOf: 2026-09-26
+    checked: 2026-09-26
+    measures: 113 original tasks across 91 real repositories in 5 languages, each requiring a large, novel change (not taken from public commits); pass@1 on hidden tests.
+    note: Independent runs from the Mercor leaderboard where available; the rest are the vendors' own reported scores (llm-stats.com/benchmarks/deepswe-1.1).
+    scores:
+      GPT-6 Astra: 72.0
+      DeepSeek V4.1 Flash: 71.7
+      Claude Opus 5: 71.4
+      Gemini 3.8 Flash: 71.4
+      GPT-5.6 Sol: 70.5
+      Muse Spark 1.3: 75.4
+      Claude Opus 5.5: 74.2
+      MiMo-V2.6-Pro: 71.9
+      Grok 4.7: 71.0
+      Claude Fable 5: 70.0
+      GPT-5.6 Terra: 70.0
+      Kimi K3: 69.0
+      GPT-6 Sol: 68.8
+      Claude Fable 5.1: 67.4
+      GPT-5.5: 67.0
+      GPT-5.6 Luna: 67.0
+      GLM-5.3: 66.9
+      GPT-6 Luna: 66.6
+      Grok 4.6: 65.9
+      Gemini 3.7 Flash: 65.3
+      GLM 5.3 Flash: 63.4
+      Muse Spark 1.2: 59.3
+      Claude Opus 4.8: 59.0
+      Qwen3.8-Flash-Next: 58.7
+      Qwen3.8 Max: 56.6
+      Grok 4.5: 54.0
+      Claude Sonnet 5: 54.0
+      Muse Spark 1.1: 53.0
+      GPT-5.4: 52.0
+      Gemini 3.6 Flash: 49.0
+      GLM-5.2: 44.0
+      Gemini 3.5 Flash: 37.0
+      Kimi K2.7 Code: 31.0
+    vendorReported:
+      - Muse Spark 1.3
+      - Claude Opus 5.5
+      - MiMo-V2.6-Pro
+      - Grok 4.7
+      - Claude Fable 5
+      - GPT-5.6 Terra
+      - Kimi K3
+      - GPT-6 Sol
+      - Claude Fable 5.1
+      - GPT-5.5
+      - GPT-5.6 Luna
+      - GLM-5.3
+      - GPT-6 Luna
+      - Grok 4.6
+      - Gemini 3.7 Flash
+      - GLM 5.3 Flash
+      - Muse Spark 1.2
+      - Claude Opus 4.8
+      - Qwen3.8-Flash-Next
+      - Qwen3.8 Max
+      - Grok 4.5
+      - Claude Sonnet 5
+      - Muse Spark 1.1
+      - GPT-5.4
+      - Gemini 3.6 Flash
+      - GLM-5.2
+      - Gemini 3.5 Flash
+      - Kimi K2.7 Code

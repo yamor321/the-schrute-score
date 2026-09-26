@@ -19,6 +19,7 @@ const state = {
   cursorOnly: false,
   task: null, // data.config.taskModel — fixed inputs of the cost-per-task formula
   tasks: new Set(), // kinds of work the visitor picked (data.taskTypes keys); empty = general score
+  measuredOnly: false, // with tasks picked: hide models not measured on that work
   sort: { key: 'rank', dir: 'asc' },
   search: '',
   limits: { bar: PAGE, table: PAGE }, // "Show more" paging
@@ -37,13 +38,17 @@ function loadPrefs() {
     state.hidden = new Set(Array.isArray(saved.hidden) ? saved.hidden.filter((v) => typeof v === 'string') : []);
     state.cursorOnly = saved.cursorOnly === true;
     state.tasks = new Set(Array.isArray(saved.tasks) ? saved.tasks.filter((v) => typeof v === 'string') : []);
+    state.measuredOnly = saved.measuredOnly === true;
   } catch {
     /* storage unavailable or corrupt — start with defaults */
   }
 }
 function savePrefs() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ hidden: [...state.hidden], cursorOnly: state.cursorOnly, tasks: [...state.tasks] }));
+    localStorage.setItem(
+      STORE_KEY,
+      JSON.stringify({ hidden: [...state.hidden], cursorOnly: state.cursorOnly, tasks: [...state.tasks], measuredOnly: state.measuredOnly }),
+    );
   } catch {
     /* settings still work for this visit */
   }
@@ -158,7 +163,8 @@ const bestScore = () =>
 const pickedLabels = () => taskTypes().filter((t) => state.tasks.has(t.key)).map((t) => t.label);
 const relative = (score) => score / bestScore();
 const vendorShown = (vendor) => !state.hidden.has(vendor);
-const isVisible = (m) => vendorShown(m.vendor) && (!state.cursorOnly || !!m.cursor);
+const isVisible = (m) =>
+  vendorShown(m.vendor) && (!state.cursorOnly || !!m.cursor) && !(state.measuredOnly && tasksPicked() && taskStatusFor(m) !== 'measured');
 const visibleModels = () => state.ranked.filter(isVisible);
 const cursorModels = () => state.data.cursor?.models ?? [];
 const levelCount = (m) => m.variants?.length ?? 1;
@@ -350,10 +356,28 @@ function renderToolbarSummaries() {
   if (scoreHead) scoreHead.textContent = tasksPicked() ? 'Your score' : 'Score';
 }
 
-const proxyText = { strong: 'strong data', medium: 'medium', weak: 'weak proxy', general: 'general only' };
+const sourceOf = (key) => (state.data.taskSources ?? []).find((s) => s.key === key);
+const fmtMonth = (d) => (d ? new Date(d + 'T00:00:00Z').toLocaleDateString(undefined, { month: 'short', year: 'numeric', timeZone: 'UTC' }) : null);
+/** The benchmarks built for a kind of work (general Coding Index left out when a dedicated one exists). */
+const dedicatedSources = (t) => {
+  const all = t.sources.map(sourceOf).filter(Boolean);
+  const own = all.filter((s) => s.key !== 'codingIndex');
+  return own.length ? own : all;
+};
+/** e.g. "SWE-Atlas Codebase QnA (Scale AI, Jul 2026) · measured for 11 of 34 models" */
+function coverageLine(t) {
+  const total = state.data.models.length;
+  return dedicatedSources(t)
+    .map((s) => `${s.label} (${s.publisher}${s.asOf ? ', ' + fmtMonth(s.asOf) : ''}) · measured for ${s.measured} of ${total}`)
+    .join(' + ');
+}
 
-/** "Tasks ▾" panel: one checkbox per kind of work. */
+/** "Tasks ▾" panel: one checkbox per kind of work, with the benchmark behind it. */
 function renderTaskFilters() {
+  const mo = $('#measured-only');
+  mo.checked = state.measuredOnly;
+  mo.disabled = !tasksPicked();
+  mo.parentElement.classList.toggle('is-disabled', !tasksPicked());
   $('#task-filters').replaceChildren(
     ...taskTypes().map((t) => {
       const input = el('input', { type: 'checkbox', checked: state.tasks.has(t.key), value: t.key });
@@ -364,18 +388,34 @@ function renderTaskFilters() {
       });
       return el(
         'label',
-        { class: 'task-chip', title: t.rationale },
+        { class: 'task-chip' },
         input,
         el(
           'span',
           { class: 'task-text' },
-          el('span', { class: 'task-name' }, t.label, ' ', el('span', { class: `proxy proxy-${t.proxy}` }, proxyText[t.proxy])),
+          el('span', { class: 'task-name' }, t.label),
           el('span', { class: 'task-desc' }, t.description),
+          el('span', { class: 'task-src' }, coverageLine(t)),
         ),
       );
     }),
   );
 }
+
+/** Measured / estimated status of a model for the picked kinds of work. */
+function taskStatusFor(m) {
+  if (!tasksPicked() || !m.taskStatus) return null;
+  const st = [...state.tasks].map((k) => m.taskStatus[k]);
+  if (st.every((s) => s === 'measured')) return 'measured';
+  if (st.every((s) => s === 'estimated')) return 'estimated';
+  return 'partial';
+}
+const statusText = { measured: '✓ measured', partial: '◐ partly measured', estimated: '~ estimated' };
+const statusTitle = {
+  measured: 'Scored from its own results on the benchmarks built for this work.',
+  partial: 'Measured on some of the benchmarks for this work; the rest estimated from its coding score.',
+  estimated: 'Not yet on the benchmark for this work; estimated from its general coding score.',
+};
 
 function onTasksChange() {
   rerank();
@@ -384,26 +424,31 @@ function onTasksChange() {
   refresh();
 }
 
-/** Methodology table: every kind of work, its benchmark mix and how directly it's measured. */
+/** Methodology table: every kind of work, the benchmark built for it, coverage, date and agreement. */
 function renderMethodTasks() {
-  const label = { codingIndex: 'Coding Index', terminalBench: 'Terminal-Bench', lcr: 'Long-context (LCR)', sciCode: 'SciCode', tauBanking: 'τ²-Banking' };
+  const total = state.data.models.length;
   $('#method-tasks').replaceChildren(
-    el('thead', {}, el('tr', {}, el('th', {}, 'Kind of work'), el('th', {}, 'Built from'), el('th', {}, 'Data'))),
+    el('thead', {}, el('tr', {}, el('th', {}, 'Kind of work'), el('th', {}, 'Measured by'), el('th', { class: 'num' }, 'Measured'), el('th', { class: 'num' }, 'Agrees with coding score'))),
     el(
       'tbody',
       {},
       ...taskTypes().map((t) => {
-        const total = Object.values(t.weights).reduce((a, b) => a + b, 0);
-        const mix = Object.entries(t.weights)
-          .sort((a, b) => b[1] - a[1])
-          .map(([k, w]) => `${label[k] ?? k} ${pct(w / total)}`)
-          .join(' · ');
+        const srcs = t.sources.map(sourceOf).filter(Boolean);
         return el(
           'tr',
-          { title: t.rationale },
+          {},
           el('td', {}, el('strong', {}, t.label), el('span', { class: 'sub' }, t.description)),
-          el('td', {}, mix),
-          el('td', {}, el('span', { class: `proxy proxy-${t.proxy}` }, proxyText[t.proxy])),
+          el(
+            'td',
+            {},
+            ...srcs.flatMap((s, i) => [
+              i ? el('br') : null,
+              el('a', { href: s.url, rel: 'noopener', title: s.measures + (s.note ? ' ' + s.note : '') }, s.label),
+              el('span', { class: 'sub' }, `${s.publisher}${s.asOf ? ' · ' + fmtMonth(s.asOf) : ' · every run'}`),
+            ]),
+          ),
+          el('td', { class: 'num' }, srcs.map((s) => `${s.measured}/${total}`).join(' · ')),
+          el('td', { class: 'num' }, srcs.map((s) => (s.fitR == null ? '—' : s.key === 'codingIndex' ? '—' : `r ${s.fitR.toFixed(2)}`)).join(' · ')),
         );
       }),
     ),
@@ -482,6 +527,10 @@ function renderTable() {
           model: m,
           vendor: m.vendor,
           sub: [
+            taskStatusFor(m)
+              ? el('span', { class: `status-tag st-${taskStatusFor(m)}`, title: statusTitle[taskStatusFor(m)] }, statusText[taskStatusFor(m)])
+              : null,
+            taskStatusFor(m) ? ' ' : null,
             levelCount(m) > 1 ? `${levelCount(m)} levels · scored at ${m.headlineLevel}` : null,
             m.bestLevel ? ` · "${m.bestLevel}" is cheaper per task now` : null,
           ],
@@ -583,7 +632,7 @@ function renderCountLine() {
   const bar = quality && config.qualityFloor > 0 ? `passed the quality bar (≥ ${fmtScore(quality.minScore)})` : 'are ranked';
   $('#count-line').textContent =
     `${shown} of the ${counts.ranked} models that ${bar}, cheapest per finished task first` +
-    (tasksPicked() ? ` · tuned for: ${pickedLabels().join(', ')}` : '') +
+    (tasksPicked() ? ` · tuned for: ${pickedLabels().join(', ')}${state.measuredOnly ? ' (measured models only)' : ''}` : '') +
     (state.cursorOnly ? ' · Cursor only.' : '.');
 }
 
@@ -673,7 +722,10 @@ function tooltipLines(m) {
   ];
   if (tasksPicked() && m.taskScores) {
     lines.splice(3, 0, `Score for your work: ${fmtScore(m.score)} · ${pct(relative(m.score))} of the best`);
-    for (const t of taskTypes().filter((x) => state.tasks.has(x.key))) lines.push(`  ${t.label}: ${fmtScore(m.taskScores[t.key])}`);
+    for (const t of taskTypes().filter((x) => state.tasks.has(x.key))) {
+      const st = m.taskStatus?.[t.key];
+      lines.push(`  ${t.label}: ${fmtScore(m.taskScores[t.key])}${st ? ` (${statusText[st].replace(/^\S+ /, '')})` : ''}`);
+    }
   }
   if (levelCount(m) > 1) lines.push(`Scored at "${m.headlineLevel}" (${levelCount(m)} levels — hover the name in the table)`);
   return lines;
@@ -702,12 +754,21 @@ function renderBar() {
   const narrow = window.innerWidth < 600;
   $('#bar-wrap').style.height = `${Math.max(120, models.length * (narrow ? 20 : 24) + 44)}px`;
 
-  const maxLen = narrow ? 18 : 40;
+  // Bars = how much more each model costs per finished task than the #1 shown, so #1 is always the
+  // shortest and the gaps are readable. The label at the end of each bar gives the total cost.
+  state.barBase = models[0]?.cost ?? 0;
+  const maxLen = narrow ? 14 : 36;
   const data = {
-    labels: models.map((m) => (m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name)),
+    labels: models.map((m) => `${m.rank}. ${m.name.length > maxLen ? m.name.slice(0, maxLen - 1) + '…' : m.name}`),
     datasets: [
-      { label: 'Tokens', data: models.map((m) => m.costTok), backgroundColor: models.map((m) => colorOf(m.vendor)), borderRadius: 0, maxBarThickness: 16, stack: 'c' },
-      { label: 'Your time', data: models.map((m) => m.costTime), backgroundColor: t.time, borderRadius: 0, maxBarThickness: 16, stack: 'c' },
+      {
+        label: 'Extra cost vs #1',
+        data: models.map((m) => m.cost - state.barBase),
+        backgroundColor: models.map((m) => colorOf(m.vendor)),
+        borderRadius: 2,
+        maxBarThickness: 16,
+        minBarLength: 3,
+      },
     ],
   };
   if (state.charts.bar) {
@@ -715,35 +776,63 @@ function renderBar() {
     state.charts.bar.update('none');
     return;
   }
+  // Draws "best · $8.31/task" / "+$0.56 · $8.87/task" after each bar.
+  const endLabels = {
+    id: 'endLabels',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      const bars = chart.getDatasetMeta(0).data;
+      ctx.save();
+      ctx.font = `${narrow ? 10.5 : 11.5}px ${t.mono}`;
+      ctx.textBaseline = 'middle';
+      bars.forEach((bar, i) => {
+        const m = state.barModels[i];
+        if (!m) return;
+        const extra = m.cost - state.barBase;
+        ctx.fillStyle = i === 0 ? t.green : t.muted;
+        // On phones there's only room for the difference; the total is in the tooltip.
+        const text = i === 0 ? `best · ${fmtMoney(m.cost)}${narrow ? '' : '/task'}` : narrow ? `+${fmtMoney(extra)}` : `+${fmtMoney(extra)} · ${fmtMoney(m.cost)}`;
+        ctx.fillText(text, bar.x + 6, bar.y);
+      });
+      ctx.restore();
+    },
+  };
   state.charts.bar = new Chart($('#bar-chart'), {
     type: 'bar',
     data,
+    plugins: [endLabels],
     options: {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
       animation: false,
+      layout: { padding: { right: narrow ? 76 : 150 } },
       plugins: {
         legend: { display: false },
         tooltip: {
           ...baseTooltip(t),
           callbacks: {
-            title: (items) => state.barModels[items[0].dataIndex].name,
-            label: (item) => (item.datasetIndex === 0 ? tooltipLines(state.barModels[item.dataIndex]) : null),
+            title: (items) => {
+              const m = state.barModels[items[0].dataIndex];
+              return `#${m.rank} ${m.name}`;
+            },
+            label: (item) => {
+              const m = state.barModels[item.dataIndex];
+              const extra = m.cost - state.barBase;
+              return [item.dataIndex === 0 ? 'Cheapest per finished task in this view' : `${fmtMoney(extra)} more per task than #1`, ...tooltipLines(m)];
+            },
           },
-          filter: (item) => item.datasetIndex === 0,
         },
       },
       scales: {
         x: {
-          stacked: true,
-          title: { display: true, text: 'USD per finished task (lower is better)', color: t.muted },
-          ticks: { color: t.muted, font: { family: t.mono }, callback: (v) => '$' + v },
+          beginAtZero: true,
+          title: { display: true, text: 'Extra cost per finished task vs #1 (USD) — shorter is better', color: t.muted },
+          ticks: { color: t.muted, font: { family: t.mono }, callback: (v) => '+$' + v },
           grid: { color: t.grid },
           border: { color: t.grid },
         },
         y: {
-          stacked: true,
           ticks: {
             autoSkip: false,
             color: (ctx) => (state.barModels[ctx.index]?.cursor ? t.green : t.ink),
@@ -846,6 +935,11 @@ function wireControls() {
       refresh();
     });
   }
+  $('#measured-only').addEventListener('change', (e) => {
+    state.measuredOnly = e.target.checked;
+    savePrefs();
+    refresh();
+  });
   $('#tasks-clear').addEventListener('click', () => {
     state.tasks = new Set();
     onTasksChange();

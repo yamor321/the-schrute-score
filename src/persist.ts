@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { ScoringConfig } from './config.js';
 import type { CursorSummary } from './cursor.js';
-import type { TaskType } from './taskTypes.js';
+import type { SourceSummary, TaskType } from './taskTypes.js';
 import type { ExcludedModel, QualityFloor, RankedModel } from './scoring.js';
 
 /** The document written to data/latest.json and data/history/*.json, and read by the dashboard. */
@@ -15,8 +15,12 @@ export interface Snapshot {
   quality: QualityFloor | null;
   /** Which models are available in Cursor and how each one fared. */
   cursor: CursorSummary | null;
-  /** Kinds of development work visitors can pick; each ranked model carries `taskScores`. */
+  /** Kinds of development work visitors can pick; each ranked model carries `taskScores` + `taskStatus`. */
   taskTypes?: TaskType[];
+  /** The benchmarks behind the task types, with coverage, date and agreement with the coding score. */
+  taskSources?: SourceSummary[];
+  /** LMArena WebDev ratings matched to our models (kept so a failed fetch can reuse them). */
+  webdev?: { asOf: string | null; scores: Record<string, number> };
   models: RankedModel[];
   excluded: ExcludedModel[];
 }
