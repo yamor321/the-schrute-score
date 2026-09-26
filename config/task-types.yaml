@@ -1,0 +1,83 @@
+# Kinds of development work visitors can pick on the dashboard ("Tasks ▾").
+# Picking one or more re-weights the coding score used in the cost-per-task
+# formula. Nothing picked = the general Coding Index (today's ranking).
+#
+# These are ACTIONS, not languages. Each type is a weighted mix of the
+# benchmarks Artificial Analysis measures for current models:
+#   codingIndex    AA Coding Index (general coding composite)
+#   terminalBench  Terminal-Bench v2.1: agent work in a real terminal
+#                  (running code, shell, builds, environments, investigating)
+#   lcr            AA-LCR: reasoning over very long inputs (large code / logs)
+#   sciCode        SciCode: scientific, numerical and algorithmic code
+#   tauBanking     τ²-Bench Banking: multi-step tool use while following rules
+# Every benchmark is first mapped onto the coding-score scale; a model missing
+# a benchmark is treated as average-for-itself (its own coding score), so a
+# gap never helps or hurts it.
+#
+# `proxy` says how directly the mix measures the task:
+#   strong  a benchmark was built for this kind of work
+#   medium  sensible combination of related benchmarks
+#   weak    the right benchmark exists but isn't in the data (see rationale)
+#   general no dedicated benchmark — uses the general coding score only
+#
+# Research basis (README "Your kind of work"): Xia et al. 2017 (58% of dev
+# time is program comprehension), Anthropic 2025 (daily use: debugging 55%,
+# code understanding 42%, new features 37%), Stack Overflow 2025 workflow
+# stages, and the task-specific benchmarks named in each rationale.
+
+types:
+  - key: greenfield
+    label: Build new features & services
+    description: New API, service or module from a spec.
+    weights: { codingIndex: 0.6, sciCode: 0.2, terminalBench: 0.2 }
+    proxy: medium
+    rationale: Writing correct new code from a description (Coding Index, SciCode's spec-to-code problems) and getting it running (Terminal-Bench). FeatureBench targets this directly but isn't in the data.
+
+  - key: legacy
+    label: Change existing / legacy code
+    description: Adapt, refactor or migrate a large existing codebase.
+    weights: { codingIndex: 0.4, lcr: 0.35, terminalBench: 0.25 }
+    proxy: medium
+    rationale: The model must hold a lot of existing code in mind (long-context reasoning) before editing it, then build and test in place (Terminal-Bench). SWE-bench and SWE-Refactor target this but aren't in the data.
+
+  - key: explore
+    label: Explore & explain a codebase
+    description: Trace flows across files and repos, onboard, answer "how does this work", review.
+    weights: { lcr: 0.6, terminalBench: 0.2, codingIndex: 0.2 }
+    proxy: weak
+    rationale: Mostly reading and reasoning over large amounts of code (long-context reasoning), plus running tools to trace execution. SWE-Atlas Codebase QnA measures exactly this (top models ~30–35%) but isn't in the data.
+
+  - key: debug
+    label: Debug, fix & test
+    description: Reproduce, locate and fix bugs; write and repair tests.
+    weights: { terminalBench: 0.45, codingIndex: 0.35, lcr: 0.2 }
+    proxy: medium
+    rationale: Debugging is hands-on - run, observe, change, re-run - which is what Terminal-Bench measures, plus code quality and enough context to find the cause.
+
+  - key: prod
+    label: Production investigation
+    description: Logs → traces → metrics across services and repos to find a root cause.
+    weights: { lcr: 0.4, terminalBench: 0.35, tauBanking: 0.25 }
+    proxy: weak
+    rationale: Reading large volumes of telemetry (long-context reasoning), driving CLI tools (Terminal-Bench) and chaining many tool calls without losing the thread (τ²-Banking). OpenRCA (68 GB of logs, metrics and traces) measures this directly but isn't in the data.
+
+  - key: infra
+    label: Infra, DevOps & scripting
+    description: CI/CD, containers, shell, builds and environment setup.
+    weights: { terminalBench: 0.7, codingIndex: 0.3 }
+    proxy: strong
+    rationale: Terminal-Bench was built for system administration, environment and build work in a real terminal.
+
+  - key: algorithms
+    label: Algorithms, data & scientific code
+    description: Numerical code, data processing, algorithms.
+    weights: { sciCode: 0.7, codingIndex: 0.3 }
+    proxy: strong
+    rationale: SciCode is built from real scientific-computing problems that combine reasoning, knowledge and code.
+
+  - key: ui
+    label: UI & web pages
+    description: Front-end pages and components.
+    weights: { codingIndex: 1 }
+    proxy: general
+    rationale: No UI/front-end benchmark is available per model in the data (LMArena WebDev votes aren't in the API and reward looks), so this uses the general coding score.

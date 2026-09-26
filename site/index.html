@@ -28,7 +28,10 @@
     </div>
     <div class="wrap masthead-body">
       <p class="wordmark">The Schrute <em>Score</em></p>
-      <h1>The best coding model, at a <span class="hl">sane</span> price.</h1>
+      <h1 class="qa">
+        <span class="qa-line"><span class="qa-tag">Question:</span> which model gets the job done for the least money?</span>
+        <span class="qa-line"><span class="qa-tag">Answer:</span> the one at the top of this page. <span class="hl">You're welcome.</span></span>
+      </h1>
       <p class="lede">Ranked by what a finished task really costs you: the tokens, plus your time fixing a model's mistakes.<span class="hide-sm"> Smarter models fail less, so they can win even when they cost more per token.</span></p>
       <dl class="facts" id="facts" hidden>
         <div><dt>Tracked</dt><dd id="fact-tracked">—</dd></div>
@@ -55,6 +58,18 @@
             <span class="small"><button type="button" class="link-btn" data-select="all">All</button> · <button type="button" class="link-btn" data-select="none">None</button></span>
           </div>
           <div id="vendor-filters" class="vendor-list" role="group" aria-label="Vendors"></div>
+        </div>
+      </details>
+
+      <details class="pop" id="pop-tasks">
+        <summary>Tasks <span class="pill-val" id="tasks-summary">all work</span></summary>
+        <div class="pop-panel">
+          <div class="pop-head">
+            <span class="muted small">Pick the kinds of work you do. The ranking re-weights the score toward them.</span>
+            <span class="small"><button type="button" class="link-btn" id="tasks-clear">Clear</button></span>
+          </div>
+          <div id="task-filters" class="task-list" role="group" aria-label="Kinds of work"></div>
+          <p class="small muted pop-foot">Tag = how directly the data measures that work. See "How this is calculated".</p>
         </div>
       </details>
 
@@ -137,7 +152,7 @@
           <p class="hero-vendor" id="hero-vendor"></p>
           <dl class="stats">
             <div class="stat stat-main"><dt>Per finished task</dt><dd id="hero-cost"></dd></div>
-            <div class="stat"><dt>Coding score</dt><dd id="hero-score"></dd></div>
+            <div class="stat"><dt id="hero-score-label">Coding score</dt><dd id="hero-score"></dd></div>
             <div class="stat"><dt>Of the best score</dt><dd id="hero-relative"></dd></div>
             <div class="stat"><dt>$ / 1M tokens</dt><dd id="hero-price"></dd></div>
           </dl>
@@ -179,6 +194,13 @@
         <li>
           <h3>Brand-new models don't wait</h3>
           <p>Artificial Analysis usually publishes a new model's general Intelligence Index within a day, but its Coding Index can take longer. A model released in the last 60 days without one gets a <span class="badge-est badge-prov">PROVISIONAL</span> estimate from the models with the most similar Intelligence Index. It's replaced automatically once the real score is out, and it never sets the quality bar.</p>
+        </li>
+        <li>
+          <h3>Your kind of work</h3>
+          <p>Reading a repo, building a new API service, changing legacy code and chasing a production bug through logs and traces are different jobs. Developers spend about <a href="https://dl.acm.org/doi/10.1145/3180155.3182538" rel="noopener">58% of their time understanding code</a>, not writing it. At Anthropic, the daily uses are <a href="https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic" rel="noopener">debugging (55%), code understanding (42%) and new features (37%)</a>. Pick your kinds of work under "Tasks" and the score is re-weighted toward the benchmarks closest to them:</p>
+          <div class="table-scroll method-table"><table class="data-table compact" id="method-tasks"></table></div>
+          <p>Each benchmark is first put on the coding-score scale (same average and spread across the ranked models). A model that wasn't tested on one counts as average-for-itself there, so a gap in the data never helps or hurts it. With nothing picked, the general coding score is used.</p>
+          <p class="muted small">Honest limits: these are mixes of the benchmarks Artificial Analysis measures, not measurements of each task. The benchmarks that target some of them directly exist but aren't in the data: <a href="https://arxiv.org/abs/2605.08366" rel="noopener">SWE-Atlas Codebase QnA</a> (codebase understanding) and <a href="https://github.com/microsoft/OpenRCA" rel="noopener">OpenRCA</a> (root cause from logs, metrics and traces). There's no per-model UI benchmark.</p>
         </li>
         <li>
           <h3>Only near-top models qualify</h3>

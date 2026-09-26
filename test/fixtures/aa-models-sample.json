@@ -12,7 +12,7 @@
         "artificial_analysis_intelligence_index": 55.2,
         "artificial_analysis_coding_index": 60,
         "livecodebench": 0.8,
-        "terminalbench_hard": 0.4,
+        "terminalbench_v2_1": 0.4,
         "scicode": 0.45,
         "gpqa": 0.81
       },
@@ -31,7 +31,7 @@
         "artificial_analysis_intelligence_index": 41.0,
         "artificial_analysis_coding_index": 40,
         "livecodebench": 0.6,
-        "terminalbench_hard": null,
+        "terminalbench_v2_1": null,
         "gpqa": 0.66
       },
       "pricing": { "price_1m_blended_3_to_1": 0.75, "price_1m_input_tokens": 0.5, "price_1m_output_tokens": 1.5 },
@@ -46,7 +46,7 @@
       "evaluations": {
         "artificial_analysis_coding_index": 50,
         "livecodebench": 0.7,
-        "terminalbench_hard": 0.3
+        "terminalbench_v2_1": 0.3
       },
       "pricing": { "price_1m_blended_3_to_1": 0.35, "price_1m_input_tokens": 0.2, "price_1m_output_tokens": 0.8 },
       "future_field_not_yet_known": { "note": "must survive in raw" }
@@ -60,7 +60,7 @@
       "evaluations": {
         "artificial_analysis_coding_index": null,
         "livecodebench": null,
-        "terminalbench_hard": null,
+        "terminalbench_v2_1": null,
         "gpqa": 0.5
       },
       "pricing": { "price_1m_blended_3_to_1": 0.4, "price_1m_input_tokens": 0.3, "price_1m_output_tokens": 0.7 }
@@ -85,7 +85,7 @@
       "evaluations": {
         "artificial_analysis_coding_index": 45,
         "livecodebench": 0.5,
-        "terminalbench_hard": 0.2
+        "terminalbench_v2_1": 0.2
       },
       "pricing": { "price_1m_blended_3_to_1": 0, "price_1m_input_tokens": 0, "price_1m_output_tokens": 0 }
     },
@@ -98,7 +98,7 @@
       "evaluations": {
         "artificial_analysis_coding_index": 55,
         "livecodebench": null,
-        "terminalbench_hard": 0.5
+        "terminalbench_v2_1": 0.5
       },
       "pricing": { "price_1m_blended_3_to_1": 2.5, "price_1m_input_tokens": 2, "price_1m_output_tokens": null }
     }

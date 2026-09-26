@@ -78,6 +78,22 @@ h1, h2, h3 { margin: 0; line-height: 1.15; }
   font-variation-settings: "opsz" 144;
   max-width: 22ch;
 }
+/* Dwight-style Question / Answer headline */
+.masthead h1.qa { max-width: 26ch; font-size: clamp(26px, 3.6vw, 42px); line-height: 1.12; }
+.qa-line { display: block; }
+.qa-line + .qa-line { margin-top: .25em; }
+.qa-tag {
+  display: inline-block;
+  font: 600 .42em/1 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: .3em .45em;
+  margin-right: .35em;
+  vertical-align: .35em;
+}
 .hl { font-style: italic; background: linear-gradient(transparent 58%, var(--lime) 58%, var(--lime) 90%, transparent 90%); padding: 0 .08em; }
 @media (prefers-color-scheme: dark) { .hl { background: none; color: var(--lime); } }
 .lede { max-width: 64ch; margin: 12px 0 0; font-size: 16.5px; color: var(--muted); }
@@ -155,6 +171,25 @@ h1, h2, h3 { margin: 0; line-height: 1.15; }
 .vendor-chip:has(input:not(:checked)) { opacity: .5; }
 .vendor-chip:has(input:not(:checked)) .vendor-name { text-decoration: line-through; }
 .swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+
+/* "Tasks ▾" panel */
+.task-list { display: grid; gap: 5px; }
+.task-chip { display: flex; gap: 9px; align-items: flex-start; padding: 7px 9px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); cursor: pointer; }
+.task-chip:hover { border-color: var(--rule-strong); }
+.task-chip:has(input:checked) { border-color: var(--green); background: var(--green-soft); }
+.task-chip input { margin: 3px 0 0; width: 15px; height: 15px; accent-color: var(--green); flex: none; cursor: pointer; }
+.task-text { display: grid; gap: 1px; min-width: 0; }
+.task-name { font-weight: 500; font-size: 14px; }
+.task-desc { font-size: 12.5px; color: var(--muted); }
+.pop-foot { margin: 10px 0 0; }
+.proxy { display: inline-block; font: 500 10.5px/1.5 var(--mono); padding: 0 5px; border-radius: 3px; vertical-align: 1px; white-space: nowrap; border: 1px solid transparent; }
+.proxy-strong { color: var(--green); border-color: var(--green); }
+.proxy-medium { color: var(--muted); border-color: var(--rule-strong); }
+.proxy-weak { color: var(--amber); border-color: var(--amber); }
+.proxy-general { color: var(--muted); border-style: dashed; border-color: var(--muted); }
+.method-table { max-height: none; margin: 8px 0 12px; }
+.method-table td { white-space: normal; }
+.method-table .sub { display: block; font-size: 12.5px; color: var(--muted); }
 
 /* ---------- Panels ---------- */
 .panel { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 24px; margin-bottom: 20px; }
@@ -298,7 +333,7 @@ td.name[tabindex]:focus-visible { outline: 2px solid var(--green-bright); outlin
   body { font-size: 15px; }
   .masthead-body { padding-top: 16px; padding-bottom: 14px; }
   .wordmark { font-size: 15px; margin-bottom: 6px; }
-  .masthead h1 { font-size: 27px; }
+  .masthead h1, .masthead h1.qa { font-size: 23px; line-height: 1.15; }
   .lede { font-size: 14.5px; margin-top: 8px; }
   .facts { margin-top: 12px; }
   .facts > div { padding: 6px 6px 7px 0; }

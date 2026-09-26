@@ -62,6 +62,33 @@ Steps 2 and 3 describe the general mechanism for blending several benchmarks. Wi
 
 Every excluded model still appears on the dashboard, in a separate list with a one-line reason. Every ranked row carries its raw inputs: each benchmark's raw and normalized value, the weight actually applied, which benchmarks were missing, and the price and its basis. Anyone can check the math.
 
+**Your kind of work (task types).** Reading a repo, building a new API service, changing legacy code and chasing a production bug through logs and traces are different jobs. Visitors pick theirs under **Tasks ▾** on the dashboard, and the score in the cost formula is re-weighted toward the closest benchmarks. With nothing picked, the general coding score is used, which is the default ranking. The types live in [`config/task-types.yaml`](config/task-types.yaml) and the math in [`src/taskTypes.ts`](src/taskTypes.ts).
+
+| Kind of work | Built from | Data |
+|---|---|---|
+| Build new features & services | Coding Index 60% · SciCode 20% · Terminal-Bench 20% | medium |
+| Change existing / legacy code | Coding Index 40% · Long-context (LCR) 35% · Terminal-Bench 25% | medium |
+| Explore & explain a codebase | LCR 60% · Terminal-Bench 20% · Coding Index 20% | weak proxy |
+| Debug, fix & test | Terminal-Bench 45% · Coding Index 35% · LCR 20% | medium |
+| Production investigation | LCR 40% · Terminal-Bench 35% · τ²-Banking 25% | weak proxy |
+| Infra, DevOps & scripting | Terminal-Bench 70% · Coding Index 30% | strong |
+| Algorithms, data & scientific code | SciCode 70% · Coding Index 30% | strong |
+| UI & web pages | Coding Index 100% | general only |
+
+- **Why these types:**
+  - Developers spend ~58% of their time on program comprehension. ([Xia et al., TSE 2017](https://dl.acm.org/doi/10.1145/3180155.3182538))
+  - At Anthropic the daily uses are debugging 55%, code understanding 42% and new features 37%. ([Anthropic](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic))
+  - Stack Overflow 2025 splits AI use by workflow stage: search, docs, learning a codebase, debugging, testing, writing, review, deploy/monitoring. ([SO 2025](https://survey.stackoverflow.co/2025/ai))
+  - Benchmarks now target these actions separately: SWE-bench (fixes in existing repos), FeatureBench (new features), SWE-Refactor, Terminal-Bench (CLI/infra), [SWE-Atlas Codebase QnA](https://arxiv.org/abs/2605.08366) (comprehension; top models ~30–35%), [OpenRCA](https://github.com/microsoft/OpenRCA) (root cause from logs, metrics and traces), SciCode.
+- **Only five benchmarks are usable per model.** The Artificial Analysis API measures just these on current models: Coding Index, Terminal-Bench v2.1, AA-LCR, SciCode and τ²-Banking. LiveCodeBench, IFBench, τ² and Terminal-Bench Hard cover 0–8 of the ranked models. SWE-Atlas QnA and OpenRCA aren't in the API at all.
+- **How:**
+  - Each benchmark is mapped onto the coding-score scale, with the same mean and spread across the ranked models: `x′ = μ_CI + (x − μ_b)/σ_b × σ_CI`.
+  - A type's score is the weighted average.
+  - **A model missing a benchmark counts as neutral there (its own coding score)**, so gaps in the data never help or hurt it.
+  - Picking several types averages them.
+  - Only the score changes; the quality bar stays on the general coding score.
+- **Example (September 2026):** GPT-5.6 Luna is #15 in general but #3 for "Explore & explain a codebase".
+
 **One row per model, not per effort level.** Artificial Analysis lists effort and reasoning levels as separate entries: "GPT-5.5 (xhigh)", "GPT-5.5 (high)", "Claude Opus 5 (Adaptive Reasoning, Max Effort)", and so on. Every level is scored first (steps 1–7). Then the levels are grouped into one row per model ([`src/variants.ts`](src/variants.ts)):
 
 - **The headline score is the model's best level:** what it can do when you turn it up. A plain average would be unfair, because each model is tested at a different set of levels. Some include low or non-reasoning and some don't, so the average mostly reflects which levels were tested (e.g. GPT-5.6 Luna: max 71.4, average over its 6 levels 56.3).
@@ -156,8 +183,10 @@ A weight of `0` (or removing the line) drops that benchmark.
 | `codingIndex` | `artificial_analysis_coding_index` | 0–100 |
 | `intelligenceIndex` | `artificial_analysis_intelligence_index` | 0–100 |
 | `liveCodeBench` | `livecodebench` | 0–1 |
-| `terminalBench` | `terminalbench_hard` (Terminal-Bench Hard) | 0–1 |
-| `terminalBenchV2` | `terminalbench_v2_1` (Terminal-Bench v2.1) | 0–1 |
+| `terminalBench` | `terminalbench_v2_1` (Terminal-Bench v2.1, measured on current models) | 0–1 |
+| `terminalBenchHard` | `terminalbench_hard` (Terminal-Bench Hard, older models only) | 0–1 |
+| `lcr` | `lcr` (AA-LCR, long-context reasoning) | 0–1 |
+| `tauBanking` | `tau_banking` (τ²-Bench Banking, multi-step tool use) | 0–1 |
 | `sciCode` | `scicode` | 0–1 |
 | `gpqa` | `gpqa` | 0–1 |
 | `hle` | `hle` (Humanity's Last Exam) | 0–1 |
@@ -239,6 +268,7 @@ npm run preview      # http://localhost:5173
 | `src/benchmarks.ts` | Config benchmark names → API fields and scales |
 | `src/scoring.ts` | The ranking methodology |
 | `src/variants.ts` | Groups effort levels into one row per model |
+| `src/taskTypes.ts` | Per-model scores for each kind of work (`config/task-types.yaml`) |
 | `src/provisional.ts` | Provisional Coding Index for brand-new models |
 | `src/manualModels.ts` | Hand-added models with estimated scores (`config/manual-models.yaml`) |
 | `src/newModels.ts` | `isNew` flag in the data (diff against the previous snapshot) |

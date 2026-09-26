@@ -12,6 +12,7 @@ import { applyCursor, loadCursorConfig } from './cursor.js';
 import { loadManualModels, mergeManualModels } from './manualModels.js';
 import { groupVariants } from './variants.js';
 import { fillProvisionalCodingIndex } from './provisional.js';
+import { computeTaskScores, loadTaskTypes } from './taskTypes.js';
 import { markNewModels } from './newModels.js';
 import { hasMeaningfulChange, readSnapshot, runStamp, writeRun, type Snapshot } from './persist.js';
 import { computeValueTable } from './scoring.js';
@@ -51,6 +52,11 @@ async function main() {
   const previous = readSnapshot(latestPath);
   const { table: marked, cursor } = applyCursor(markNewModels(table, previous), cursorCfg);
 
+  // Per-model scores for each kind of development work (visitors pick types on the dashboard).
+  const taskTypes = loadTaskTypes();
+  const taskScores = computeTaskScores(marked.ranked, models, taskTypes);
+  const ranked = marked.ranked.map((r) => ({ ...r, taskScores: taskScores.get(r.id) }));
+
   const now = new Date();
   const snapshot: Snapshot = {
     generatedAt: now.toISOString(),
@@ -64,7 +70,8 @@ async function main() {
     },
     quality: table.quality,
     cursor,
-    models: marked.ranked,
+    taskTypes,
+    models: ranked,
     excluded: marked.excluded,
   };
   const cursorRanked = cursor.models.filter((m) => m.status === 'ranked').length;

@@ -91,7 +91,7 @@ describe('parseModels', () => {
     const models = parseModels(fixtureBody);
     const epsilon = models.find((m) => m.name === 'Epsilon Unpriced')!;
     expect(epsilon.pricing).toEqual({ input: null, output: null, blended3to1: null });
-    expect(epsilon.evaluations.terminalbench_hard).toBeUndefined();
+    expect(epsilon.evaluations.terminalbench_v2_1).toBeUndefined();
 
     const delta = models.find((m) => m.name === 'Delta Legacy')!;
     expect(delta.releaseDate).toBeNull();

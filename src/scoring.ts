@@ -43,6 +43,8 @@ export interface RankedModel {
   /** Cost per finished task in USD (see `taskCost`). Lower = better. This decides the rank. */
   effectiveCost: number;
   costBreakdown: { tokens: number; time: number };
+  /** Score per kind of work (config/task-types.yaml), used when a visitor picks task types. */
+  taskScores?: Record<string, number>;
   /** Set by new-model detection (see newModels.ts). */
   isNew?: boolean;
   /** Present for hand-added models whose coding score is an estimate (config/manual-models.yaml). */

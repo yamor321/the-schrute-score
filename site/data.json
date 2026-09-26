@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T08:28:00.977Z",
+  "generatedAt": "2026-09-26T10:18:36.626Z",
   "source": {
     "name": "Artificial Analysis",
     "url": "https://artificialanalysis.ai"
@@ -37,7 +37,7 @@
   },
   "cursor": {
     "source": "https://cursor.com/docs/models",
-    "checked": "Fri Sep 25 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
+    "checked": "Fri Sep 25 2026 03:00:00 GMT+0300 (Israel Daylight Time)",
     "models": [
       {
         "name": "Composer 2.5",
@@ -584,6 +584,100 @@
       }
     ]
   },
+  "taskTypes": [
+    {
+      "key": "greenfield",
+      "label": "Build new features & services",
+      "description": "New API, service or module from a spec.",
+      "weights": {
+        "codingIndex": 0.6,
+        "sciCode": 0.2,
+        "terminalBench": 0.2
+      },
+      "proxy": "medium",
+      "rationale": "Writing correct new code from a description (Coding Index, SciCode's spec-to-code problems) and getting it running (Terminal-Bench). FeatureBench targets this directly but isn't in the data."
+    },
+    {
+      "key": "legacy",
+      "label": "Change existing / legacy code",
+      "description": "Adapt, refactor or migrate a large existing codebase.",
+      "weights": {
+        "codingIndex": 0.4,
+        "lcr": 0.35,
+        "terminalBench": 0.25
+      },
+      "proxy": "medium",
+      "rationale": "The model must hold a lot of existing code in mind (long-context reasoning) before editing it, then build and test in place (Terminal-Bench). SWE-bench and SWE-Refactor target this but aren't in the data."
+    },
+    {
+      "key": "explore",
+      "label": "Explore & explain a codebase",
+      "description": "Trace flows across files and repos, onboard, answer \"how does this work\", review.",
+      "weights": {
+        "lcr": 0.6,
+        "terminalBench": 0.2,
+        "codingIndex": 0.2
+      },
+      "proxy": "weak",
+      "rationale": "Mostly reading and reasoning over large amounts of code (long-context reasoning), plus running tools to trace execution. SWE-Atlas Codebase QnA measures exactly this (top models ~30–35%) but isn't in the data."
+    },
+    {
+      "key": "debug",
+      "label": "Debug, fix & test",
+      "description": "Reproduce, locate and fix bugs; write and repair tests.",
+      "weights": {
+        "terminalBench": 0.45,
+        "codingIndex": 0.35,
+        "lcr": 0.2
+      },
+      "proxy": "medium",
+      "rationale": "Debugging is hands-on - run, observe, change, re-run - which is what Terminal-Bench measures, plus code quality and enough context to find the cause."
+    },
+    {
+      "key": "prod",
+      "label": "Production investigation",
+      "description": "Logs → traces → metrics across services and repos to find a root cause.",
+      "weights": {
+        "lcr": 0.4,
+        "terminalBench": 0.35,
+        "tauBanking": 0.25
+      },
+      "proxy": "weak",
+      "rationale": "Reading large volumes of telemetry (long-context reasoning), driving CLI tools (Terminal-Bench) and chaining many tool calls without losing the thread (τ²-Banking). OpenRCA (68 GB of logs, metrics and traces) measures this directly but isn't in the data."
+    },
+    {
+      "key": "infra",
+      "label": "Infra, DevOps & scripting",
+      "description": "CI/CD, containers, shell, builds and environment setup.",
+      "weights": {
+        "terminalBench": 0.7,
+        "codingIndex": 0.3
+      },
+      "proxy": "strong",
+      "rationale": "Terminal-Bench was built for system administration, environment and build work in a real terminal."
+    },
+    {
+      "key": "algorithms",
+      "label": "Algorithms, data & scientific code",
+      "description": "Numerical code, data processing, algorithms.",
+      "weights": {
+        "sciCode": 0.7,
+        "codingIndex": 0.3
+      },
+      "proxy": "strong",
+      "rationale": "SciCode is built from real scientific-computing problems that combine reasoning, knowledge and code."
+    },
+    {
+      "key": "ui",
+      "label": "UI & web pages",
+      "description": "Front-end pages and components.",
+      "weights": {
+        "codingIndex": 1
+      },
+      "proxy": "general",
+      "rationale": "No UI/front-end benchmark is available per model in the data (LMArena WebDev votes aren't in the API and reward looks), so this uses the general coding score."
+    }
+  ],
   "models": [
     {
       "rank": 1,
@@ -640,7 +734,17 @@
       ],
       "headlineLevel": "standard",
       "averageScore": 76.3,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 76.706387,
+        "legacy": 77.444504,
+        "explore": 78.262006,
+        "debug": 76.954002,
+        "prod": 77.608004,
+        "infra": 76.3,
+        "algorithms": 77.722354,
+        "ui": 76.3
+      }
     },
     {
       "rank": 2,
@@ -711,7 +815,17 @@
       "headlineLevel": "high",
       "averageScore": 74.633333,
       "bestValueLevel": null,
-      "cursor": "Gemini 3.8 Flash"
+      "cursor": "Gemini 3.8 Flash",
+      "taskScores": {
+        "greenfield": 76.132072,
+        "legacy": 75.910829,
+        "explore": 75.454044,
+        "debug": 76.317885,
+        "prod": 75.904929,
+        "infra": 76.847588,
+        "algorithms": 75.164663,
+        "ui": 76.3
+      }
     },
     {
       "rank": 3,
@@ -772,7 +886,17 @@
       "headlineLevel": "xhigh",
       "averageScore": 76.15,
       "bestValueLevel": null,
-      "cursor": "Muse Spark 1.3"
+      "cursor": "Muse Spark 1.3",
+      "taskScores": {
+        "greenfield": 76.421669,
+        "legacy": 76.120698,
+        "explore": 76.124947,
+        "debug": 75.913483,
+        "prod": 76.205983,
+        "infra": 75.657262,
+        "algorithms": 77.06858,
+        "ui": 76.5
+      }
     },
     {
       "rank": 4,
@@ -843,7 +967,17 @@
       "headlineLevel": "high",
       "averageScore": 72.866667,
       "bestValueLevel": null,
-      "cursor": "Gemini 3.7 Flash"
+      "cursor": "Gemini 3.7 Flash",
+      "taskScores": {
+        "greenfield": 75.816343,
+        "legacy": 75.57399,
+        "explore": 75.313975,
+        "debug": 75.643943,
+        "prod": 74.081161,
+        "infra": 75.74565,
+        "algorithms": 75.46155,
+        "ui": 76.1
+      }
     },
     {
       "rank": 5,
@@ -924,7 +1058,17 @@
       "headlineLevel": "high",
       "averageScore": 73.35,
       "bestValueLevel": null,
-      "cursor": "Grok 4.6"
+      "cursor": "Grok 4.6",
+      "taskScores": {
+        "greenfield": 76.534156,
+        "legacy": 75.913828,
+        "explore": 75.08024,
+        "debug": 76.563184,
+        "prod": 76.398864,
+        "infra": 77.414364,
+        "algorithms": 75.255182,
+        "ui": 76.8
+      }
     },
     {
       "rank": 6,
@@ -992,7 +1136,17 @@
       "headlineLevel": "high",
       "averageScore": 76.3,
       "bestValueLevel": null,
-      "cursor": "Grok 4.7"
+      "cursor": "Grok 4.7",
+      "taskScores": {
+        "greenfield": 76.179554,
+        "legacy": 74.216584,
+        "explore": 72.728431,
+        "debug": 75.109477,
+        "prod": 73.918954,
+        "infra": 76.3,
+        "algorithms": 75.878437,
+        "ui": 76.3
+      }
     },
     {
       "rank": 7,
@@ -1042,7 +1196,17 @@
       ],
       "headlineLevel": "standard",
       "averageScore": 76.2,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 75.485932,
+        "legacy": 75.748253,
+        "explore": 75.019779,
+        "debug": 76.487148,
+        "prod": 76.162657,
+        "infra": 77.442752,
+        "algorithms": 72.45801,
+        "ui": 76.2
+      }
     },
     {
       "rank": 8,
@@ -1092,7 +1256,17 @@
       ],
       "headlineLevel": "standard",
       "averageScore": 73.1,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 72.954237,
+        "legacy": 73.756718,
+        "explore": 73.587749,
+        "debug": 74.332651,
+        "prod": 74.878023,
+        "infra": 75.054038,
+        "algorithms": 70.635792,
+        "ui": 73.1
+      }
     },
     {
       "rank": 9,
@@ -1152,7 +1326,17 @@
       ],
       "headlineLevel": "max",
       "averageScore": 71.7,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 75.04455,
+        "legacy": 73.990173,
+        "explore": 73.570513,
+        "debug": 74.12387,
+        "prod": 74.836406,
+        "infra": 74.313712,
+        "algorithms": 76.142212,
+        "ui": 74.8
+      }
     },
     {
       "rank": 10,
@@ -1219,7 +1403,17 @@
       ],
       "headlineLevel": "reasoning · max",
       "averageScore": 63.2,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 72.296871,
+        "legacy": 74.297524,
+        "explore": 75.438612,
+        "debug": 73.612871,
+        "prod": 74.525742,
+        "infra": 72.7,
+        "algorithms": 71.289047,
+        "ui": 72.7
+      }
     },
     {
       "rank": 11,
@@ -1326,7 +1520,17 @@
       ],
       "headlineLevel": "max",
       "averageScore": 71.233333,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 76.385564,
+        "legacy": 76.717241,
+        "explore": 76.800985,
+        "debug": 76.666995,
+        "prod": 76.73399,
+        "infra": 76.6,
+        "algorithms": 75.849475,
+        "ui": 76.6
+      }
     },
     {
       "rank": 12,
@@ -1424,7 +1628,17 @@
       "headlineLevel": "max",
       "averageScore": 78.58,
       "bestValueLevel": null,
-      "cursor": "Claude Opus 5.5"
+      "cursor": "Claude Opus 5.5",
+      "taskScores": {
+        "greenfield": 81.406065,
+        "legacy": 79.858089,
+        "explore": 79.113868,
+        "debug": 80.304623,
+        "prod": 79.709245,
+        "infra": 80.9,
+        "algorithms": 82.671226,
+        "ui": 80.9
+      }
     },
     {
       "rank": 13,
@@ -1525,7 +1739,17 @@
       "headlineLevel": "max",
       "averageScore": 64.916667,
       "bestValueLevel": null,
-      "cursor": "GPT-5.6 Terra"
+      "cursor": "GPT-5.6 Terra",
+      "taskScores": {
+        "greenfield": 76.159697,
+        "legacy": 76.721667,
+        "explore": 76.581722,
+        "debug": 76.921228,
+        "prod": 76.10865,
+        "infra": 77.175976,
+        "algorithms": 74.332964,
+        "ui": 76.7
+      }
     },
     {
       "rank": 14,
@@ -1575,7 +1799,17 @@
       ],
       "headlineLevel": "standard",
       "averageScore": 71.5,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 71.866487,
+        "legacy": 72.85988,
+        "explore": 73.16768,
+        "debug": 73.168709,
+        "prod": 74.707635,
+        "infra": 73.532099,
+        "algorithms": 70.750604,
+        "ui": 71.5
+      }
     },
     {
       "rank": 15,
@@ -1676,7 +1910,17 @@
       "headlineLevel": "max",
       "averageScore": 56.25,
       "bestValueLevel": null,
-      "cursor": "GPT-5.6 Luna"
+      "cursor": "GPT-5.6 Luna",
+      "taskScores": {
+        "greenfield": 71.610525,
+        "legacy": 73.418173,
+        "explore": 74.78573,
+        "debug": 72.652673,
+        "prod": 73.322637,
+        "infra": 71.62661,
+        "algorithms": 71.910227,
+        "ui": 71.4
+      }
     },
     {
       "rank": 16,
@@ -1726,7 +1970,17 @@
       ],
       "headlineLevel": "xhigh",
       "averageScore": 72.2,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 72.617242,
+        "legacy": 71.975365,
+        "explore": 72.059864,
+        "debug": 71.742483,
+        "prod": 71.707383,
+        "infra": 71.449835,
+        "algorithms": 74.410513,
+        "ui": 72.2
+      }
     },
     {
       "rank": 17,
@@ -1833,7 +2087,17 @@
       ],
       "headlineLevel": "max",
       "averageScore": 58.566667,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 70.915726,
+        "legacy": 72.571958,
+        "explore": 74.123357,
+        "debug": 71.641119,
+        "prod": 72.882238,
+        "infra": 70.4,
+        "algorithms": 72.205039,
+        "ui": 70.4
+      }
     },
     {
       "rank": 18,
@@ -1894,7 +2158,17 @@
       "headlineLevel": "max",
       "averageScore": 74.1,
       "bestValueLevel": null,
-      "cursor": "Kimi K3"
+      "cursor": "Kimi K3",
+      "taskScores": {
+        "greenfield": 76.148141,
+        "legacy": 77.886081,
+        "explore": 79.365079,
+        "debug": 76.79441,
+        "prod": 78.195684,
+        "infra": 75.358875,
+        "algorithms": 76.859618,
+        "ui": 76.2
+      }
     },
     {
       "rank": 19,
@@ -1995,7 +2269,17 @@
       "headlineLevel": "xhigh",
       "averageScore": 74,
       "bestValueLevel": null,
-      "cursor": "GPT-5.6 Sol"
+      "cursor": "GPT-5.6 Sol",
+      "taskScores": {
+        "greenfield": 77.714742,
+        "legacy": 77.428798,
+        "explore": 76.744624,
+        "debug": 77.88533,
+        "prod": 76.018778,
+        "infra": 78.489527,
+        "algorithms": 76.062069,
+        "ui": 78.3
+      }
     },
     {
       "rank": 20,
@@ -2046,7 +2330,17 @@
       "headlineLevel": "high",
       "averageScore": 72.4,
       "bestValueLevel": null,
-      "cursor": "Grok 4.5"
+      "cursor": "Grok 4.5",
+      "taskScores": {
+        "greenfield": 72.567528,
+        "legacy": 72.468345,
+        "explore": 72.535649,
+        "debug": 72.414213,
+        "prod": 73.106915,
+        "infra": 72.343385,
+        "algorithms": 73.042964,
+        "ui": 72.4
+      }
     },
     {
       "rank": 21,
@@ -2096,7 +2390,17 @@
       ],
       "headlineLevel": "xhigh",
       "averageScore": 71.3,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 71.957931,
+        "legacy": 70.707689,
+        "explore": 70.732117,
+        "debug": 70.360198,
+        "prod": 70.190497,
+        "infra": 69.929508,
+        "algorithms": 74.973249,
+        "ui": 71.3
+      }
     },
     {
       "rank": 22,
@@ -2155,7 +2459,17 @@
       "headlineLevel": "standard",
       "averageScore": 70.3,
       "bestValueLevel": null,
-      "cursor": "Composer 2.5"
+      "cursor": "Composer 2.5",
+      "taskScores": {
+        "greenfield": 70.3,
+        "legacy": 70.3,
+        "explore": 70.3,
+        "debug": 70.3,
+        "prod": 70.3,
+        "infra": 70.3,
+        "algorithms": 70.3,
+        "ui": 70.3
+      }
     },
     {
       "rank": 23,
@@ -2205,7 +2519,17 @@
       ],
       "headlineLevel": "standard",
       "averageScore": 71.9,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 72.174116,
+        "legacy": 72.688617,
+        "explore": 73.088071,
+        "debug": 72.570804,
+        "prod": 74.433054,
+        "infra": 72.401773,
+        "algorithms": 72.357633,
+        "ui": 71.9
+      }
     },
     {
       "rank": 24,
@@ -2255,7 +2579,17 @@
       ],
       "headlineLevel": "standard",
       "averageScore": 71.8,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 71.842086,
+        "legacy": 71.808072,
+        "explore": 71.763226,
+        "debug": 71.872622,
+        "prod": 73.701614,
+        "infra": 71.954998,
+        "algorithms": 71.792303,
+        "ui": 71.8
+      }
     },
     {
       "rank": 25,
@@ -2346,7 +2680,17 @@
       "headlineLevel": "max",
       "averageScore": 74.54,
       "bestValueLevel": null,
-      "cursor": "Claude Opus 5"
+      "cursor": "Claude Opus 5",
+      "taskScores": {
+        "greenfield": 77.35624,
+        "legacy": 76.196828,
+        "explore": 74.846436,
+        "debug": 77.053483,
+        "prod": 75.190792,
+        "infra": 78.191139,
+        "algorithms": 75.555701,
+        "ui": 78
+      }
     },
     {
       "rank": 26,
@@ -2447,7 +2791,17 @@
       "headlineLevel": "max",
       "averageScore": 68.95,
       "bestValueLevel": null,
-      "cursor": "Claude Sonnet 5"
+      "cursor": "Claude Sonnet 5",
+      "taskScores": {
+        "greenfield": 71.729948,
+        "legacy": 72.807335,
+        "explore": 73.758052,
+        "debug": 72.22433,
+        "prod": 73.289116,
+        "infra": 71.448222,
+        "algorithms": 72.356596,
+        "ui": 71.5
+      }
     },
     {
       "rank": 27,
@@ -2518,7 +2872,17 @@
       "headlineLevel": "high",
       "averageScore": 70.1,
       "bestValueLevel": null,
-      "cursor": "Gemini 3.5 Flash"
+      "cursor": "Gemini 3.5 Flash",
+      "taskScores": {
+        "greenfield": 70.524273,
+        "legacy": 68.87786,
+        "explore": 68.042035,
+        "debug": 69.351739,
+        "prod": 68.73474,
+        "infra": 69.986284,
+        "algorithms": 71.698671,
+        "ui": 70.1
+      }
     },
     {
       "rank": 28,
@@ -2589,7 +2953,17 @@
       "headlineLevel": "xhigh",
       "averageScore": 71.1,
       "bestValueLevel": null,
-      "cursor": "GPT-5.4"
+      "cursor": "GPT-5.4",
+      "taskScores": {
+        "greenfield": 70.80797,
+        "legacy": 72.20079,
+        "explore": 73.320816,
+        "debug": 71.280549,
+        "prod": 72.931412,
+        "infra": 70.077896,
+        "algorithms": 71.1,
+        "ui": 71.1
+      }
     },
     {
       "rank": 29,
@@ -2640,7 +3014,17 @@
       "headlineLevel": "max",
       "averageScore": 74.3,
       "bestValueLevel": null,
-      "cursor": "Claude Opus 4.8"
+      "cursor": "Claude Opus 4.8",
+      "taskScores": {
+        "greenfield": 74.081875,
+        "legacy": 73.247324,
+        "explore": 72.403825,
+        "debug": 73.821542,
+        "prod": 72.357759,
+        "infra": 74.580487,
+        "algorithms": 73.256077,
+        "ui": 74.3
+      }
     },
     {
       "rank": 30,
@@ -2701,7 +3085,17 @@
       "headlineLevel": "max",
       "averageScore": 73.6,
       "bestValueLevel": null,
-      "cursor": "Claude 4.7 Opus"
+      "cursor": "Claude 4.7 Opus",
+      "taskScores": {
+        "greenfield": 73.581982,
+        "legacy": 73.015476,
+        "explore": 72.618551,
+        "debug": 73.238315,
+        "prod": 72.384868,
+        "infra": 73.536936,
+        "algorithms": 73.6,
+        "ui": 73.6
+      }
     },
     {
       "rank": 31,
@@ -2792,7 +3186,17 @@
       "headlineLevel": "xhigh",
       "averageScore": 67.08,
       "bestValueLevel": null,
-      "cursor": "GPT-5.5"
+      "cursor": "GPT-5.5",
+      "taskScores": {
+        "greenfield": 74.620261,
+        "legacy": 75.718556,
+        "explore": 76.41684,
+        "debug": 75.215096,
+        "prod": 75.447833,
+        "infra": 74.552099,
+        "algorithms": 74.268814,
+        "ui": 74.9
+      }
     },
     {
       "rank": 32,
@@ -2883,7 +3287,17 @@
       "headlineLevel": "max",
       "averageScore": 78.74,
       "bestValueLevel": null,
-      "cursor": "Claude Fable 5.1"
+      "cursor": "Claude Fable 5.1",
+      "taskScores": {
+        "greenfield": 81.012116,
+        "legacy": 80.158464,
+        "explore": 79.48097,
+        "debug": 80.303031,
+        "prod": 78.795347,
+        "infra": 80.521465,
+        "algorithms": 80.620941,
+        "ui": 81.6
+      }
     },
     {
       "rank": 33,
@@ -2973,7 +3387,17 @@
       ],
       "headlineLevel": "high",
       "averageScore": 76.46,
-      "bestValueLevel": null
+      "bestValueLevel": null,
+      "taskScores": {
+        "greenfield": 76.765372,
+        "legacy": 76.216242,
+        "explore": 75.18077,
+        "debug": 77.138162,
+        "prod": 75.419539,
+        "infra": 78.337915,
+        "algorithms": 74.690889,
+        "ui": 77.1
+      }
     },
     {
       "rank": 34,
@@ -3024,7 +3448,17 @@
       "headlineLevel": "max · opus 4.8 fallback",
       "averageScore": 76.5,
       "bestValueLevel": null,
-      "cursor": "Claude Fable 5"
+      "cursor": "Claude Fable 5",
+      "taskScores": {
+        "greenfield": 76.523521,
+        "legacy": 75.741284,
+        "explore": 75.610613,
+        "debug": 75.513804,
+        "prod": 74.664258,
+        "infra": 75.240487,
+        "algorithms": 77.841836,
+        "ui": 76.5
+      }
     }
   ],
   "excluded": [

@@ -19,8 +19,11 @@ export const BENCHMARKS: Record<string, BenchmarkDef> = {
   codingIndex: { field: 'artificial_analysis_coding_index', label: 'AA Coding Index', scale: 1 },
   intelligenceIndex: { field: 'artificial_analysis_intelligence_index', label: 'AA Intelligence Index', scale: 1 },
   liveCodeBench: { field: 'livecodebench', label: 'LiveCodeBench', scale: 100 },
-  terminalBench: { field: 'terminalbench_hard', label: 'Terminal-Bench Hard', scale: 100 },
-  terminalBenchV2: { field: 'terminalbench_v2_1', label: 'Terminal-Bench v2.1', scale: 100 },
+  // Terminal-Bench v2.1 is what AA measures on current models (Hard: 8 of 34 ranked models).
+  terminalBench: { field: 'terminalbench_v2_1', label: 'Terminal-Bench v2.1', scale: 100 },
+  terminalBenchHard: { field: 'terminalbench_hard', label: 'Terminal-Bench Hard', scale: 100 },
+  lcr: { field: 'lcr', label: 'AA-LCR (long-context reasoning)', scale: 100 },
+  tauBanking: { field: 'tau_banking', label: 'τ²-Bench Banking', scale: 100 },
   sciCode: { field: 'scicode', label: 'SciCode', scale: 100 },
   gpqa: { field: 'gpqa', label: 'GPQA Diamond', scale: 100 },
   hle: { field: 'hle', label: "Humanity's Last Exam", scale: 100 },
