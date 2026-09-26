@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T08:26:36.723Z",
+  "generatedAt": "2026-09-26T08:28:00.977Z",
   "source": {
     "name": "Artificial Analysis",
     "url": "https://artificialanalysis.ai"
@@ -37,7 +37,7 @@
   },
   "cursor": {
     "source": "https://cursor.com/docs/models",
-    "checked": "Fri Sep 25 2026 03:00:00 GMT+0300 (Israel Daylight Time)",
+    "checked": "Fri Sep 25 2026 00:00:00 GMT+0000 (Coordinated Universal Time)",
     "models": [
       {
         "name": "Composer 2.5",
